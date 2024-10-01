@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('product_variant', function (Blueprint $table) {
             $table->id('product_variant_id');
-            $table->foreignId('size_id')->constrained('size', 'size_id');
+            $table->foreignId('size_id')->constrained('sizes', 'size_id');
             $table->foreignId('color_id')->constrained('colors', 'color_id');
             $table->foreignId('product_id')->constrained('products', 'product_id');
             $table->decimal('price', 10.0);
