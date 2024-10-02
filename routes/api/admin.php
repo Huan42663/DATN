@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\SizeController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -15,6 +18,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user',function(Request $request){
-    return $request->user(); 
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
 });
+Route::apiResource('colors', ColorController::class);
+Route::apiResource('sizes', SizeController::class);
+Route::apiResource('orders', OrderController::class);
