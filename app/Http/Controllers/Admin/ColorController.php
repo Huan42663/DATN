@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Color;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use \Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log as FacadesLog;
 use Log;
 
 class ColorController extends Controller
@@ -40,7 +41,7 @@ class ColorController extends Controller
                 );
             }
         } catch (\Throwable $th) {
-            Log::error(__CLASS__ . "@" . __FUNCTION__, [
+            FacadesLog::error(__CLASS__ . "@" . __FUNCTION__, [
                 'Line' => $th->getLine(),
                 'message' => $th->getMessage(),
             ]);
