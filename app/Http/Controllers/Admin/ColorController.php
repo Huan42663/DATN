@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Color;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use \Illuminate\Http\Response;
-use Log;
+use Illuminate\Support\Facades\Log;
 
 class ColorController extends Controller
 {
@@ -52,6 +52,5 @@ class ColorController extends Controller
                 );
             }
         }
-
     }
 }
