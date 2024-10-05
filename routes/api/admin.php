@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SizeController;
+use App\Models\CategoryPost;
+use App\Models\CategoryProduct;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -24,3 +26,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::apiResource('colors', ColorController::class);
 Route::apiResource('sizes', SizeController::class);
 Route::apiResource('orders', OrderController::class);
+
+Route::apiResource('category-product', CategoryProduct::class);
+Route::apiResource('category-post', CategoryPost::class);
