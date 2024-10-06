@@ -21,7 +21,7 @@ class OrderController extends Controller
         $data = Order::query()->get();
         return response()->json(
             [
-                'message' => "Danh sách size",
+                'message' => "Danh sách order",
                 'data' => $data
             ],
             Response::HTTP_OK

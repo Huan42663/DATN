@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\CategoryProductController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SizeController;
@@ -27,5 +29,8 @@ Route::apiResource('colors', ColorController::class);
 Route::apiResource('sizes', SizeController::class);
 Route::apiResource('orders', OrderController::class);
 
-Route::apiResource('category-product', CategoryProduct::class);
+Route::apiResource('category-product', CategoryProductController::class);
 Route::apiResource('category-post', CategoryPost::class);
+
+Route::apiResource('banners', BannerController::class);
+

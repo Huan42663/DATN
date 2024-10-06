@@ -40,7 +40,7 @@ class ColorController extends Controller
                 );
             }
         } catch (\Throwable $th) {
-            FacadesLog::error(__CLASS__ . "@" . __FUNCTION__, [
+            Log::error(__CLASS__ . "@" . __FUNCTION__, [
                 'Line' => $th->getLine(),
                 'message' => $th->getMessage(),
             ]);
