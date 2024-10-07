@@ -9,7 +9,7 @@ class Size extends Model
 {
     use HasFactory;
     protected $table = 'sizes';
-    protected $fillable =[
+    protected $fillable = [
         'size_id',
         'size_name',
     ];
