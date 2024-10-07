@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CategoryPost extends Model
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
     protected $table = 'category_post';
     protected $fillable =[
         'category_post_id',
