@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('price', 10.0);
             $table->decimal('sale-price', 10.0)->nullable();
             $table->integer('quantity');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

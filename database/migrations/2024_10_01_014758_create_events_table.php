@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('discount')->nullable();
             $table->text('slug');
             $table->tinyInteger('status');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

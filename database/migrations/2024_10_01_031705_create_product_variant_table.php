@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('sale_price', 10.0)->nullable();
             $table->integer('quantity');
             $table->float('weight');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

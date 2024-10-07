@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('rate_image_id');
             $table->foreignId('rate_id')->constrained('rates', 'rate_id');
             $table->string('image_name', 255);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
