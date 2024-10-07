@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Size;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log as FacadesLog;
 use Log;
 
 class SizeController extends Controller
@@ -56,7 +58,7 @@ class SizeController extends Controller
                 );
             }
         } catch (\Throwable $th) {
-            Log::error(__CLASS__ . "@" . __FUNCTION__, [
+            FacadesLog::error(__CLASS__ . "@" . __FUNCTION__, [
                 'Line' => $th->getLine(),
                 'message' => $th->getMessage(),
             ]);

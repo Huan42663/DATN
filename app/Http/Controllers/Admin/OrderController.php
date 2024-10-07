@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log as FacadesLog;
 use Log;
 
 class OrderController extends Controller
@@ -19,7 +21,7 @@ class OrderController extends Controller
         $data = Order::query()->get();
         return response()->json(
             [
-                'message' => "Danh sách size",
+                'message' => "Danh sách order",
                 'data' => $data
             ],
             Response::HTTP_OK
@@ -75,7 +77,7 @@ class OrderController extends Controller
                 );
             }
         } catch (\Throwable $th) {
-            Log::error(__CLASS__ . "@" . __FUNCTION__, [
+            FacadesLog::error(__CLASS__ . "@" . __FUNCTION__, [
                 'Line' => $th->getLine(),
                 'message' => $th->getMessage(),
             ]);
