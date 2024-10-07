@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('category_id');
             $table->string('category_name', 50);
             $table->integer('category_parent_id')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

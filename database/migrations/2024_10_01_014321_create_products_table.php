@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description');
             $table->string('product_image',255);
             $table->tinyInteger('status');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

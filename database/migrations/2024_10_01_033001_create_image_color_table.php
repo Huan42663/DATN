@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('image_color_name', 50);
             $table->foreignId('product_id')->constrained('products', 'product_id');
             $table->foreignId('color_id')->constrained('colors', 'color_id');
+            $table->softDeletes();
             $table->timestamps();
         });
     }   

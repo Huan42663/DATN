@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('variant_image_color_id');
             $table->foreignId('image_color_id')->constrained('image_color', 'image_color_id');
             $table->foreignId('product_variant_id')->constrained('product_variant', 'product_variant_id');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

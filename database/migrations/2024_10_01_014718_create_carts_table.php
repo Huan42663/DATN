@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->id('cart_id');
             $table->foreignId('user_id')->constrained('users', 'user_id');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

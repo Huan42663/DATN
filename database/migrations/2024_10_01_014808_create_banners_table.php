@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('event_id')->constrained('events', 'event_id');
             $table->foreignId('product_id')->constrained('products', 'product_id');
             $table->text('link');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
