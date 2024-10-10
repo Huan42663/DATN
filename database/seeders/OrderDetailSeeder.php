@@ -20,7 +20,7 @@ class OrderDetailSeeder extends Seeder
                         'order_id'=>1,
                         'product_variant_id'=>$i,
                         'price'=>100000,
-                        'sale-price'=>99000,
+                        'sale_price'=>99000,
                         'quantity'=>1
                     ]
                 );

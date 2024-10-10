@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryProductController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SizeController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Models\CategoryPost;
 use App\Models\CategoryProduct;
 use Illuminate\Support\Facades\Broadcast;
@@ -33,4 +34,7 @@ Route::apiResource('category-product', CategoryProductController::class);
 Route::apiResource('category-post', CategoryPost::class);
 
 Route::apiResource('banners', BannerController::class);
+
+Route::apiResource('products', ProductController::class);
+Route::get('products/{id}/rates', [ProductController::class, 'getRates']);
 
