@@ -13,16 +13,14 @@ class CartDetailSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 0; $i < 5; $i++) {
-            if ($i > 0) {
-                CartDetail::create(
-                    [
-                        'cart_id' => $i,
-                        'product_variant_id' => $i,
-                        'quantity' => 1
-                    ]
-                );
-            }
+        for ($i = 1; $i <= 5; $i++) {
+            CartDetail::create(
+                [
+                    'cart_id' => $i,
+                    'product_variant_id' => $i,
+                    'quantity' => 1
+                ]
+            );
         }
     }
 }

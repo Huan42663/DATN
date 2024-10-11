@@ -13,7 +13,7 @@ class ProductVariantSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i <=5; $i++) {
             if ($i > 0) {
                 ProductVariant::create(
                     [
