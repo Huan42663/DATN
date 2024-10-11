@@ -13,13 +13,12 @@ class BannerSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 1; $i < 5; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             Banner::create(
                 [
                     'image_name'=>"123.jpg",
                     'status'=>1,
                     'event_id'=>$i,
-                    'product_id'=>$i,
                     'link'=>'product'
                 ]
             );

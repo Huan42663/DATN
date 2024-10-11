@@ -13,7 +13,7 @@ class VariantImageColorSeeder extends Seeder
      */
     public function run(): void
     {
-       for ($i=1; $i <5 ; $i++) { 
+       for ($i=1; $i <=5 ; $i++) { 
         VariantImageColor::create(
             [
                 'image_color_id'=>$i,
