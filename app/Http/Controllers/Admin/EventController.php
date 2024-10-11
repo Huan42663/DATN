@@ -53,7 +53,7 @@ class EventController extends Controller
     public function show(string $id)
     {
         try {
-            $data = Event::find($id);
+            $data = Event::query()->where('event_id', $id)->get();
             return response()->json(
                 [
                     'message' => 'chi tiết sự kiện',
@@ -80,7 +80,7 @@ class EventController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $event = Event::find($id);
+        $event = Event::query()->where('event_id', $id)->get();
         $data = $request->validate(
             [
                 'event_name' => 'required|min:5',
@@ -103,7 +103,7 @@ class EventController extends Controller
     public function destroy(string $id)
     {
         try {
-            $data = Event::find($id);
+            $data = Event::query()->where('event_id', $id)->get();
             $data->delete();
             return response()->json(
                 [
