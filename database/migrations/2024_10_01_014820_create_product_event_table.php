@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained('products', 'product_id');
             $table->foreignId('event_id')->constrained('events', 'event_id');
             $table->tinyInteger('status');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

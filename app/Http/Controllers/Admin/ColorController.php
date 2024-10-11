@@ -35,7 +35,7 @@ class ColorController extends Controller
                 );
             } else {
                 return response()->json(
-                    ['message' => "Không tìm thấy"],
+                    ['error' => "Không tìm thấy"],
                     Response::HTTP_NOT_FOUND
                 );
             }
@@ -47,7 +47,7 @@ class ColorController extends Controller
 
             if ($th instanceof ModelNotFoundException) {
                 return response()->json(
-                    ['message' => "Không tìm thấy"],
+                    ['error' => "Không tìm thấy"],
                     Response::HTTP_NOT_FOUND
                 );
             }

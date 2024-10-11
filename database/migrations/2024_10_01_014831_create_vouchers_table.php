@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('quantity');
             $table->dateTime('date_start');
             $table->dateTime('date_end');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

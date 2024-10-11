@@ -7,7 +7,8 @@ use App\Models\Size;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log as FacadesLog;
+use Log;
 
 class SizeController extends Controller
 {
@@ -52,19 +53,19 @@ class SizeController extends Controller
                 );
             } else {
                 return response()->json(
-                    ['message' => "Không tìm thấy"],
+                    ['error' => "Không tìm thấy"],
                     Response::HTTP_NOT_FOUND
                 );
             }
         } catch (\Throwable $th) {
-            Log::error(__CLASS__ . "@" . __FUNCTION__, [
+            FacadesLog::error(__CLASS__ . "@" . __FUNCTION__, [
                 'Line' => $th->getLine(),
                 'message' => $th->getMessage(),
             ]);
 
             if ($th instanceof ModelNotFoundException) {
                 return response()->json(
-                    ['message' => "Không tìm thấy"],
+                    ['error' => "Không tìm thấy"],
                     Response::HTTP_NOT_FOUND
                 );
             }

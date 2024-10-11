@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string(column: 'bill_code', length: 50);
             $table->string('order_code', 50);
             $table->decimal('amount', 10.0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

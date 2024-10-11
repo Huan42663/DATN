@@ -39,7 +39,7 @@ class CategoryPostController extends Controller
     public function show(string $id)
     {
         //
-        // $categoryPost = CategoryPost::find($id);
+        $categoryPost = CategoryPost::where('category_post_id', '=', $id)->get();
 
         // if (!$categoryPost) {
         //     return response()->json(['message' => 'Không tìm thấy danh mục Bài viết']);

@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('street', 50);
             $table->string('hamlet', 50)->nullable();
             $table->enum('status', ['unconfirm', 'confirmed','shipping','delivered','received','canceled','return']);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

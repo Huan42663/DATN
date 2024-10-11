@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users', 'user_id');
             $table->integer('star');
             $table->text('content')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

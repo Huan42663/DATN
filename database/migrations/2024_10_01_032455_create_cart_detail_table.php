@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('cart_id')->constrained('carts', 'cart_id');
             $table->foreignId('product_variant_id')->constrained('product_variant', 'product_variant_id');
             $table->integer('quantity');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

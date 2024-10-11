@@ -13,18 +13,17 @@ class OrderDetailSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 0; $i < 5; $i++) {
-            if ($i > 0) {
-                OrderDetail::create(
-                    [
-                        'order_id'=>1,
-                        'product_variant_id'=>$i,
-                        'price'=>100000,
-                        'sale-price'=>99000,
-                        'quantity'=>1
-                    ]
-                );
-            }
+        for ($i = 1; $i <= 5; $i++) {
+            OrderDetail::create(
+                [
+                    'order_id' => $i,
+                    'product_variant_id' => $i,
+                    'price' => 100000,
+                    'sale_price' => 99000,
+                    'quantity' => 1
+                ]
+            );
         }
     }
 }
+

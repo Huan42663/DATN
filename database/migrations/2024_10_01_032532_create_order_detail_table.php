@@ -16,8 +16,9 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained('orders', 'order_id');
             $table->foreignId('product_variant_id')->constrained('product_variant', 'product_variant_id');
             $table->decimal('price', 10.0);
-            $table->decimal('sale-price', 10.0)->nullable();
+            $table->decimal('sale_price', 10.0)->nullable();
             $table->integer('quantity');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

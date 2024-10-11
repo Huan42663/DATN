@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Rate extends Model
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
     protected $table = 'rates';
+    protected $primaryKey = 'rate_id';
     protected $fillable =[
         'rate_id',
         'order_id',
@@ -25,5 +27,9 @@ class Rate extends Model
     }
     public function user(){
         return $this->belongsTo(User::class,'user_id');
+    }
+    public function images()
+    {
+        return $this->hasMany(RateImage::class, 'rate_id'); 
     }
 }
