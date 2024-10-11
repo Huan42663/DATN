@@ -34,6 +34,22 @@ class EventController extends Controller
         $validatedData = $request->validate(
             [
                 'event_name' => 'required|min:5',
+                'date_start' => [
+                    'required',
+                    function ($error, $date, $date_start) {
+                        if ($date_start <= $date) {
+                            $error('ngày bắt đầu phải lớn hơn hoặc bằng ngày hiện tại');
+                        }
+                    }
+                ],
+                'date_end' => [
+                    'required',
+                    function ($error, $date_end, $date_start) {
+                        if ($date_end < $date_start) {
+                            $error('ngày kết thúc phải lớn hơn ngày bắt đầu');
+                        }
+                    }
+                ],
                 'type_event' => 'required'
 
             ],
@@ -53,7 +69,7 @@ class EventController extends Controller
     public function show(string $id)
     {
         try {
-            $data = Event::find($id);
+            $data = Event::query()->where('event_id', $id)->get();
             return response()->json(
                 [
                     'message' => 'chi tiết sự kiện',
@@ -80,7 +96,7 @@ class EventController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $event = Event::find($id);
+        $event = Event::query()->where('event_id', $id)->get();
         $data = $request->validate(
             [
                 'event_name' => 'required|min:5',
@@ -103,7 +119,7 @@ class EventController extends Controller
     public function destroy(string $id)
     {
         try {
-            $data = Event::find($id);
+            $data = Event::query()->where('event_id', $id)->get();
             $data->delete();
             return response()->json(
                 [

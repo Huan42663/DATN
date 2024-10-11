@@ -13,15 +13,13 @@ class CategoryProductSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 0; $i < 5; $i++) {
-            if ($i > 0) {
+        for ($i = 1; $i <=5; $i++) {
                 CategoryProduct::create(
                     [
                         'category_id'=>$i,
                         'product_id'=>$i,
                     ]
                 );
-            }
         }
     }
 }

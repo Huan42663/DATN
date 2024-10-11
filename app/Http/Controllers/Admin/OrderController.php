@@ -39,29 +39,27 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(int $id)
     {
 
         try {
             $data = [
                 Order::query()->where('order_id', '=', $id)->get(),
-                Order::join('order_detail', 'orders.order_id', '=', 'order_detail.order_id')
-                    ->join('product_variant', 'order_detail.product_variant_id', "=", 'product_variant.product_variant_id')
+
+                OrderDetail::join('product_variant', 'order_detail.product_variant_id', "=", 'product_variant.product_variant_id')
                     ->join('products', 'product_variant.product_id', "=", 'products.product_id')
                     ->join('sizes', 'product_variant.size_id', "=", 'sizes.size_id')
                     ->join('colors', 'product_variant.color_id', "=", 'colors.color_id')
                     ->select(
                         'order_detail.price',
-                        'order_detail.sale-price',
+                        'order_detail.sale_price',
                         'order_detail.quantity',
                         'products.product_name',
                         'products.product_image',
                         'sizes.size_name',
                         'colors.color_name'
                     )
-                    ->where('orders.order_id', '=', $id)
-                    ->get()
-
+                    ->where('Order_detail.order_id', '=', $id)->get()
             ];
             if (count($data[0]) > 0) {
                 return response()->json(
@@ -72,7 +70,7 @@ class OrderController extends Controller
                 );
             } else {
                 return response()->json(
-                    ['message' => "Không tìm thấy đơn hàng"],
+                    ['error' => "Không tìm thấy đơn hàng"],
                     Response::HTTP_NOT_FOUND
                 );
             }
@@ -84,7 +82,7 @@ class OrderController extends Controller
 
             if ($th instanceof ModelNotFoundException) {
                 return response()->json(
-                    ['message' => "Không tìm thấy đơn hàng"],
+                    ['error' => "Không tìm thấy đơn hàng"],
                     Response::HTTP_NOT_FOUND
                 );
             }
