@@ -31,30 +31,15 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        $date = new \DateTime('now');
-        $date_start = $request->get('date_start');
-        $date_end = $request->get('date_end');
         $validatedData = $request->validate(
             [
                 'event_name' => 'required|min:5',
-                'date_start' => ['required', function ($error, $date, $date_start) {
-                    if ($date_start <= $date) {
-                        $error('ngày bắt đầu phải lớn hơn hoặc bằng ngày hiện tại');
-                    }
-                }],
-                'date_end' => ['required', function ($error, $date_end, $date_start) {
-                    if ($date_end < $date_start) {
-                        $error('ngày kết thúc phải lớn hơn ngày bắt đầu');
-                    }
-                }],
                 'type_event' => 'required'
 
             ],
             [
                 'event_name.required' => 'tên sự kiện không được để trống',
                 'event_name.min' => 'tên sự kiện không được nhỏ hơn 5 ký tự',
-                'date_start.required' => 'ngày bắt đầu không được để trống',
-                'date_end.required' => 'ngày kết thúc không được để trống',
                 'type_event.required' => 'kiểu sự kiện không được để trống'
             ]
         );
@@ -95,7 +80,21 @@ class EventController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $event = Event::find($id);
+        $data = $request->validate(
+            [
+                'event_name' => 'required|min:5',
+                'type_event' => 'required'
+
+            ],
+            [
+                'event_name.required' => 'tên sự kiện không được để trống',
+                'event_name.min' => 'tên sự kiện không được nhỏ hơn 5 ký tự',
+                'type_event.required' => 'kiểu sự kiện không được để trống'
+            ]
+        );
+        $event->update($data);
+        return response()->json(['data' => $event], Response::HTTP_OK);
     }
 
     /**
