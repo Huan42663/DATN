@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\CategoryProduct;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class CategoryProductController extends Controller
 {
@@ -14,8 +18,8 @@ class CategoryProductController extends Controller
     public function index()
     {
         //
-        $categoryProducts = CategoryProduct::all();
-        return response()->json(['categoryProducts' => $categoryProducts], 200);
+        $data = Category::query()->get();
+        return response()->json(['data' => $data], Response::HTTP_OK);
     }
 
     /**
@@ -24,11 +28,12 @@ class CategoryProductController extends Controller
     public function store(Request $request)
     {
         //
-        $data = $request->only(['category_id', 'product_id']);
+        // $data = $request->only(['category_id', 'product_id']);
 
-        $categoryProduct = CategoryProduct::create($data);
+        // $categoryProduct = CategoryProduct::create($data);
 
-        return response()->json(['categoryProduct' => $categoryProduct], 201);
+
+        // return response()->json(['categoryProduct' => $categoryProduct], 201);
     }
 
     /**
@@ -37,13 +42,39 @@ class CategoryProductController extends Controller
     public function show(string $id)
     {
         //
-        $categoryProduct = CategoryProduct::find($id);
+        try {
 
-        if (!$categoryProduct) {
-            return response()->json(['message' => 'Không tìm thấy Danh mục sản phẩm'], 404);
+            $categoryProducts = Category::join('categories as c', 'categories.category_id', '=', 'c.category_parent_id')
+                ->join('categories as cp', 'c.category_parent_id', '=', 'cp.category_id')
+                ->select('c.category_id', 'c.category_name', 'cp.category_name as category_parent')
+                ->get();
+            $count = Count($categoryProducts);
+            if ($count > 0) {
+                return response()->json(
+                    [
+                        'message' => "Danh mục sản phẩm",
+                        'data' => $categoryProducts
+                    ]
+                );
+            } else {
+                return response()->json(
+                    ['message' => "Không tìm thấy Danh mục sản phẩm"],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+        } catch (\Throwable $th) {
+            Log::error(__CLASS__ . "@" . __FUNCTION__, [
+                'Line' => $th->getLine(),
+                'message' => $th->getMessage(),
+            ]);
+
+            if ($th instanceof ModelNotFoundException) {
+                return response()->json(
+                    ['message' => "Không tìm thấy Danh mục sản phẩm"],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
         }
-
-        return response()->json(['categoryProduct' => $categoryProduct], 200);
     }
 
     /**
@@ -52,15 +83,7 @@ class CategoryProductController extends Controller
     public function update(Request $request, string $id)
     {
         //
-        $categoryProduct = CategoryProduct::find($id);
 
-        if (!$categoryProduct) {
-            return response()->json(['message' => 'Không tìm thấy danh mục sản phẩm'], 404);
-        }
-
-        $categoryProduct->update($request->only('category_id', 'product_id'));
-
-        return response()->json(['categoryProduct' => $categoryProduct], 200);
     }
 
     /**
@@ -69,14 +92,6 @@ class CategoryProductController extends Controller
     public function destroy(string $id)
     {
         //
-        $categoryProduct = CategoryProduct::find($id);
 
-        if (!$categoryProduct) {
-            return response()->json(['message' => 'Không tìm thấy danh mục sản phẩm']);
-        }
-
-        $categoryProduct->delete();
-
-        return response()->json(['message' => 'Xóa danh mục sản phẩm thành công']);
     }
 }

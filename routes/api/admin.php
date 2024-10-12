@@ -43,6 +43,3 @@ Route::apiResource('events', EventController::class);
 
 Route::apiResource('products', ProductController::class);
 Route::get('products/{id}/rates', [ProductController::class, 'getRates']);
-
-
-
