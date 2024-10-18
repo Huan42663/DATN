@@ -13,16 +13,18 @@ class RateSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 1; $i <= 5; $i++) {
-            Rate::create(
-                [
-                    'order_id' => $i,
-                    'product_variant_id' => $i,
-                    'user_id' => $i,
-                    'star' => 5,
-                    'content' => "Sản phẩm rất đẹp và chất lượng",
-                ]
-            );
+        for ($i = 0; $i < 5; $i++) {
+            if ($i > 0) {
+                Rate::create(
+                    [
+                        'order_id'=>1,
+                        'product_variant_id'=>1,
+                        'user_id'=>1,
+                        'star'=>5,
+                        'content'=>"Sản phẩm rất đẹp và chất lượng",
+                    ]
+                );
+            }
         }
     }
 }

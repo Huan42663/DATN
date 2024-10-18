@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
                     ]
                 );
             }
-            else if($i>=1 && $i<= 4){
+            else if($i>1 && $i<4){
                 User::create(
                     [
                         'fullname'=>"HelloWorld".$i,

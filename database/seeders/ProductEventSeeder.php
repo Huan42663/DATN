@@ -13,14 +13,16 @@ class ProductEventSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 1; $i <= 5; $i++) {
-            ProductEvent::create(
-                [
-                    'product_id' => $i,
-                    'event_id' => $i,
-                    'status' => 1,
-                ]
-            );
+        for ($i = 0; $i < 5; $i++) {
+            if ($i > 0) {
+                ProductEvent::create(
+                    [
+                        'product_id'=>$i,
+                        'event_id'=>$i,
+                        'status'=>1,
+                    ]
+                );
+            }
         }
     }
 }

@@ -13,11 +13,12 @@ class BillSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 4; $i <=5; $i++) {
+        for ($i = 0; $i < 5; $i++) {
+            if($i>0){
                 Bill::create(
                     [
                         'bill_code'=>"DATN1234".$i,
-                        'order_id'=>$i,
+                        'order_id'=>1,
                         'order_code'=>"DATN1",
                         'amount'=>99000
                     ]
@@ -26,3 +27,4 @@ class BillSeeder extends Seeder
             
         }
     }
+}

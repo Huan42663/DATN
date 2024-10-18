@@ -13,8 +13,8 @@ class ImageColorSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 1; $i <= 5; $i++) {
-            
+        for ($i = 0; $i < 5; $i++) {
+            if ($i > 0) {
                 ImageColor::create(
                     [
                         'image_color_name'=>"123.jpg",
@@ -22,6 +22,7 @@ class ImageColorSeeder extends Seeder
                         'color_id'=>$i
                     ]
                 );
+            }
 
         }
     }

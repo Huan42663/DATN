@@ -18,7 +18,6 @@ class CategorySeeder extends Seeder
                 Category::create(
                     [
                         'category_name' => "Áo Nam" . $i,
-                        'category_slug' => "ao-nam-" . $i,
                         'category_parent_id' => "1",
                     ]
                 );
@@ -26,7 +25,6 @@ class CategorySeeder extends Seeder
                 Category::create(
                     [
                         'category_name' => "Áo Nam",
-                        'category_slug' => "ao-nam",
                     ]
                 );
             }
