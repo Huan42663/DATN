@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-
 use Psy\Exception\ThrowUpException;
 use Throwable;
 
@@ -23,8 +22,8 @@ class CategoryProductController extends Controller
     public function index()
     {
         //
-        $data = Category::query()->get();
-        return response()->json(['data' => $data], Response::HTTP_OK);
+        $categoryProducts = CategoryProduct::all();
+        return response()->json(['categoryProducts' => $categoryProducts], 200);
     }
 
     /**
@@ -32,6 +31,7 @@ class CategoryProductController extends Controller
      */
     public function store(Request $request)
     {
+
         $validatedData = $request->validate([
             'category_name' => 'required|string|max:255',
             'category_parent_id' => 'nullable|exists:categories,category_id'
@@ -46,18 +46,6 @@ class CategoryProductController extends Controller
             ],
             Response::HTTP_CREATED
         );
-
-        // $data = $request->only(['category_id', 'product_id']);
-
-        // $categoryProduct = CategoryProduct::create($data);
-
-        // return response()->json(
-        //     [
-        //         'message' => 'Danh mục sản phẩm đã được tạo thành công',
-        //         'categoryProduct' => $categoryProduct
-        //     ],
-        //     Response::HTTP_CREATED
-        // );
     }
 
     /**
@@ -66,8 +54,8 @@ class CategoryProductController extends Controller
     public function show(string $id)
     {
         //
-        try {
 
+        try {
             $categoryProducts = Category::query()->join('categories as c', 'categories.category_id', '=', 'c.category_parent_id')
                 ->join('categories as cp', 'c.category_parent_id', '=', 'cp.category_id')
                 ->select('c.category_id', 'c.category_name', 'cp.category_name as category_parent')
@@ -107,6 +95,7 @@ class CategoryProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
+
         try {
             $categoryProduct = Category::query()->where('category_id', $id);
 

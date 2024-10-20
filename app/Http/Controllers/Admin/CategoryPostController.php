@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\CategoryPost;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log as FacadesLog;
 use Log;
+
 
 class CategoryPostController extends Controller
 {
@@ -18,7 +20,8 @@ class CategoryPostController extends Controller
     public function index()
     {
         //
-        $categoryPosts = CategoryPost::query()->get();
+        $categoryPosts = CategoryPost::all();
+
 
         return response()->json(
             [
@@ -34,6 +37,7 @@ class CategoryPostController extends Controller
      */
     public function store(Request $request)
     {
+
 
         $validatedData = $request->validate(['category_post_name' => 'required|string|max:255']);
 
@@ -91,11 +95,19 @@ class CategoryPostController extends Controller
     public function update(Request $request, string $id)
     {
 
+
         $categoryPost = CategoryPost::where('category_post_id', $id);
+
+
+        if (!$categoryPost) {
+            return response()->json(['message' => 'Không tìm thấy danh mục Bài viết']);
+        }
+
 
         $validatedData = $request->validate(['category_post_name' => 'required|string|max:255']);
 
         $categoryPost->update($validatedData);
+
 
         return response()->json(
             [
@@ -111,6 +123,7 @@ class CategoryPostController extends Controller
      */
     public function destroy(string $id)
     {
+
         $categoryPost = CategoryPost::where('category_post_id', $id)->delete();
 
         if ($categoryPost) {
