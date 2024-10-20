@@ -10,6 +10,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
+use Psy\Exception\ThrowUpException;
+use Throwable;
+
+use function PHPUnit\Framework\throwException;
+
 class CategoryProductController extends Controller
 {
     /**
@@ -27,13 +32,32 @@ class CategoryProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'category_name' => 'required|string|max:255',
+            'category_parent_id' => 'nullable|exists:categories,category_id'
+        ]);
+
+        $categoryProduct = Category::create($validatedData);
+
+        return response()->json(
+            [
+                'message' => 'Danh mục sản phẩm đã được tạo thành công',
+                'categoryProduct' => $categoryProduct
+            ],
+            Response::HTTP_CREATED
+        );
+
         // $data = $request->only(['category_id', 'product_id']);
 
         // $categoryProduct = CategoryProduct::create($data);
 
-
-        // return response()->json(['categoryProduct' => $categoryProduct], 201);
+        // return response()->json(
+        //     [
+        //         'message' => 'Danh mục sản phẩm đã được tạo thành công',
+        //         'categoryProduct' => $categoryProduct
+        //     ],
+        //     Response::HTTP_CREATED
+        // );
     }
 
     /**
@@ -44,15 +68,16 @@ class CategoryProductController extends Controller
         //
         try {
 
-            $categoryProducts = Category::join('categories as c', 'categories.category_id', '=', 'c.category_parent_id')
+            $categoryProducts = Category::query()->join('categories as c', 'categories.category_id', '=', 'c.category_parent_id')
                 ->join('categories as cp', 'c.category_parent_id', '=', 'cp.category_id')
                 ->select('c.category_id', 'c.category_name', 'cp.category_name as category_parent')
+                ->where('c.category_id', $id)
                 ->get();
             $count = Count($categoryProducts);
             if ($count > 0) {
                 return response()->json(
                     [
-                        'message' => "Danh mục sản phẩm",
+                        'message' => "Chi tiết Danh mục sản phẩm",
                         'data' => $categoryProducts
                     ]
                 );
@@ -82,8 +107,19 @@ class CategoryProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $categoryProduct = Category::query()->where('category_id', $id);
 
+            $data = $request->validate([
+                'category_name' => 'required|string|max:255',
+                'category_parent_id' => 'nullable|exists:categories,category_id'
+            ]);
+
+            $categoryProduct->update($data);
+            return response()->json(['message' => 'update thanh cong'], Response::HTTP_OK);
+        } catch (Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
     }
 
     /**
@@ -91,7 +127,22 @@ class CategoryProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $categoryProduct = Category::where('category_id', $id)->delete();
 
+        if ($categoryProduct) {
+            return response()->json(
+                [
+                    'message' => 'Danh mục sản phẩm đã được xóa thành công'
+                ],
+                Response::HTTP_OK
+            );
+        } else {
+            return response()->json(
+                [
+                    'error' => 'Danh mục sản phẩm không tồn tại'
+                ],
+                Response::HTTP_NOT_FOUND
+            );
+        }
     }
 }

@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CategoryPost;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log as FacadesLog;
+use Log;
 
 class CategoryPostController extends Controller
 {
@@ -17,7 +20,13 @@ class CategoryPostController extends Controller
         //
         $categoryPosts = CategoryPost::query()->get();
 
-        return response()->json(['data' => $categoryPosts], Response::HTTP_OK);
+        return response()->json(
+            [
+                'message' => "Danh mục Bài viết",
+                'data' => $categoryPosts
+            ],
+            Response::HTTP_OK
+        );
     }
 
     /**
@@ -25,12 +34,18 @@ class CategoryPostController extends Controller
      */
     public function store(Request $request)
     {
-        // //
-        // $validatedData = $request->validate(['category_post_name' => 'required|string|max:255']);
 
-        // $categoryPost = CategoryPost::create($validatedData);
+        $validatedData = $request->validate(['category_post_name' => 'required|string|max:255']);
 
-        // return response()->json(['data' => $categoryPost], 201);
+        $categoryPost = CategoryPost::create($validatedData);
+
+        return response()->json(
+            [
+                'message' => 'Danh mục bài viết đã được tạo thành cônng',
+                'data' => $categoryPost
+            ],
+            Response::HTTP_CREATED
+        );
     }
 
     /**
@@ -38,14 +53,36 @@ class CategoryPostController extends Controller
      */
     public function show(string $id)
     {
-        //
-        $categoryPost = CategoryPost::where('category_post_id', '=', $id)->get();
+        try {
+            $data = CategoryPost::query()->where("category_post_id", '=', $id)->get();
+            $count = Count($data);
+            if ($count > 0) {
+                return response()->json(
+                    [
+                        'message' => "Chi tiết danh mục Bài viết",
+                        'data' => $data
+                    ]
+                );
+            } else {
+                return response()->json(
 
-        // if (!$categoryPost) {
-        //     return response()->json(['message' => 'Không tìm thấy danh mục Bài viết']);
-        // }
+                    ['error' => "Không tìm thấy"],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+        } catch (\Throwable $th) {
+            FacadesLog::error(__CLASS__ . "@" . __FUNCTION__, [
+                'Line' => $th->getLine(),
+                'message' => $th->getMessage(),
+            ]);
 
-        // return response()->json(['data' => $categoryPost], 200);
+            if ($th instanceof ModelNotFoundException) {
+                return response()->json(
+                    ['error' => "Không tìm thấy"],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+        }
     }
 
     /**
@@ -53,18 +90,20 @@ class CategoryPostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
-        // $categoryPost = CategoryPost::find($id);
 
-        // if (!$categoryPost) {
-        //     return response()->json(['message' => 'Không tìm thấy danh mục Bài viết']);
-        // }
+        $categoryPost = CategoryPost::where('category_post_id', $id);
 
-        // $validatedData = $request->validate(['category_post_name' => 'required|string|max:255']);
+        $validatedData = $request->validate(['category_post_name' => 'required|string|max:255']);
 
-        // $categoryPost->update($validatedData);
+        $categoryPost->update($validatedData);
 
-        // return response()->json(['data' => $categoryPost], 200);
+        return response()->json(
+            [
+                'message' => 'Danh mục bài viết đã được cập nhật thành công!!',
+                'data' => $categoryPost
+            ],
+            Response::HTTP_OK
+        );
     }
 
     /**
@@ -72,15 +111,22 @@ class CategoryPostController extends Controller
      */
     public function destroy(string $id)
     {
-        //
-        // $categoryPost = CategoryPost::find($id);
+        $categoryPost = CategoryPost::where('category_post_id', $id)->delete();
 
-        // if (!$categoryPost) {
-        //     return response()->json(['message' => 'Không tìm thấy danh mục Bài viết']);
-        // }
-
-        // $categoryPost->delete();
-
-        // return response()->json(['message' => 'Xóa danh mục bài viết thành công!']);
+        if ($categoryPost) {
+            return response()->json(
+                [
+                    'message' => 'Danh mục Bài viết đã được xóa thành công'
+                ],
+                Response::HTTP_OK
+            );
+        } else {
+            return response()->json(
+                [
+                    'error' => 'Danh mục Bài viết không tồn tại'
+                ],
+                Response::HTTP_NOT_FOUND
+            );
+        }
     }
 }
