@@ -66,7 +66,7 @@ class OrderController extends Controller
             if (count($data[0]) > 0) {
                 return response()->json(
                     [
-                        'message' => "Chi tiết đơn hàng",
+                        'message' => "Chi tiết đơn hàng.",
                         'data' => $data,
                     ]
                 );
@@ -94,16 +94,23 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $orderCode)
     {
-        //
+        $order = Order::query()->where('order_code', '=', $orderCode)->get();
+        if (empty($order[0])) {
+            return response()->json(
+                ['error' => "Không tìm thấy đơn hàng"],
+                Response::HTTP_NOT_FOUND
+            );
+        }else{
+            $request["status"] = "confirmed";
+            Order::query()->where('order_code', '=', $orderCode)->update($request->all());
+            $orderData = Order::query()->where('order_code', '=', $orderCode)->get();
+            return response()->json(
+                ['message' => "Cập nhật đơn hàng thành công.",'data'=>$orderData],
+                Response::HTTP_OK
+            );
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

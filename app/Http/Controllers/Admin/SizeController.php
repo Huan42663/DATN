@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log as FacadesLog;
+use Illuminate\Support\Facades\Validator;
 use Log;
 
 class SizeController extends Controller
@@ -33,7 +34,30 @@ class SizeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make(
+            $request->all(),
+            ['size_name' => "required|unique:sizes,size_name"],
+            [
+                "size_name.required" => "Không được bỏ trống",
+                "size_name.unique" => "Size đã có"
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        } else {
+            $Size = Size::create($request->all());
+            return response()->json(
+                [
+                    'message' => "Thêm Size Thành Công",
+                    'data' => $Size
+                ],
+                Response::HTTP_CREATED
+            );
+        }
     }
 
     /**
