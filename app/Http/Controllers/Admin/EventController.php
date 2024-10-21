@@ -118,7 +118,7 @@ class EventController extends Controller
                             'date_start.required' => 'thời gian bắt đầu không được để trống',
                             'date_end.required' => 'thời gian kết thúc không được để trống',
                             'event_name.min' => 'tên sự kiện không được nhỏ hơn 5 ký tự',
-                            'type_event.required' => 'kiểu sự kiện không được để trống'
+                            'type_event.required' => 'kiểu sự kiện không được để trống !'
                         ]
 
                     );
