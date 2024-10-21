@@ -97,7 +97,7 @@ class CategoryProductController extends Controller
     {
 
         try {
-$categoryProduct = Category::query()->where('category_id', $id);
+            $categoryProduct = Category::query()->where('category_id', $id);
 
             $data = $request->validate([
                 'category_name' => 'required|string|max:255',

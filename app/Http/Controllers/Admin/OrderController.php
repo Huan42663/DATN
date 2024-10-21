@@ -33,62 +33,64 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-
+        //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $orderCode)
+    public function show(string $id)
     {
 
-        $order = Order::query()->where('order_code', '=', $orderCode)->get();
-        if (empty($order[0])) {
-            return response()->json(
-                ['message' => "Không tìm thấy đơn hàng"],
-                Response::HTTP_NOT_FOUND
-            );
-        } else {
-            try {
-                $data = [
-                    $order,
-                    OrderDetail::join('product_variant', 'order_detail.product_variant_id', "=", 'product_variant.product_variant_id')
-                        ->join('products', 'product_variant.product_id', "=", 'products.product_id')
-                        ->join('sizes', 'product_variant.size_id', "=", 'sizes.size_id')
-                        ->join('colors', 'product_variant.color_id', "=", 'colors.color_id')
-                        ->select(
-                            'order_detail.price',
-                            'order_detail.sale_price',
-                            'order_detail.quantity',
-                            'products.product_name',
-                            'products.product_image',
-                            'sizes.size_name',
-                            'colors.color_name'
-                        )
-                        ->where('Order_detail.order_id', '=', $order[0]->order_id)->get()
-                ];
+        try {
+            $data = [
+                Order::query()->where('order_id', '=', $id)->get(),
+                Order::join('order_detail', 'orders.order_id', '=', 'order_detail.order_id')
+                    ->join('product_variant', 'order_detail.product_variant_id', "=", 'product_variant.product_variant_id')
+                    ->join('products', 'product_variant.product_id', "=", 'products.product_id')
+                    ->join('sizes', 'product_variant.size_id', "=", 'sizes.size_id')
+                    ->join('colors', 'product_variant.color_id', "=", 'colors.color_id')
+                    ->select(
+                        'order_detail.price',
+                        'order_detail.sale-price',
+                        'order_detail.quantity',
+                        'products.product_name',
+                        'products.product_image',
+                        'sizes.size_name',
+                        'colors.color_name'
+                    )
+                    ->where('orders.order_id', '=', $id)
+                    ->get()
 
+            ];
+            if (count($data[0]) > 0) {
                 return response()->json(
                     [
                         'message' => "Chi tiết đơn hàng.",
                         'data' => $data,
                     ]
                 );
-            } catch (\Throwable $th) {
-                FacadesLog::error(__CLASS__ . "@" . __FUNCTION__, [
-                    'Line' => $th->getLine(),
-                    'message' => $th->getMessage(),
-                ]);
+            } else {
+                return response()->json(
+                    ['message' => "Không tìm thấy đơn hàng"],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+        } catch (\Throwable $th) {
+            FacadesLog::error(__CLASS__ . "@" . __FUNCTION__, [
+                'Line' => $th->getLine(),
+                'message' => $th->getMessage(),
+            ]);
 
-                if ($th instanceof ModelNotFoundException) {
-                    return response()->json(
-                        ['error' => "Không tìm thấy đơn hàng"],
-                        Response::HTTP_NOT_FOUND
-                    );
-                }
+            if ($th instanceof ModelNotFoundException) {
+                return response()->json(
+                    ['message' => "Không tìm thấy đơn hàng"],
+                    Response::HTTP_NOT_FOUND
+                );
             }
         }
     }
+
     /**
      * Update the specified resource in storage.
      */

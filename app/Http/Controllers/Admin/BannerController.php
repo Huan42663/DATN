@@ -9,15 +9,14 @@ use Illuminate\Http\Response;
 
 class BannerController extends Controller
 {
-    public function index()
-    {
+    public function index(){
         $data = Banner::query()->get();
-        return response()->json(
-            [
-                'message' => "Danh sách Banner",
-                'data' => $data
-            ],
-            Response::HTTP_OK
+            return response()->json(
+                [
+                    'message' => "Danh sách Banner",
+                    'data' => $data
+                ],
+                Response::HTTP_OK
         );
     }
     public function show($id)
@@ -85,7 +84,7 @@ class BannerController extends Controller
         // Trả về phản hồi JSON
         return response()->json([
             'message' => 'Banner đã được cập nhật thành công',
-            'data' => $request->all()
+            'data' => $banner
         ], Response::HTTP_OK); // Trạng thái 200
     }
     public function destroy($banner_id)

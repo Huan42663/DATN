@@ -112,7 +112,7 @@ class CategoryPostController extends Controller
         return response()->json(
             [
                 'message' => 'Danh mục bài viết đã được cập nhật thành công!!',
-'data' => $categoryPost
+                'data' => $categoryPost
             ],
             Response::HTTP_OK
         );
