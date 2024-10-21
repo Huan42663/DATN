@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log as FacadesLog;
+use Illuminate\Support\Facades\Validator;
 use Log;
-use Validator;
 
 class SizeController extends Controller
 {
@@ -63,10 +63,10 @@ class SizeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $size_name)
+    public function show(string $id)
     {
         try {
-            $data = Size::query()->where("size_name", '=', $size_name)->get();
+            $data = Size::query()->where("size_id", '=', $id)->get();
             $count = Count($data);
             if ($count > 0) {
                 return response()->json(
@@ -77,7 +77,7 @@ class SizeController extends Controller
                 );
             } else {
                 return response()->json(
-                    ['error' => "Không tìm thấy"],
+                    ['message' => "Không tìm thấy"],
                     Response::HTTP_NOT_FOUND
                 );
             }
@@ -89,81 +89,26 @@ class SizeController extends Controller
 
             if ($th instanceof ModelNotFoundException) {
                 return response()->json(
-                    ['error' => "Không tìm thấy"],
+                    ['message' => "Không tìm thấy"],
                     Response::HTTP_NOT_FOUND
                 );
             }
         }
     }
+
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        $size = Size::query()->where("size_id", '=', $id)->get();
-        $count = Count($size);
-        if ($count <= 0) {
-            return response()->json([
-                'error' => 'Không tìm thấy size',
-            ], Response::HTTP_NOT_FOUND);
-        } else {
-            $sizeCheck = Size::query()->where("size_id", '!=', $id)->get();
-            foreach ($sizeCheck as $value) {
-                if ($value->size_name == $request["size_name"]) {
-                    return response()->json([
-                        'error' => 'Tên size đã có',
-                    ], 422);
-                }
-            }
-            $validator = Validator::make(
-                $request->all(),
-                ['size_name' => "sometimes|required"],
-                [
-                    "size_name.required" => "Không được bỏ trống"
-                ]
-
-            );
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            } else {
-                $Size = Size::query()->where("size_id", '=', $id)->update($request->all());
-                $size1 = Size::query()->where("size_id", '=', $id)->get();
-                return response()->json(
-                    [
-                        'message' => "Sửa Size Thành Công",
-                        'data' => $size1
-                    ],
-                    Response::HTTP_OK
-                );
-            }
-        }
+        //
     }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        $size = Size::query()->where('size_id', '=', $id)->delete();
-        if (!$size) {
-            return response()->json(
-                [
-                    'error' => "Không tìm thấy size",
-                ],
-                Response::HTTP_NOT_FOUND
-            );
-        } else {
-            return response()->json(
-                [
-                    'message' => "Xóa Size Thành Công",
-                ],
-                Response::HTTP_OK
-            );
-        }
+        //
     }
-
-    
 }
