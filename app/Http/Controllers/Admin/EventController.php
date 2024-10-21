@@ -123,7 +123,7 @@ class EventController extends Controller
             $data->delete();
             return response()->json(
                 [
-                    'message' => 'Xóa sự kiện thành công',
+                    'message' => 'Xóa sự kiện thành công.',
                     Response::HTTP_OK
                 ]
             );
@@ -135,7 +135,7 @@ class EventController extends Controller
 
             if ($th instanceof ModelNotFoundException) {
                 return response()->json(
-                    ['message' => "Không tìm thấy sự kiện"],
+                    ['error' => "Không tìm thấy sự kiện."],
                     Response::HTTP_NOT_FOUND
                 );
             }

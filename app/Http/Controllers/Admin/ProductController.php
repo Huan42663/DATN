@@ -15,10 +15,9 @@ class ProductController extends Controller
     {
         $data = Products::query()->get();
         return response()->json(
-            [
-                'message' => 'Danh sách sản phẩm',
-                'data' => $data
-            ],
+            
+                 $data
+            ,
             Response::HTTP_OK
         );
     }

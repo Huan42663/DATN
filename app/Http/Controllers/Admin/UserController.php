@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $data = User::all();
+        $data = User::query()->where("role",'=','admin')->get();
         return response()->json(
             [
                 'message' => 'danh sách người dùng',
@@ -33,11 +33,11 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'fullname' => 'required|min:8|regex:/^[a-zA-Z0-9]+$/',
+            'fullname' => 'required|min:8',
             'email' => 'required|email',
             'password' => 'required|min:8|confirmed',
-            'password_confirmation' => 'require|same:password',
-            'phone' => 'required|regex:/^(0|\+84)(\s|\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))([0-9]{7})$/',
+            'password_confirmation' => 'required|same:password',
+            'phone' => 'required',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ], [
             'fullname.required' => 'họ tên không được để trống',
@@ -50,12 +50,11 @@ class UserController extends Controller
             'password_confirmation.required' => 'xác nhận mật khẩu không được để trống',
             'password_confirmation.same' => 'mật khẩu phải trùng với xác nhận mật khẩu',
             'phone.required' => 'số điện thoại không được để trống',
-            'phone.regex' => 'số điện thoại không đúng',
             'avatar.image' => 'ảnh không đúng định dạng',
             'avatar.mimes' => 'yêu cầu ảnh có đuôi jpeg,png,jpg,gif',
             'avatar.max' => 'kích thước tối đa của ảnh là 2MB'
         ]);
-        $data['password'] = Hash::make($data['pasword']) ;
+        $data['password'] = Hash::make($data['password']) ;
         $user = User::create($data);
         return response()->json(['message' => 'đăng ký thành công', 'data' => $user], Response::HTTP_CREATED);
     }

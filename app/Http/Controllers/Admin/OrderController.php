@@ -70,7 +70,7 @@ class OrderController extends Controller
 
                 return response()->json(
                     [
-                        'message' => "Chi tiết đơn hàng",
+                        'message' => "Chi tiết đơn hàng.",
                         'data' => $data,
                     ]
                 );
@@ -105,7 +105,7 @@ class OrderController extends Controller
             Order::query()->where('order_code', '=', $orderCode)->update($request->all());
             $orderData = Order::query()->where('order_code', '=', $orderCode)->get();
             return response()->json(
-                ['message' => "Cập nhật đơn hàng thành công",'data'=>$orderData],
+                ['message' => "Cập nhật đơn hàng thành công.",'data'=>$orderData],
                 Response::HTTP_OK
             );
         }

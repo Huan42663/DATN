@@ -54,7 +54,7 @@ class BannerController extends Controller
 
         // Trả về phản hồi JSON
         return response()->json([
-            'message' => 'Banner đã được tạo thành công',
+            'message' => 'Banner đã được tạo thành công.',
             'data' => $banner
         ], Response::HTTP_CREATED); // Trạng thái 201
     }
@@ -75,7 +75,7 @@ class BannerController extends Controller
         // Kiểm tra nếu banner không tồn tại
         if (!$banner) {
             return response()->json([
-                'message' => 'Banner không tồn tại'
+                'message' => 'Banner không tồn tại.'
             ], 404);
         }
 
