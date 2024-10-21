@@ -13,7 +13,8 @@ class CartSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 1; $i <=5; $i++) {
+        for ($i = 0; $i < 5; $i++) {
+            if ($i > 0) {
                 Cart::create(
                     [
                         'user_id' => $i
@@ -22,3 +23,4 @@ class CartSeeder extends Seeder
             }
         }
     }
+}

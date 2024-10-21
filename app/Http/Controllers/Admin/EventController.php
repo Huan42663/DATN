@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
@@ -33,32 +31,35 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        $request['slug'] = Str::slug($request->event_name);
-        $validator = Validator::make(
-            $request->all(),
+        $date = new \DateTime('now');
+        $date_start = $request->get('date_start');
+        $date_end = $request->get('date_end');
+        $validatedData = $request->validate(
             [
-                'event_name' => 'required|min:5|unique:events,event_name',
-                'date_start' => 'required',
-                'date_end' => 'required',
+                'event_name' => 'required|min:5',
+                'date_start' => ['required', function ($error, $date, $date_start) {
+                    if ($date_start <= $date) {
+                        $error('ngày bắt đầu phải lớn hơn hoặc bằng ngày hiện tại');
+                    }
+                }],
+                'date_end' => ['required', function ($error, $date_end, $date_start) {
+                    if ($date_end < $date_start) {
+                        $error('ngày kết thúc phải lớn hơn ngày bắt đầu');
+                    }
+                }],
                 'type_event' => 'required'
 
             ],
             [
                 'event_name.required' => 'tên sự kiện không được để trống',
-                'event_name.unique' => 'tên sự kiện đã bị trùng',
-                'date_start.required' => 'thời gian bắt đầu không được để trống',
-                'date_end.required' => 'thời gian kết thúc không được để trống',
                 'event_name.min' => 'tên sự kiện không được nhỏ hơn 5 ký tự',
+                'date_start.required' => 'ngày bắt đầu không được để trống',
+                'date_end.required' => 'ngày kết thúc không được để trống',
                 'type_event.required' => 'kiểu sự kiện không được để trống'
             ]
-
         );
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
-        } else {
-            $event = Event::create($request->all());
-            return response()->json(['data' => $event], Response::HTTP_CREATED);
-        }
+        $event = Event::create($validatedData);
+        return response()->json(['data' => $event], Response::HTTP_CREATED);
     }
 
     /**
@@ -67,7 +68,7 @@ class EventController extends Controller
     public function show(string $id)
     {
         try {
-            $data = Event::query()->where('event_id', $id)->get();
+            $data = Event::find($id);
             return response()->json(
                 [
                     'message' => 'chi tiết sự kiện',
@@ -141,7 +142,7 @@ class EventController extends Controller
     public function destroy(string $id)
     {
         try {
-            $data = Event::query()->where('event_id', $id)->get();
+            $data = Event::find($id);
             $data->delete();
             return response()->json(
                 [

@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -14,8 +15,8 @@ return new class extends Migration {
             $table->id('banner_id');
             $table->string('image_name', 255);
             $table->tinyInteger('status');
-            $table->foreignId('event_id')->nullable()->constrained('events', 'event_id');
-            $table->foreignId('product_id')->nullable()->constrained('products', 'product_id');
+            $table->foreignId('event_id')->constrained('events', 'event_id');
+            $table->foreignId('product_id')->constrained('products', 'product_id');
             $table->text('link');
             $table->softDeletes();
             $table->timestamps();
