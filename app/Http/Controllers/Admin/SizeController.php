@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log as FacadesLog;
+use Illuminate\Support\Facades\Validator;
 use Log;
-use Validator;
 
 class SizeController extends Controller
 {
@@ -63,10 +63,10 @@ class SizeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $size_name)
+    public function show(string $id)
     {
         try {
-            $data = Size::query()->where("size_name", '=', $size_name)->get();
+            $data = Size::query()->where("size_id", '=', $id)->get();
             $count = Count($data);
             if ($count > 0) {
                 return response()->json(
@@ -77,7 +77,7 @@ class SizeController extends Controller
                 );
             } else {
                 return response()->json(
-                    ['error' => "Không tìm thấy"],
+                    ['message' => "Không tìm thấy"],
                     Response::HTTP_NOT_FOUND
                 );
             }
@@ -89,12 +89,13 @@ class SizeController extends Controller
 
             if ($th instanceof ModelNotFoundException) {
                 return response()->json(
-                    ['error' => "Không tìm thấy"],
+                    ['message' => "Không tìm thấy"],
                     Response::HTTP_NOT_FOUND
                 );
             }
         }
     }
+
     /**
      * Update the specified resource in storage.
      */
@@ -123,7 +124,6 @@ class SizeController extends Controller
                 ]
 
             );
-
             if ($validator->fails()) {
                 return response()->json([
                     'message' => 'Validation failed',
@@ -142,6 +142,7 @@ class SizeController extends Controller
             }
         }
     }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -164,6 +165,4 @@ class SizeController extends Controller
             );
         }
     }
-
-    
 }

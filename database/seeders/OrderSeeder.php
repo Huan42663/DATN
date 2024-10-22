@@ -14,25 +14,26 @@ class OrderSeeder extends Seeder
     public function run(): void
     {
         for ($i = 1; $i <= 5; $i++) {
-            Order::create(
-                [
-                    'fullname' => "HelloWorld" . $i,
-                    'email' => "helloworld" . $i . "@gmail",
-                    'phone' => "012345678" . $i,
-                    'total' => 99000,
-                    'total_discount' => 99000,
-                    'method_payment' => "COD",
-                    'order_code' => "DATN" . $i,
-                    'user_id' => $i,
-                    'note' => "Giao hàng nhanh bạn ơi cần gấp",
-                    'address' => "Số 68 Đường Hà Nội Tổ dân phố số 3",
-                    'province' => "Hà Nội",
-                    'district' => "Nam Từ Liêm",
-                    'ward' => "Phường phương canh",
-                    'street' => " Đường Hà Nội",
-                    'status' => "unconfirm"
-                ]
-            );
+                Order::create(
+                    [
+                        'fullname' => "HelloWorld" . $i,
+                        'email' => "helloworld" . $i . "@gmail",
+                        'phone' => "012345678" . $i,
+                        'total' => 99000,
+                        'total_discount' => 99000,
+                        'method_payment' => "COD",
+                        'order_code' => "DATN" . $i,
+                        'user_id' => $i,
+                        'note' => "Giao hàng nhanh bạn ơi cần gấp",
+                        'address' => "Số 68 Đường Hà Nội Tổ dân phố số 3",
+                        'province' => "Hà Nội",
+                        'district' => "Nam Từ Liêm",
+                        'ward' => "Phường phương canh",
+                        'street' => " Đường Hà Nội",
+                        'status' => "unconfirm"
+                    ]
+                );
+           
         }
     }
 }

@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use \Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Validator;
+use Illuminate\Support\Facades\Validator ;
+
 
 class ColorController extends Controller
 {

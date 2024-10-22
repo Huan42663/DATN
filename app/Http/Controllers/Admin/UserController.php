@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -32,32 +33,44 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'fullname' => 'required|min:8|regex:/^[a-zA-Z0-9]+$/',
-            'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
-            'password_confirmation' => 'require|same:password',
-            'phone' => 'required|regex:/^(0|\+84)(\s|\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))([0-9]{7})$/',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ], [
-            'fullname.required' => 'họ tên không được để trống',
-            'fullname.min' => 'họ tên tối thiểu từ 8 ký tự',
-            'fullname.regex' => 'họ tên không được chứa ký tự đặc biệt',
-            'email.required' => 'email không được để trống',
-            'email.email' => 'email không đúng định dạng',
-            'password.required' => 'mật khẩu không được để trống',
-            'password.min' => 'mật khẩu tối thiểu từ 8 ký tự',
-            'password_confirmation.required' => 'xác nhận mật khẩu không được để trống',
-            'password_confirmation.same' => 'mật khẩu phải trùng với xác nhận mật khẩu',
-            'phone.required' => 'số điện thoại không được để trống',
-            'phone.regex' => 'số điện thoại không đúng',
-            'avatar.image' => 'ảnh không đúng định dạng',
-            'avatar.mimes' => 'yêu cầu ảnh có đuôi jpeg,png,jpg,gif',
-            'avatar.max' => 'kích thước tối đa của ảnh là 2MB'
-        ]);
-        $data['password'] = Hash::make($data['pasword']) ;
-        $user = User::create($data);
-        return response()->json(['message' => 'đăng ký thành công', 'data' => $user], Response::HTTP_CREATED);
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'fullname' => 'required|min:8|regex:/^[a-zA-Z0-9]+$/',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|min:8|confirmed',
+                'password_confirmation' => 'required',
+                'phone' => 'required|unique:users,phone',
+                'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            ],
+            [
+                'fullname.required' => 'họ tên không được để trống',
+                'fullname.min' => 'họ tên tối thiểu từ 8 ký tự',
+                'fullname.regex' => 'họ tên không được chứa ký tự đặc biệt',
+                'email.required' => 'email không được để trống',
+                'email.email' => 'email không đúng định dạng',
+                'email.unique' => 'email đã được sử dụng',
+                'password.required' => 'mật khẩu không được để trống',
+                'password.min' => 'mật khẩu tối thiểu từ 8 ký tự',
+                'password.confirmed' => 'mật khẩu không khớp',
+                'password_confirmation.required' => 'vui lòng nhập lại mật khẩu',
+                'phone.required' => 'số điện thoại không được để trống',
+                // 'phone.regex' => 'số điện thoại không đúng',
+                'phone.unique' => 'số điện thoại đã được sử dụng',
+                'avatar.image' => 'ảnh không đúng định dạng',
+                'avatar.mimes' => 'yêu cầu ảnh có đuôi jpeg,png,jpg,gif',
+                'avatar.max' => 'kích thước tối đa của ảnh là 2MB'
+            ]
+        );
+        $data = $request->except(['password', 'password_confirmation']);
+        $data['password'] = Hash::make($request['pasword']);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
+        } else {
+            $user = User::create($data);
+            return response()->json(['message' => 'đăng ký thành công', 'data' => $user], Response::HTTP_CREATED);
+        }
     }
 
     /**
@@ -94,25 +107,50 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::query()->where('user_id', $id)->get();
-        $data = $request->validate([
-            'fullname' => 'required|min:8|regex:/^[a-zA-Z0-9]+$/',
-            'email' => 'required|email',
-            'phone' => 'required|regex:/^(0|\+84)(\s|\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))([0-9]{7})$/',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ], [
-            'fullname.required' => 'họ tên không được để trống',
-            'fullname.min' => 'họ tên tối thiểu từ 8 ký tự',
-            'fullname.regex' => 'họ tên không được chứa ký tự đặc biệt',
-            'email.required' => 'email không được để trống',
-            'email.email' => 'email không đúng định dạng',
-            'phone.required' => 'số điện thoại không được để trống',
-            'phone.regex' => 'số điện thoại không đúng',
-            'avatar.image' => 'ảnh không đúng định dạng',
-            'avatar.mimes' => 'yêu cầu ảnh có đuôi jpeg,png,jpg,gif',
-            'avatar.max' => 'kích thước tối đa của ảnh là 2MB'
-        ]);
-        $user->update($data);
-        return response()->json(['message' => 'cập nhật thành công', 'data' => $user], Response::HTTP_OK);
+        $listUser = User::query()->where('user_id', "!=", $id)->get();
+        if (empty($user[0])) {
+            return response()->json(['errors' => "không tìm thấy user"], Response::HTTP_BAD_REQUEST);
+        } else {
+            foreach ($listUser as $value) {
+                if ($value->email == $request->email) {
+                    return response()->json(['errors' => "email bị trùng"], Response::HTTP_BAD_REQUEST);
+                } elseif ($value->phone == $request->phone) {
+                    return response()->json(['errors' => "số điện thoại bị trùng"], Response::HTTP_BAD_REQUEST);
+                } else {
+                    $validator = Validator::make(
+                        $request->all(),
+                        [
+                            'fullname' => 'required|min:8|regex:/^[a-zA-Z0-9]+$/',
+                            'email' => 'required|email|unique:users,email',
+                            'phone' => 'required|unique:users,phone',
+                        ],
+                        [
+                            'fullname.required' => 'họ tên không được để trống',
+                            'fullname.min' => 'họ tên tối thiểu từ 8 ký tự',
+                            'fullname.regex' => 'họ tên không được chứa ký tự đặc biệt',
+                            'email.required' => 'email không được để trống',
+                            'email.email' => 'email không đúng định dạng',
+                            'email.unique' => 'email đã được sử dụng',  
+                            'phone.required' => 'số điện thoại không được để trống',
+                            'phone.unique' => 'số điện thoại đã được sử dụng',
+                            // 'phone.regex' => 'số điện thoại không đúng',
+                        ]
+                    );
+                    if ($validator->fails()) {
+                        return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
+                    } else {
+                        User::query()->where("user_id", $id)->update($request->all());
+                        return response()->json(
+                            [
+                                'message' => 'chỉnh sửa thành công',
+                                'data' => User::query()->where("user_id", $id)->get()
+                            ],
+                            Response::HTTP_OK
+                        );
+                    }
+                }
+            }
+        }
     }
 
     /**
