@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 
 class BannerController extends Controller
 {
@@ -37,25 +38,53 @@ class BannerController extends Controller
             'data' => $banner
         ], 200);
     }
+    // public function store(Request $request)
+    // {
+    //     // Xác thực dữ liệu
+    //     $validatedData = $request->validate([
+    //         'image_name' => 'required|string|max:255',
+    //         'status' => 'required|boolean',
+    //         'event_id' => 'nullable|integer',
+    //         'product_id' => 'nullable|integer',
+    //         'link' => 'nullable|string|url'
+    //     ]);
+
+    //     // Tạo banner mới trong cơ sở dữ liệu
+    //     $banner = Banner::create($validatedData);
+
+    //     // Trả về phản hồi JSON
+    //     return response()->json([
+    //         'message' => 'Banner đã được tạo thành công',
+    //         'data' => $banner
+    //     ], Response::HTTP_CREATED); // Trạng thái 201
+    // }
     public function store(Request $request)
     {
-        // Xác thực dữ liệu
-        $validatedData = $request->validate([
-            'image_name' => 'required|string|max:255',
-            'status' => 'required|boolean',
-            'event_id' => 'nullable|integer',
-            'product_id' => 'nullable|integer',
-            'link' => 'nullable|string|url'
-        ]);
+        try {
+            // Xác thực dữ liệu
+            $validatedData = $request->validate([
+                'image_name' => 'required|string|max:255',
+                'status' => 'required|boolean',
+                'event_id' => 'nullable|integer',
+                'product_id' => 'nullable|integer',
+                'link' => 'nullable|string|url'
+            ]);
 
-        // Tạo banner mới trong cơ sở dữ liệu
-        $banner = Banner::create($validatedData);
+            // Tạo banner mới trong cơ sở dữ liệu
+            $banner = Banner::create($validatedData);
 
-        // Trả về phản hồi JSON
-        return response()->json([
-            'message' => 'Banner đã được tạo thành công.',
-            'data' => $banner
-        ], Response::HTTP_CREATED); // Trạng thái 201
+            // Trả về phản hồi JSON
+            return response()->json([
+                'message' => 'Banner đã được tạo thành công',
+                'data' => $banner
+            ], Response::HTTP_CREATED); // Trạng thái 201
+        } catch (ValidationException $e) {
+            // Trả về phản hồi JSON với thông tin lỗi
+            return response()->json([
+                'message' => 'Validation errors',
+                'errors' => $e->errors(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY); // Trạng thái 422
+        }
     }
     public function update(Request $request, $banner_id)
     {
