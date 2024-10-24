@@ -3,9 +3,11 @@
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryProductController;
 use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\UserController;
 use App\Models\CategoryPost;
 use App\Models\CategoryProduct;
 use Illuminate\Support\Facades\Broadcast;
@@ -31,7 +33,9 @@ Route::apiResource('sizes', SizeController::class);
 Route::apiResource('orders', OrderController::class);
 
 Route::apiResource('category-product', CategoryProductController::class);
-Route::apiResource('category-post', CategoryPost::class);
+Route::apiResource('category-post', CategoryProductController::class);
+Route::apiResource('events', EventController::class);
+Route::apiResource('users', UserController::class);
 
 Route::apiResource('banners', BannerController::class);
 

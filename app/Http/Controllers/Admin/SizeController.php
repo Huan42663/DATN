@@ -101,7 +101,46 @@ class SizeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $size = Size::query()->where("size_id", '=', $id)->get();
+        $count = Count($size);
+        if ($count <= 0) {
+            return response()->json([
+                'error' => 'Không tìm thấy size',
+            ], Response::HTTP_NOT_FOUND);
+        } else {
+            $sizeCheck = Size::query()->where("size_id", '!=', $id)->get();
+            foreach ($sizeCheck as $value) {
+                if ($value->size_name == $request["size_name"]) {
+                    return response()->json([
+                        'error' => 'Tên size đã có',
+                    ], 422);
+                }
+            }
+            $validator = Validator::make(
+                $request->all(),
+                ['size_name' => "sometimes|required"],
+                [
+                    "size_name.required" => "Không được bỏ trống"
+                ]
+
+            );
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            } else {
+                $Size = Size::query()->where("size_id", '=', $id)->update($request->all());
+                $size1 = Size::query()->where("size_id", '=', $id)->get();
+                return response()->json(
+                    [
+                        'message' => "Sửa Size Thành Công",
+                        'data' => $size1
+                    ],
+                    Response::HTTP_OK
+                );
+            }
+        }
     }
 
     /**
@@ -109,6 +148,21 @@ class SizeController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $size = Size::query()->where('size_id', '=', $id)->delete();
+        if (!$size) {
+            return response()->json(
+                [
+                    'error' => "Không tìm thấy size",
+                ],
+                Response::HTTP_NOT_FOUND
+            );
+        } else {
+            return response()->json(
+                [
+                    'message' => "Xóa Size Thành Công",
+                ],
+                Response::HTTP_OK
+            );
+        }
     }
 }
