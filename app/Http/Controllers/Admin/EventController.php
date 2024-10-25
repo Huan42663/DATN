@@ -101,36 +101,36 @@ class EventController extends Controller
         } else {
             foreach ($listEvent as $value) {
                 if ($value->event_name == $request->event_name) {
-                    return response()->json(['data' => $event,'errors' => "tên sự kiện bị trùng"], Response::HTTP_BAD_REQUEST);
-                } else {
-                    $request['slug'] = Str::slug($request->event_name);
-                    $validator = Validator::make(
-                        $request->all(),
-                        [
-                            'event_name' => 'required|min:5',
-                            'date_start' => 'required',
-                            'date_end' => 'required',
-                            'type_event' => 'required'
-
-                        ],
-                        [
-                            'event_name.required' => 'tên sự kiện không được để trống',
-                            'date_start.required' => 'thời gian bắt đầu không được để trống',
-                            'date_end.required' => 'thời gian kết thúc không được để trống',
-                            'event_name.min' => 'tên sự kiện không được nhỏ hơn 5 ký tự',
-                            'type_event.required' => 'kiểu sự kiện không được để trống'
-                        ]
-
-                    );
-                    if ($validator->fails()) {
-                        return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
-                    } else {
-                        Event::query()->where('event_id', $id)->update($request->all());
-                        return response()->json([
-                            'data' => Event::query()->where('event_id', $id)->get()
-                        ], Response::HTTP_OK);
-                    }
+                    return response()->json(['errors' => "tên sự kiện bị trùng"], Response::HTTP_BAD_REQUEST);
                 }
+            }
+            $request['slug'] = Str::slug($request->event_name);
+
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'event_name' => 'required|min:5',
+                    'date_start' => 'required',
+                    'date_end' => 'required',
+                    'type_event' => 'required'
+
+                ],
+                [
+                    'event_name.required' => 'tên sự kiện không được để trống',
+                    'date_start.required' => 'thời gian bắt đầu không được để trống',
+                    'date_end.required' => 'thời gian kết thúc không được để trống',
+                    'event_name.min' => 'tên sự kiện không được nhỏ hơn 5 ký tự',
+                    'type_event.required' => 'kiểu sự kiện không được để trống'
+                ]
+
+            );
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
+            } else {
+                Event::query()->where('event_id', $id)->update($request->all());
+                return response()->json([
+                    'data' => Event::query()->where('event_id', $id)->get()
+                ], Response::HTTP_OK);
             }
         }
     }
