@@ -34,6 +34,7 @@ Route::apiResource('category-product', CategoryProductController::class);
 Route::apiResource('category-post', CategoryPost::class);
 
 Route::apiResource('banners', BannerController::class);
+Route::put('banners/{id}', [BannerController::class, 'update']);
 
 Route::apiResource('products', ProductController::class);
 Route::get('products/{id}/rates', [ProductController::class, 'getRates']);
