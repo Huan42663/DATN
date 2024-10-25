@@ -44,6 +44,7 @@ Route::apiResource('events', EventController::class);
 Route::apiResource('users', UserController::class);
 
 Route::apiResource('banners', BannerController::class);
+Route::put('banners/{id}', [BannerController::class, 'update']);
 
 Route::apiResource('products', ProductController::class);
 Route::get('products/{id}/rates', [ProductController::class, 'getRates']);
