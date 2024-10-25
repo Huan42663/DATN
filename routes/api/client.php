@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Client\ProductController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -17,3 +18,5 @@ use Illuminate\Http\Request;
 Route::middleware('auth:sanctum')->get('/user',function(Request $request){
     return $request->user(); 
 });
+
+Route::get('product-detail/{slug}', [ProductController::class, 'productDetail']);

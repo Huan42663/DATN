@@ -42,7 +42,6 @@ class UserController extends Controller
                 'password' => 'required|min:8|confirmed',
                 'password_confirmation' => 'required',
                 'phone' => 'required|unique:users,phone',
-                'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
             ],
             [
                 'fullname.required' => 'họ tên không được để trống',
@@ -56,11 +55,7 @@ class UserController extends Controller
                 'password.confirmed' => 'mật khẩu không khớp',
                 'password_confirmation.required' => 'vui lòng nhập lại mật khẩu',
                 'phone.required' => 'số điện thoại không được để trống',
-                // 'phone.regex' => 'số điện thoại không đúng',
                 'phone.unique' => 'số điện thoại đã được sử dụng',
-                'avatar.image' => 'ảnh không đúng định dạng',
-                'avatar.mimes' => 'yêu cầu ảnh có đuôi jpeg,png,jpg,gif',
-                'avatar.max' => 'kích thước tối đa của ảnh là 2MB'
             ]
         );
         $data = $request->except(['password', 'password_confirmation']);
@@ -133,7 +128,6 @@ class UserController extends Controller
                             'email.unique' => 'email đã được sử dụng',  
                             'phone.required' => 'số điện thoại không được để trống',
                             'phone.unique' => 'số điện thoại đã được sử dụng',
-                            // 'phone.regex' => 'số điện thoại không đúng',
                         ]
                     );
                     if ($validator->fails()) {
