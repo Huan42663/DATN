@@ -32,4 +32,6 @@ class Rate extends Model
     {
         return $this->hasMany(RateImage::class, 'rate_id'); 
     }
+
+   
 }

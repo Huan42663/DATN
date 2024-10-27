@@ -111,38 +111,37 @@ class UserController extends Controller
                     return response()->json(['errors' => "email bị trùng"], Response::HTTP_BAD_REQUEST);
                 } elseif ($value->phone == $request->phone) {
                     return response()->json(['errors' => "số điện thoại bị trùng"], Response::HTTP_BAD_REQUEST);
-                } else {
-                    $validator = Validator::make(
-                        $request->all(),
-                        [
-                            'fullname' => 'required|min:8|regex:/^[a-zA-Z0-9]+$/',
-                            'email' => 'required|email|unique:users,email',
-                            'phone' => 'required|unique:users,phone',
-                        ],
-                        [
-                            'fullname.required' => 'họ tên không được để trống',
-                            'fullname.min' => 'họ tên tối thiểu từ 8 ký tự',
-                            'fullname.regex' => 'họ tên không được chứa ký tự đặc biệt',
-                            'email.required' => 'email không được để trống',
-                            'email.email' => 'email không đúng định dạng',
-                            'email.unique' => 'email đã được sử dụng',  
-                            'phone.required' => 'số điện thoại không được để trống',
-                            'phone.unique' => 'số điện thoại đã được sử dụng',
-                        ]
-                    );
-                    if ($validator->fails()) {
-                        return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
-                    } else {
-                        User::query()->where("user_id", $id)->update($request->all());
-                        return response()->json(
-                            [
-                                'message' => 'chỉnh sửa thành công',
-                                'data' => User::query()->where("user_id", $id)->get()
-                            ],
-                            Response::HTTP_OK
-                        );
-                    }
                 }
+            }
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'fullname' => 'required|min:8|regex:/^[a-zA-Z0-9]+$/',
+                    'email' => 'required|email|unique:users,email',
+                    'phone' => 'required|unique:users,phone',
+                ],
+                [
+                    'fullname.required' => 'họ tên không được để trống',
+                    'fullname.min' => 'họ tên tối thiểu từ 8 ký tự',
+                    'fullname.regex' => 'họ tên không được chứa ký tự đặc biệt',
+                    'email.required' => 'email không được để trống',
+                    'email.email' => 'email không đúng định dạng',
+                    'email.unique' => 'email đã được sử dụng',
+                    'phone.required' => 'số điện thoại không được để trống',
+                    'phone.unique' => 'số điện thoại đã được sử dụng',
+                ]
+            );
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
+            } else {
+                User::query()->where("user_id", $id)->update($request->all());
+                return response()->json(
+                    [
+                        'message' => 'chỉnh sửa thành công',
+                        'data' => User::query()->where("user_id", $id)->get()
+                    ],
+                    Response::HTTP_OK
+                );
             }
         }
     }

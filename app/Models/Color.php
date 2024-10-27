@@ -10,8 +10,12 @@ class Color extends Model
 {
     use HasFactory,SoftDeletes;
     protected $table = 'colors';
+
+    protected $primaryKey = 'color_id';
     protected $fillable =[
         'color_id',
         'color_name',
     ];
+
+
 }

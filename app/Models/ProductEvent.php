@@ -19,7 +19,10 @@ class ProductEvent extends Model
     public function products(){
         return $this->belongsTo(Products::class, 'product_id');
     }
-    public function event(){
-        return $this->belongsTo(Event::class,'event_id');
+   
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class, 'event_id', 'event_id');  // Sử dụng event_id nếu đó là khóa chính
     }
 }
