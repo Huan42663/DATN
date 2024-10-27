@@ -10,6 +10,7 @@ class Post extends Model
 {
     use HasFactory,SoftDeletes;
     protected $table = 'posts';
+    protected $primaryKey = 'post_id';
     protected $fillable =[
         'post_id',
         'title',

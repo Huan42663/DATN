@@ -20,6 +20,9 @@ class ProductVariant extends Model
         'quantity',
         'weight',
     ];
+
+    
+
     public function size(){
         return $this->belongsTo(Size::class,'size_id');
     }
@@ -28,5 +31,10 @@ class ProductVariant extends Model
     }
     public function products(){
         return $this->belongsTo(Products::class,'product_id');
+    }
+
+    public function rates()
+    {
+        return $this->hasMany(Rate::class, 'product_variant_id');
     }
 }
