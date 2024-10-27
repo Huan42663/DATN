@@ -70,17 +70,23 @@ class BannerController extends Controller
                 'link' => 'nullable|string|url' // Cho phép null nhưng phải là URL hợp lệ nếu có
             ]);
 
-            // Kiểm tra nếu người dùng không nhập link
+            // Kiểm tra và thiết lập giá trị cho link
             if (empty($request->link)) {
-                // Nếu không nhập cả event_id và product_id, gán link là danh sách sản phẩm
-                if (empty($request->event_id) && empty($request->product_id)) {
+                if (!empty($request->event_id) && empty($request->product_id)) {
+                    // Nếu chỉ có event_id, gán link là slug của event_id
+                    $validatedData['link'] = url('/events/' . $request->event_id); // Ví dụ link theo slug của event
+                } elseif (empty($request->event_id) && !empty($request->product_id)) {
+                    // Nếu chỉ có product_id, gán link là slug của product_id
+                    $validatedData['link'] = url('/products/' . $request->product_id); // Ví dụ link theo slug của product
+                } elseif (empty($request->event_id) && empty($request->product_id)) {
+                    // Nếu không có cả event_id và product_id, gán link là danh sách sản phẩm
                     $validatedData['link'] = url('/api/admin/products');
                 } else {
-                    // Nếu có nhập event_id hoặc product_id nhưng không nhập link, báo lỗi
+                    // Nếu có cả event_id và product_id nhưng không nhập link, báo lỗi
                     return response()->json([
-                        'message' => 'Link is required when event_id or product_id is provided.',
+                        'message' => 'Link is required when both event_id and product_id are provided.',
                         'errors' => [
-                            'link' => 'This field is required if event_id or product_id is provided.'
+                            'link' => 'This field is required if both event_id and product_id are provided.'
                         ]
                     ], Response::HTTP_UNPROCESSABLE_ENTITY); // Trạng thái 422
                 }
@@ -110,55 +116,58 @@ class BannerController extends Controller
             ], Response::HTTP_UNPROCESSABLE_ENTITY); // Trạng thái 422
         }
     }
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        // Tìm banner theo banner_id
-        $banner = Banner::where('banner_id', $id)->first();
+        try {
+            // Tìm banner cần cập nhật
+            $banner = Banner::findOrFail($id);
 
-        // Kiểm tra nếu banner không tồn tại
-        if (!$banner) {
-            return response()->json(['message' => 'Không tìm thấy banner'], 404);
-        }
+            // Lấy dữ liệu từ request và bỏ qua những trường không có giá trị
+            $validatedData = $request->validate([
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'status' => 'nullable|boolean',
+                'event_id' => 'nullable|integer',
+                'product_id' => 'nullable|integer',
+                'link' => 'nullable|string|url'
+            ]);
 
-        // Cập nhật các trường trong banner từ request
-        $banner->status = $request->input('status', $banner->status);
-        $banner->event_id = $request->input('event_id', $banner->event_id);
-        $banner->product_id = $request->input('product_id', $banner->product_id);
-        $banner->link = $request->input('link', $banner->link);
-
-        // Kiểm tra và cập nhật file ảnh nếu có
-        if ($request->hasFile('image_name')) {
-            // Xóa ảnh cũ nếu cần
-            if ($banner->image_name) {
-                $oldImagePath = public_path('path/to/images/' . $banner->image_name); // Đảm bảo đường dẫn đúng
-                if (file_exists($oldImagePath)) {
-                    unlink($oldImagePath); // Xóa ảnh cũ
+            // Kiểm tra và thiết lập giá trị cho link nếu chưa có
+            if (empty($request->link)) {
+                if (!empty($request->event_id) && empty($request->product_id)) {
+                    // Nếu chỉ có event_id, gán link là slug của event_id
+                    $validatedData['link'] = url('/events/' . $request->event_id);
+                } elseif (empty($request->event_id) && !empty($request->product_id)) {
+                    // Nếu chỉ có product_id, gán link là slug của product_id
+                    $validatedData['link'] = url('/products/' . $request->product_id);
+                } elseif (empty($request->event_id) && empty($request->product_id)) {
+                    // Nếu không có cả event_id và product_id, gán link là danh sách sản phẩm
+                    $validatedData['link'] = url('/api/admin/products');
                 }
             }
 
-            // Lưu ảnh mới
-            $image = $request->file('image_name');
-            $imageName = time() . '_' . $image->getClientOriginalName(); // Đặt tên ảnh
-            $image->move(public_path('path/to/images'), $imageName); // Đảm bảo đường dẫn đúng
-            $banner->image_name = $imageName; // Cập nhật tên ảnh trong banner
-        }
+            // Xử lý upload file ảnh nếu có file mới được upload
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('uploads/banners'), $imageName);
+                $validatedData['image_name'] = $imageName; // Cập nhật tên file trong DB
+            }
 
-        // Lưu lại banner đã cập nhật
-        try {
-            $banner->update(); // Thực hiện lưu vào cơ sở dữ liệu
-        } catch (\Exception $e) {
-            // Nếu có lỗi, trả về thông báo lỗi
-            return response()->json(['message' => 'Không thể cập nhật banner. Lỗi: ' . $e->getMessage()], 500);
-        }
+            // Cập nhật các trường hợp có trong validatedData vào banner
+            $banner->update(array_filter($validatedData));
 
-        // Trả về phản hồi JSON
-        return response()->json(
-            [
-                'message' => 'Banner đã được cập nhật thành công!!',
-                'data' => $banner // Trả về banner đã cập nhật
-            ],
-            Response::HTTP_OK // Trạng thái 200
-        );
+            // Trả về phản hồi JSON
+            return response()->json([
+                'message' => 'Banner đã được cập nhật thành công',
+                'data' => $banner
+            ], Response::HTTP_OK); // Trạng thái 200
+        } catch (ValidationException $e) {
+            // Trả về phản hồi JSON với thông tin lỗi
+            return response()->json([
+                'message' => 'Validation errors',
+                'errors' => $e->errors(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY); // Trạng thái 422
+        }
     }
     public function destroy(string $id)
     {
