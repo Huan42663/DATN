@@ -20,20 +20,23 @@ class ProductController extends Controller
                 'description',
             )
             ->get();
+        // kiểm tra sản phẩm có tồn tại hay không
         if (empty($product[0])) {
             return response()->json(['errors' => 'không tìm thấy sản phẩm'], Response::HTTP_NOT_FOUND);
         } else {
+
             // lấy ra giá nhỏ nhất
-            $min_price = Products::query()
+            $product['0']['min_price'] = Products::query()
                 ->where('product_slug', "=", $slug)
                 ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
                 ->min('product_variant.price');
 
             // lấy ra giá lớn nhất
-            $max_price = Products::query()
+            $product['0']['max_price'] = Products::query()
                 ->where('product_slug', "=", $slug)
                 ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
                 ->max('product_variant.price');
+
             // lấy ra biến thể của sản phẩm
             $product_variant = Products::query()
                 ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
@@ -44,14 +47,13 @@ class ProductController extends Controller
                     'price',
                     'sale_price',
                     'quantity',
-
                     'color_name',
                     'size_name'
                 )
                 ->get();
 
             // lấy ra 1 mảng các ảnh của biến thể
-            $images = Products::query()
+            $product_images = Products::query()
                 ->where('product_slug', $slug)
                 ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
                 ->join('colors', 'product_variant.color_id', "=", 'colors.color_id')
@@ -61,7 +63,7 @@ class ProductController extends Controller
                 ->get();
 
             // lấy ra các danh mục của sản phẩm
-            $categories = Products::query()
+            $product['0']['categories'] = Products::query()
                 ->where('product_slug', $slug)
                 ->join('category_product', 'products.product_id', '=', 'category_product.product_id')
                 ->join('categories', 'category_product.category_id', '=', 'categories.category_id')
@@ -71,11 +73,11 @@ class ProductController extends Controller
                 ->get();
 
             // lấy ra sản phẩm tương tự
-            $count = count($categories);
+            $count = count($product['0']['categories']);
             $related_products = [];
             for ($i = 0; $i < $count; $i++) {
                 $resuilt =  Products::query()
-                    ->where('category_name',  "LIKE", $categories[$i]->category_name)
+                    ->where('category_name',  "LIKE", $product['0']['categories'][$i]->category_name)
                     ->join('category_product', 'products.product_id', '=', 'category_product.product_id')
                     ->join('categories', 'category_product.category_id', '=', 'categories.category_id')
                     ->select(
@@ -88,16 +90,39 @@ class ProductController extends Controller
                 $related_products[$i] = $resuilt;
             }
 
-            $product['0']['min_price'] = $min_price;
-            $product['0']['max_price'] = $max_price;
-            $product['0']['categories'] = $categories;
+            // lấy ra danh sách đánh giá
+            $rates = Products::query()
+                ->where('product_slug', $slug)
+                ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
+                ->join('rates', 'product_variant.product_variant_id', '=', 'rates.product_variant_id')
+                ->join('users', 'rates.user_id', '=', 'users.user_id')
+                ->select(
+                    'star',
+                    'content',
+                    'fullname'
+                )
+                ->get();
 
+            // lấy ra danh sách ảnh của đánh giá
+            $rate_images = Products::query()
+                ->where('product_slug', $slug)
+                ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
+                ->join('rates', 'product_variant.product_variant_id', '=', 'rates.product_variant_id')
+                ->join('rate_image', 'rates.rate_id', '=', 'rate_image.rate_id')
+                ->select(
+                    'image_name'
+                )
+                ->get();
+
+            //  trả về dữ liệu dưới dạng json
             return response()->json(
                 [
                     'product' => $product,
                     'product_variant' => $product_variant,
-                    'images' => $images,
-                    'related_products' => $related_products
+                    'product_images' => $product_images,
+                    'related_products' => $related_products,
+                    'rates' => $rates,
+                    'rate_images' => $rate_images,
                 ],
                 Response::HTTP_OK
             );
