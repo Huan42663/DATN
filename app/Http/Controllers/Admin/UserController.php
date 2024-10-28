@@ -59,7 +59,7 @@ class UserController extends Controller
             ]
         );
         $data = $request->except(['password', 'password_confirmation']);
-        $data['password'] = Hash::make($request['pasword']);
+        $data['password'] = Hash::make($request['password']);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
         } else {
@@ -153,8 +153,8 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         try {
-            $data = User::query()->where('user_id', $id)->get();
-            $data->delete();
+            $data = User::query()->where('user_id', $id)->delete();
+            // $data->delete();
             return response()->json(
                 [
                     'message' => 'Xóa người dùng thành công',

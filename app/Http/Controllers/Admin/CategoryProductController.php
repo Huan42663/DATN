@@ -22,7 +22,7 @@ class CategoryProductController extends Controller
     public function index()
     {
         //
-        $categoryProducts = CategoryProduct::all();
+        $categoryProducts = Category::all();
         return response()->json(['categoryProducts' => $categoryProducts], 200);
     }
 

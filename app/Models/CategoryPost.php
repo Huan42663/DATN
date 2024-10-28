@@ -13,5 +13,8 @@ class CategoryPost extends Model
     protected $fillable =[
         'category_post_id',
         'category_post_name',
+        'category_post_slug',
+        'showHeader',
+        'showFooter'
     ];
 }

@@ -22,9 +22,6 @@ class HomeController extends Controller
         $product   = count(Products::query()->get());
         $user      = count(User::query()->where('role','guest')->get()); 
 
-        $arr =[];
-        array_push($arr, $category, $product,$user);
-
 
         // Lấy số lượng sản phẩm theo danh mục
         $chartCategoryProduct = Category::query()
