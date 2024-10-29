@@ -54,7 +54,6 @@ class CategoryProductController extends Controller
     public function show(string $id)
     {
         //
-
         try {
             $categoryProducts = Category::query()->join('categories as c', 'categories.category_id', '=', 'c.category_parent_id')
                 ->join('categories as cp', 'c.category_parent_id', '=', 'cp.category_id')
