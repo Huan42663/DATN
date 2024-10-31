@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\CategoryPost;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log as FacadesLog;
 use Log;
+
 
 
 class CategoryPostController extends Controller
@@ -37,11 +38,9 @@ class CategoryPostController extends Controller
      */
     public function store(Request $request)
     {
-
-
         $validatedData = $request->validate(['category_post_name' => 'required|string|max:255']);
-
-        $categoryPost = CategoryPost::create($validatedData);
+        $request['category_post_slug'] = Str::slug($request['category_post_name']);
+        $categoryPost = CategoryPost::create($request->all());
 
         return response()->json(
             [
@@ -55,10 +54,10 @@ class CategoryPostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $slug)
     {
         try {
-            $data = CategoryPost::query()->where("category_post_id", '=', $id)->get();
+            $data = CategoryPost::query()->where("category_post_slug", '=', $slug)->get();
             $count = Count($data);
             if ($count > 0) {
                 return response()->json(
@@ -94,25 +93,33 @@ class CategoryPostController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $categoryPost = CategoryPost::where('category_post_id', $id)->get();
 
-
-        $categoryPost = CategoryPost::where('category_post_id', $id);
-
+        $validatedData = $request->validate(['category_post_name' => 'required|string|max:255']);
 
         if (!$categoryPost) {
             return response()->json(['message' => 'Không tìm thấy danh mục Bài viết']);
         }
-
-
-        $validatedData = $request->validate(['category_post_name' => 'required|string|max:255']);
-
-        $categoryPost->update($validatedData);
-
+        if($categoryPost[0]->category_post_name != $request['category_post_name']){
+            $category_post = CategoryPost::query()->where('category_post_id','!=',$categoryPost[0]->category_post_id)->get();
+            foreach($category_post as $key){
+                if($key->category_post_name == $request['category_post_name']){
+                    return response()->json('Danh mục đã tồn tại');
+                }
+            }
+            $request['category_post_slug'] = Str::slug($request['category_post_name']);
+            $categoryPost = CategoryPost::where('category_post_id', $id)->update($request->all());
+        }
+        else{
+            $categoryPost = CategoryPost::where('category_post_id', $id)->update($request->all());
+        }
+       
+        $categoryPost1 = CategoryPost::where('category_post_id', $id)->get();
 
         return response()->json(
             [
                 'message' => 'Danh mục bài viết đã được cập nhật thành công!!',
-                'data' => $categoryPost
+                'data' => $categoryPost1
             ],
             Response::HTTP_OK
         );

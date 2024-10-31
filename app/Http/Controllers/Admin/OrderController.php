@@ -95,9 +95,9 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $orderCode)
+    public function update(Request $request, string $id)
     {
-        $order = Order::query()->where('order_code', '=', $orderCode)->get();
+        $order = Order::query()->where('order_id', '=', $id)->get();
         if (empty($order[0])) {
             return response()->json(
                 ['error' => "Không tìm thấy đơn hàng"],
@@ -105,8 +105,8 @@ class OrderController extends Controller
             );
         }else{
             $request["status"] = "confirmed";
-            Order::query()->where('order_code', '=', $orderCode)->update($request->all());
-            $orderData = Order::query()->where('order_code', '=', $orderCode)->get();
+            Order::query()->where('order_id', '=', $id)->update($request->all());
+            $orderData = Order::query()->where('order_id', '=', $id)->get();
             return response()->json(
                 ['message' => "Cập nhật đơn hàng thành công.",'data'=>$orderData],
                 Response::HTTP_OK

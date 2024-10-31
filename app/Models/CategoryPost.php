@@ -17,4 +17,7 @@ class CategoryPost extends Model
         'showHeader',
         'showFooter'
     ];
+    public function categoryPost1(){
+        return $this->hasMany(Post::class,'category_post_id','category_post_id');
+    }
 }

@@ -16,9 +16,11 @@ class HomeController extends Controller
 {
     public function index()
     {
+        
         $Category_post_header    = CategoryPost::query()->where('showHeader',true)->get();
 
-        $Category_post_footer    = CategoryPost::query()->join('posts','category_post.category_post_id','=','posts.category_post_id')->where('category_post.showFooter',1)->get();
+        // $Category_post_header1    = CategoryPost::query()->with('posts')->where('showFooter',true)->get();
+        $Category_post_footer    =     CategoryPost::with('categoryPost1')->where('showFooter',true)->get();;
        
         $Product_hot             =  Products::query()
                                     ->join('product_variant','products.product_id','=','product_variant.product_id')
@@ -44,9 +46,12 @@ class HomeController extends Controller
         
             return $treeItems;
         }
+
+        // }
         $arr= Category::query()->get();
-        $arr_tree = build_tree($arr);
         
+        $arr_tree = build_tree($arr);
+    
         return response() -> json(
             [
                 'CategoryProduct'   =>$arr_tree,

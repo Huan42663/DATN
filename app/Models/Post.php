@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
     protected $table = 'posts';
+    protected $primaryKey = 'post_id';
     protected $fillable =[
         'post_id',
         'title',
@@ -18,7 +19,10 @@ class Post extends Model
         'slug',
         'category_post_id',
     ];
+    public function PostImage(){
+        return $this->hasMany(PostImage::class,'post_id','post_id');
+    }
     public function categoryPost(){
-        return $this->belongsTo(CategoryPost::class,'category_post_id');
+        return $this->belongsTo(CategoryPost::class,'category_post_id','category_post_id');
     }
 }
