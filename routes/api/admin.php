@@ -1,17 +1,17 @@
 <?php
 
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\CategoryPostController;
 use App\Http\Controllers\Admin\CategoryProductController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VoucherController;
-use App\Models\CategoryPost;
-use App\Models\CategoryProduct;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -35,11 +35,12 @@ Route::apiResource('sizes', SizeController::class);
 Route::apiResource('orders', OrderController::class);
 Route::apiResource('vouchers', VoucherController::class);
 Route::apiResource('home', HomeController::class);
+Route::apiResource('posts', PostController::class);
 
 
 
 Route::apiResource('category-product', CategoryProductController::class);
-Route::apiResource('category-post', CategoryProductController::class);
+Route::apiResource('category-post', CategoryPostController::class);
 Route::apiResource('events', EventController::class);
 Route::apiResource('users', UserController::class);
 
