@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class VariantImageColor extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory;
     protected $table = 'variant_image_color';
     protected $fillable =[
         'variant_image_color_id',

@@ -36,3 +36,10 @@ Route::get('/orders', [OrderController::class, 'index']);
 
 Route::get('product-detail/{slug}', [ProductController::class, 'productDetail']);
 
+Route::get('home', [HomeController::class,'index']);
+Route::get('cart', [CartController::class,'index']);
+Route::post('cart', [CartController::class,'store']);
+Route::put('cart/{cart}', [CartController::class,'UpdateCartDetail']);
+Route::delete('cart/{id}', [CartController::class,'DestroyCart']);
+
+
