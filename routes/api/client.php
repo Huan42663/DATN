@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Authenticate\AuthController;
 use App\Http\Controllers\Client\AuthController as ClientAuthController;
+use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\ProductController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
