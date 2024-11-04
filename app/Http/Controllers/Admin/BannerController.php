@@ -80,7 +80,7 @@ class BannerController extends Controller
                     $validatedData['link'] = url('/products/' . $request->product_id); // Ví dụ link theo slug của product
                 } elseif (empty($request->event_id) && empty($request->product_id)) {
                     // Nếu không có cả event_id và product_id, gán link là danh sách sản phẩm
-                    $validatedData['link'] = url('/api/admin/products');
+                    $validatedData['link'] = url('/api/client/products');
                 } else {
                     // Nếu có cả event_id và product_id nhưng không nhập link, báo lỗi
                     return response()->json([
@@ -124,7 +124,7 @@ class BannerController extends Controller
 
             // Lấy dữ liệu từ request và bỏ qua những trường không có giá trị
             $validatedData = $request->validate([
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'image' => 'required|mimes:jpeg,png,jpg,gif|max:2048',
                 'status' => 'nullable|boolean',
                 'event_id' => 'nullable|integer',
                 'product_id' => 'nullable|integer',
@@ -141,7 +141,7 @@ class BannerController extends Controller
                     $validatedData['link'] = url('/products/' . $request->product_id);
                 } elseif (empty($request->event_id) && empty($request->product_id)) {
                     // Nếu không có cả event_id và product_id, gán link là danh sách sản phẩm
-                    $validatedData['link'] = url('/api/admin/products');
+                    $validatedData['link'] = url('/api/client/products');
                 }
             }
 
@@ -154,8 +154,9 @@ class BannerController extends Controller
             }
 
             // Cập nhật các trường hợp có trong validatedData vào banner
-            $banner->update(array_filter($validatedData));
-
+            // $banner->update(array_filter($validatedData));
+            $banner->update($validatedData);
+            
             // Trả về phản hồi JSON
             return response()->json([
                 'message' => 'Banner đã được cập nhật thành công',
