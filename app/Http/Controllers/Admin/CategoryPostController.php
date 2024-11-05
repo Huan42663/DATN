@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 
 
 
+
 class CategoryPostController extends Controller
 {
     /**
@@ -36,8 +37,6 @@ class CategoryPostController extends Controller
      */
     public function store(Request $request)
     {
-
-
         $slug = Str::slug($request->category_post_name);
 
         // Xác thực dữ liệu
@@ -126,7 +125,7 @@ class CategoryPostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
+        $categoryPost = CategoryPost::where('category_post_id', $id)->get();
         $categoryPost = CategoryPost::query()->where('category_post_id', $id)->get();
         $listCategoryPost = CategoryPost::query()->where('category_post_id', "!=", $id)->get();
         if (empty($categoryPost[0])) {

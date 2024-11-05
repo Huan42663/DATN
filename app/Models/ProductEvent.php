@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductEvent extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory;
     protected $table = 'product_event';
     protected $fillable =[
         'product_event_id',
@@ -19,7 +19,9 @@ class ProductEvent extends Model
     public function products(){
         return $this->belongsTo(Products::class, 'product_id');
     }
-    public function event(){
-        return $this->belongsTo(Event::class,'event_id');
+   
+    public function event()
+    {
+        return $this->belongsTo(Event::class, 'event_id', 'event_id');  // Sử dụng event_id nếu đó là khóa chính
     }
 }

@@ -33,7 +33,9 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
+        // tự động tạo slug theo tên sự kiện
         $request['slug'] = Str::slug($request->event_name);
+        // validate form
         $validator = Validator::make(
             $request->all(),
             [
@@ -53,6 +55,7 @@ class EventController extends Controller
             ]
 
         );
+        // check validate fails nếu không có thì thêm vào bảng event
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
         } else {
@@ -64,14 +67,39 @@ class EventController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $slug)
     {
         try {
-            $data = Event::query()->where('event_id', $id)->get();
+            // lấy ra sự kiện theo slug
+            $event = Event::query()
+                ->where('slug', $slug)
+                ->select(
+                    'event_name',
+                    'date_start',
+                    'date_end',
+                    'type_event',
+                    'discount',
+                    'status',
+                    'created_at',
+                    'updated_at'
+                )
+                ->get();
+            // lấy ra mảng sản phẩm của sự kiện
+            $products = Event::query()
+                ->where('slug', $slug)
+                ->join('product_event', 'product_event.event_id', '=', 'events.event_id')
+                ->join('products', 'products.product_id', '=', 'product_event.product_id')
+                ->select(
+                    'product_name',
+                    'product_image'
+                )
+                ->get();
+            // trả về mảng các giá trị dưới dạng json
             return response()->json(
                 [
                     'message' => 'chi tiết sự kiện',
-                    'data' => $data
+                    'event' => $event,
+                    'products' => $products
                 ]
             );
         } catch (\Throwable $th) {
@@ -94,11 +122,20 @@ class EventController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        // lấy ra sự kiện theo id
         $event = Event::query()->where('event_id', $id)->get();
+
+        // lấy ra list sự kiện trừ sự kiện trùng id truyền vào
         $listEvent = Event::query()->where("event_id", "!=", $id)->get();
+
+        // check sự kiện có tồn tại hay không
         if (empty($event[0])) {
-            return response()->json(['errors' => "không tìm thấy event"], Response::HTTP_BAD_REQUEST);
+
+            // nếu không tồn tại sự kiện sẽ trả về lỗi 404
+            return response()->json(['errors' => "không tìm thấy event"], Response::HTTP_NOT_FOUND);
         } else {
+
+            // dùng vòng lặp để so sánh tên của sự kiện được gừi lên có trùng với tên của sự kiện ở DB hay không
             foreach ($listEvent as $value) {
                 if ($value->event_name == $request->event_name) {
                     return response()->json(['data' => $event, 'errors' => "tên sự kiện bị trùng"], Response::HTTP_BAD_REQUEST);
@@ -111,26 +148,44 @@ class EventController extends Controller
                             'date_start' => 'required',
                             'date_end' => 'required',
                             'type_event' => 'required'
-
-                        ],
-                        [
-                            'event_name.required' => 'tên sự kiện không được để trống',
-                            'date_start.required' => 'thời gian bắt đầu không được để trống',
-                            'date_end.required' => 'thời gian kết thúc không được để trống',
-                            'event_name.min' => 'tên sự kiện không được nhỏ hơn 5 ký tự',
-                            'type_event.required' => 'kiểu sự kiện không được để trống'
                         ]
-
                     );
-                    if ($validator->fails()) {
-                        return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
-                    } else {
-                        Event::query()->where('event_id', $id)->update($request->all());
-                        return response()->json([
-                            'data' => Event::query()->where('event_id', $id)->get()
-                        ], Response::HTTP_OK);
-                    }
+                    // nếu trùng trả về lỗi
+                    return response()->json(['errors' => "tên sự kiện bị trùng"], Response::HTTP_BAD_REQUEST);
                 }
+            }
+
+            // tự động tạo slug theo tên sự kiện được thay đổi
+            $request['slug'] = Str::slug($request->event_name);
+
+            // validate form
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'event_name' => 'required|min:5',
+                    'date_start' => 'required',
+                    'date_end' => 'required',
+                    'type_event' => 'required'
+
+                ],
+                [
+                    'event_name.required' => 'tên sự kiện không được để trống',
+                    'date_start.required' => 'thời gian bắt đầu không được để trống',
+                    'date_end.required' => 'thời gian kết thúc không được để trống',
+                    'event_name.min' => 'tên sự kiện không được nhỏ hơn 5 ký tự',
+                    'type_event.required' => 'kiểu sự kiện không được để trống'
+                ]
+
+            );
+
+            // check validate fails
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
+            } else {
+                Event::query()->where('event_id', $id)->update($request->all());
+                return response()->json([
+                    'data' => Event::query()->where('event_id', $id)->get()
+                ], Response::HTTP_OK);
             }
         }
     }

@@ -10,6 +10,7 @@ class Size extends Model
 {
     use HasFactory,SoftDeletes;
     protected $table = 'sizes';
+    protected $primaryKey = 'size_id'; 
     protected $fillable = [
         'size_id',
         'size_name',

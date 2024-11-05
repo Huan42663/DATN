@@ -14,5 +14,11 @@ class CategoryPost extends Model
         'category_post_id',
         'category_post_name',
         'category_post_slug',
+        'showHeader',
+        'showFooter'
     ];
+    public function categoryPost1()
+    {
+        return $this->hasMany(Post::class, 'category_post_id', 'category_post_id');
+    }
 }
