@@ -101,7 +101,7 @@ class EventController extends Controller
         } else {
             foreach ($listEvent as $value) {
                 if ($value->event_name == $request->event_name) {
-                    return response()->json(['data' => $event,'errors' => "tên sự kiện bị trùng"], Response::HTTP_BAD_REQUEST);
+                    return response()->json(['data' => $event, 'errors' => "tên sự kiện bị trùng"], Response::HTTP_BAD_REQUEST);
                 } else {
                     $request['slug'] = Str::slug($request->event_name);
                     $validator = Validator::make(

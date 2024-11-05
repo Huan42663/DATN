@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use \Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator ;
+use Illuminate\Support\Facades\Validator;
 
 
 class ColorController extends Controller
@@ -87,7 +87,7 @@ class ColorController extends Controller
     {
         $color = Color::query()->where("color_id", '=', $id)->get();
         $count = Count($color);
-            if ($count <= 0) {
+        if ($count <= 0) {
             return response()->json([
                 'error' => 'Không tìm thấy màu',
             ], Response::HTTP_NOT_FOUND);

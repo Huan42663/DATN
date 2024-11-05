@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\CategoryPost;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log as FacadesLog;
-use Log;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
 
 
 class CategoryPostController extends Controller
@@ -20,13 +21,11 @@ class CategoryPostController extends Controller
     public function index()
     {
         //
-        $categoryPosts = CategoryPost::all();
-
-
+        $data = CategoryPost::query()->get();
         return response()->json(
             [
                 'message' => "Danh mục Bài viết",
-                'data' => $categoryPosts
+                'data' => $data
             ],
             Response::HTTP_OK
         );
@@ -39,50 +38,83 @@ class CategoryPostController extends Controller
     {
 
 
-        $validatedData = $request->validate(['category_post_name' => 'required|string|max:255']);
+        $slug = Str::slug($request->category_post_name);
 
-        $categoryPost = CategoryPost::create($validatedData);
-
-        return response()->json(
+        // Xác thực dữ liệu
+        $validator = Validator::make(
+            $request->all(),
             [
-                'message' => 'Danh mục bài viết đã được tạo thành cônng',
-                'data' => $categoryPost
+                'category_post_name' => 'required|string|max:255',
             ],
-            Response::HTTP_CREATED
+            [
+                'category_post_name.required' => 'Tên danh mục bài viết không được để trống',
+                'category_post_name.string' => 'Tên danh mục bài viết phải là chuỗi',
+                'category_post_name.max' => 'Tên danh mục bài viết không được lớn hơn 255 ký tự',
+            ]
         );
+
+        // Xử lý lỗi xác thực
+        if ($validator->fails()) {
+            return response()->json([
+                'data' => [
+                    'errors' => $validator->errors(),
+                ],
+                'status' => Response::HTTP_BAD_REQUEST,
+            ]);
+        }
+
+        // Tạo mới danh mục và trả về JSON thành công
+        try {
+            $categoryPost = CategoryPost::create(array_merge(
+                $request->all(),
+                ['category_post_slug' => $slug]
+            ));
+
+            return response()->json([
+                'data' => [
+                    'message' => 'Danh mục bài viết đã được tạo thành công',
+                    'data' => $categoryPost,
+                ],
+                'status' => Response::HTTP_CREATED,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'data' => [
+                    'message' => 'Đã xảy ra lỗi khi tạo danh mục',
+                    'error' => $e->getMessage(),
+                ],
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+            ]);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $slug)
     {
         try {
-            $data = CategoryPost::query()->where("category_post_id", '=', $id)->get();
-            $count = Count($data);
-            if ($count > 0) {
-                return response()->json(
-                    [
-                        'message' => "Chi tiết danh mục Bài viết",
-                        'data' => $data
-                    ]
-                );
-            } else {
-                return response()->json(
-
-                    ['error' => "Không tìm thấy"],
-                    Response::HTTP_NOT_FOUND
-                );
-            }
+            $category_post = CategoryPost::query()
+                ->where('category_post_slug', $slug)
+                ->select(
+                    'category_post_name'
+                )
+                ->get();
+            return response()->json(
+                [
+                    'message' => 'Chi tiết danh mục bài viết',
+                    'data' => $category_post
+                ]
+            );
         } catch (\Throwable $th) {
-            FacadesLog::error(__CLASS__ . "@" . __FUNCTION__, [
+            Log::error(__CLASS__ . "@" . __FUNCTION__, [
                 'Line' => $th->getLine(),
                 'message' => $th->getMessage(),
             ]);
 
             if ($th instanceof ModelNotFoundException) {
                 return response()->json(
-                    ['error' => "Không tìm thấy"],
+                    ['error' => "Không tìm thấy danh mục Bài viết"],
                     Response::HTTP_NOT_FOUND
                 );
             }
@@ -95,27 +127,38 @@ class CategoryPostController extends Controller
     public function update(Request $request, string $id)
     {
 
-
-        $categoryPost = CategoryPost::where('category_post_id', $id);
-
-
-        if (!$categoryPost) {
-            return response()->json(['message' => 'Không tìm thấy danh mục Bài viết']);
+        $categoryPost = CategoryPost::query()->where('category_post_id', $id)->get();
+        $listCategoryPost = CategoryPost::query()->where('category_post_id', "!=", $id)->get();
+        if (empty($categoryPost[0])) {
+            return response()->json(['message' => 'Không tìm thấy danh mục Bài viết'], Response::HTTP_BAD_REQUEST);
+        } else {
+            foreach ($listCategoryPost as $value) {
+                if ($value->category_post_name == $request->category_post_name) {
+                    return response()->json(['errors' => "Tên danh mục bài viết bị trùng", 'data' => $categoryPost], Response::HTTP_BAD_REQUEST);
+                } else {
+                    $request['category_post_slug'] = Str::slug($request->category_post_name);
+                    $validator = Validator::make(
+                        $request->all(),
+                        [
+                            'category_post_name' => 'required|string|max:255',
+                        ],
+                        [
+                            'category_post_name.required' => 'Tên danh mục bài viết không được để trống',
+                            'category_post_name.max' => 'Tên danh mục bài viết không được lớn hơn 255 ký tự',
+                        ]
+                    );
+                    if ($validator->fails()) {
+                        return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
+                    } else {
+                        CategoryPost::query()->where('category_post_id', $id)->update($request->all());
+                        return response()->json([
+                            'message' => 'Danh mục bài viết được cập nhật thành công',
+                            'data' => CategoryPost::query()->where('category_post_id', $id)->get()
+                        ], Response::HTTP_OK);
+                    }
+                }
+            }
         }
-
-
-        $validatedData = $request->validate(['category_post_name' => 'required|string|max:255']);
-
-        $categoryPost->update($validatedData);
-
-
-        return response()->json(
-            [
-                'message' => 'Danh mục bài viết đã được cập nhật thành công!!',
-                'data' => $categoryPost
-            ],
-            Response::HTTP_OK
-        );
     }
 
     /**
@@ -123,22 +166,20 @@ class CategoryPostController extends Controller
      */
     public function destroy(string $id)
     {
-
-        $categoryPost = CategoryPost::where('category_post_id', $id)->delete();
-
-        if ($categoryPost) {
+        $data = CategoryPost::query()->where('category_post_id', '=', $id)->delete();
+        if (!$data) {
             return response()->json(
                 [
-                    'message' => 'Danh mục Bài viết đã được xóa thành công'
+                    'error' => "Không tìm thấy danh mục bài viết"
                 ],
-                Response::HTTP_OK
+                Response::HTTP_NOT_FOUND
             );
         } else {
             return response()->json(
                 [
-                    'error' => 'Danh mục Bài viết không tồn tại'
+                    'message' => "Xóa danh mục bài viết thành công"
                 ],
-                Response::HTTP_NOT_FOUND
+                Response::HTTP_OK
             );
         }
     }

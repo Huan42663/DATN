@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Psy\Exception\ThrowUpException;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Throwable;
 
 use function PHPUnit\Framework\throwException;
@@ -21,9 +22,14 @@ class CategoryProductController extends Controller
      */
     public function index()
     {
-        //
-        $categoryProducts = CategoryProduct::all();
-        return response()->json(['categoryProducts' => $categoryProducts], 200);
+        $data = Category::query()->get();
+        return response()->json(
+            [
+                'message' => "Danh sách danh mục sản phẩm",
+                'data' => $data
+            ],
+            Response::HTTP_OK
+        );
     }
 
     /**
@@ -31,50 +37,54 @@ class CategoryProductController extends Controller
      */
     public function store(Request $request)
     {
-
-        $validatedData = $request->validate([
-            'category_name' => 'required|string|max:255',
-            'category_parent_id' => 'nullable|exists:categories,category_id'
-        ]);
-
-        $categoryProduct = Category::create($validatedData);
-
-        return response()->json(
+        $request['category_slug'] = Str::slug($request->category_name);
+        $validator = Validator::make(
+            $request->all(),
             [
-                'message' => 'Danh mục sản phẩm đã được tạo thành công',
-                'categoryProduct' => $categoryProduct
+                'category_name' => "required|unique:categories,category_name",
+                'category_parent_id' => "nullable|exists:categories,category_id"
             ],
-            Response::HTTP_CREATED
+            [
+                "category_name.required" => "Tên danh mục sản phẩm không được để trống",
+                "category_name.unique" => "Tên danh mục sản phẩm đã có",
+            ]
         );
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], Response::HTTP_BAD_REQUEST);
+        } else {
+            $categoryProduct = Category::create($request->all());
+            return response()->json(
+                [
+                    'message' => "Thêm danh mục sản phẩm thành công",
+                    'data' => $categoryProduct
+                ],
+                Response::HTTP_CREATED
+            );
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $slug)
     {
-        //
-
         try {
-            $categoryProducts = Category::query()->join('categories as c', 'categories.category_id', '=', 'c.category_parent_id')
-                ->join('categories as cp', 'c.category_parent_id', '=', 'cp.category_id')
-                ->select('c.category_id', 'c.category_name', 'cp.category_name as category_parent')
-                ->where('c.category_id', $id)
+            $category_products = Category::query()
+                ->where('category_slug', $slug)
+                ->select(
+                    'category_name',
+                    'category_parent_id'
+                )
                 ->get();
-            $count = Count($categoryProducts);
-            if ($count > 0) {
-                return response()->json(
-                    [
-                        'message' => "Chi tiết Danh mục sản phẩm",
-                        'data' => $categoryProducts
-                    ]
-                );
-            } else {
-                return response()->json(
-                    ['message' => "Không tìm thấy Danh mục sản phẩm"],
-                    Response::HTTP_NOT_FOUND
-                );
-            }
+            return response()->json(
+                [
+                    'message' => "Chi tiết danh mục sản phẩm",
+                    'data' => $category_products
+                ]
+            );
         } catch (\Throwable $th) {
             Log::error(__CLASS__ . "@" . __FUNCTION__, [
                 'Line' => $th->getLine(),
@@ -83,7 +93,7 @@ class CategoryProductController extends Controller
 
             if ($th instanceof ModelNotFoundException) {
                 return response()->json(
-                    ['message' => "Không tìm thấy Danh mục sản phẩm"],
+                    ['error' => "Không tìm thấy danh mục Bài viết"],
                     Response::HTTP_NOT_FOUND
                 );
             }
@@ -95,19 +105,38 @@ class CategoryProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
-        try {
-            $categoryProduct = Category::query()->where('category_id', $id);
-
-            $data = $request->validate([
-                'category_name' => 'required|string|max:255',
-                'category_parent_id' => 'nullable|exists:categories,category_id'
-            ]);
-
-            $categoryProduct->update($data);
-            return response()->json(['message' => 'update thanh cong'], Response::HTTP_OK);
-        } catch (Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
+        $categoryProduct = Category::query()->where('category_id', $id)->get();
+        $listCategoryProduct = Category::query()->where('category_id', "!=", $id)->get();
+        if (empty($categoryProduct[0])) {
+            return response()->json(['message' => 'Không tìm thấy danh mục Sản phẩm'], Response::HTTP_NOT_FOUND);
+        } else {
+            foreach ($listCategoryProduct as $value) {
+                if ($value->category_name == $request->category_name) {
+                    return response()->json(['errors' => "Tên danh mục sản phẩm bị trùng", 'data' => $categoryProduct], Response::HTTP_NOT_FOUND);
+                } else {
+                    $request['category_slug'] = Str::slug($request->category_name);
+                    $validator = Validator::make(
+                        $request->all(),
+                        [
+                            'category_name' => "required|unique:categories,category_name",
+                            'category_parent_id' => "nullable|exists:categories,category_id"
+                        ],
+                        [
+                            "category_name.required" => "Tên danh mục sản phẩm không được để trống",
+                            "category_name.unique" => "Tên danh mục sản phẩm đã có",
+                        ]
+                    );
+                    if ($validator->fails()) {
+                        return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
+                    } else {
+                        Category::query()->where('category_id', $id)->update($request->all());
+                        return response()->json([
+                            'message' => 'Danh mục sản phẩm đã được cập nhật thành công',
+                            'data' => Category::query()->where('category_id', $id)->get()
+                        ], Response::HTTP_OK);
+                    }
+                }
+            }
         }
     }
 
@@ -116,21 +145,20 @@ class CategoryProductController extends Controller
      */
     public function destroy(string $id)
     {
-        $categoryProduct = Category::where('category_id', $id)->delete();
-
-        if ($categoryProduct) {
+        $data = Category::query()->where('category_id', '=', $id)->delete();
+        if (!$data) {
             return response()->json(
                 [
-                    'message' => 'Danh mục sản phẩm đã được xóa thành công'
+                    'error' => "Không tìm thấy danh mục sản phẩm"
                 ],
-                Response::HTTP_OK
+                Response::HTTP_NOT_FOUND
             );
         } else {
             return response()->json(
                 [
-                    'error' => 'Danh mục sản phẩm không tồn tại'
+                    'message' => "Xóa danh mục sản phẩm thành công"
                 ],
-                Response::HTTP_NOT_FOUND
+                Response::HTTP_OK
             );
         }
     }
