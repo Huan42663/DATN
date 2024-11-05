@@ -85,6 +85,7 @@ class ProductController extends Controller
                         'product_image',
                         'product_name',
                         'description',
+                        'product_slug'
                     )
                     ->get();
                 $related_products[$i] = $resuilt;

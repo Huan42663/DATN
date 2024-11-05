@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,3 +23,5 @@ use Illuminate\Support\Facades\Route;
 //     Route::put('/{banner_id}', [BannerController::class, 'update']); // Cập nhật banner
 //     Route::delete('/{banner_id}', [BannerController::class, 'destroy']); // Xóa banner
 // });
+
+Route::get('/',[HomeController::class, 'test'])->name('home');
