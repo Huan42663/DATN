@@ -39,6 +39,3 @@ Route::apiResource('banners', BannerController::class);
 
 Route::apiResource('products', ProductController::class);
 Route::get('products/{id}/rates', [ProductController::class, 'getRates']);
-
-//slug
-// Route::get('/category-posts/{category_post_slug}', [CategoryPostController::class, 'Admin\CategoryPostController@show']);
