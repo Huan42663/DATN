@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
+    public function showRegisterForm()
+    {
+        return view('auth.register'); // Render view cho form đăng ký
+    }
     public function login(Request $request)
     {
         // Xác thực dữ liệu đầu vào
