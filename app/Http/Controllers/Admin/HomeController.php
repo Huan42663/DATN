@@ -16,8 +16,8 @@ class HomeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function test() {
-        return view('client.home');
+    public function dashboard() {
+        return view('admin.home');
     }
     public function index(Request $request)
     {

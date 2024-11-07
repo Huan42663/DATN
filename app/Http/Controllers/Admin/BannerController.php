@@ -10,6 +10,9 @@ use Illuminate\Validation\ValidationException;
 
 class BannerController extends Controller
 {
+    public function showBanner(){
+        return view('admin.banners.index');
+    }
     public function index(){
         $data = Banner::query()->get();
             return response()->json(
@@ -156,7 +159,7 @@ class BannerController extends Controller
             // Cập nhật các trường hợp có trong validatedData vào banner
             // $banner->update(array_filter($validatedData));
             $banner->update($validatedData);
-            
+
             // Trả về phản hồi JSON
             return response()->json([
                 'message' => 'Banner đã được cập nhật thành công',
