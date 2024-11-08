@@ -19,18 +19,16 @@ class EventController extends Controller
     public function index()
     {
         $data = Event::all();
-        return response()->json(
-            [
-                'message' => 'danh sách sự kiện',
-                'data' => $data
-            ],
-            Response::HTTP_OK
-        );
+        return view('admin.events.index', compact(['data' => $data]));
     }
 
     /**
      * Store a newly created resource in storage.
      */
+    public function create()
+    {
+        return view('admin.events.create');
+    }
     public function store(Request $request)
     {
         // tự động tạo slug theo tên sự kiện
@@ -57,10 +55,10 @@ class EventController extends Controller
         );
         // check validate fails nếu không có thì thêm vào bảng event
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
+            return view('admin.events.create', compact(['errors' => $validator->errors()]));
         } else {
             $event = Event::create($request->all());
-            return response()->json(['data' => $event], Response::HTTP_CREATED);
+            return view('admin.events.index', compact(['event' => $event, 'message' => 'thêm thành công']));
         }
     }
 
@@ -69,52 +67,41 @@ class EventController extends Controller
      */
     public function show(string $slug)
     {
-        try {
-            // lấy ra sự kiện theo slug
-            $event = Event::query()
-                ->where('slug', $slug)
-                ->select(
-                    'event_name',
-                    'date_start',
-                    'date_end',
-                    'type_event',
-                    'discount',
-                    'status',
-                    'created_at',
-                    'updated_at'
-                )
-                ->get();
-            // lấy ra mảng sản phẩm của sự kiện
-            $products = Event::query()
-                ->where('slug', $slug)
-                ->join('product_event', 'product_event.event_id', '=', 'events.event_id')
-                ->join('products', 'products.product_id', '=', 'product_event.product_id')
-                ->select(
-                    'product_name',
-                    'product_image'
-                )
-                ->get();
-            // trả về mảng các giá trị dưới dạng json
-            return response()->json(
+        // lấy ra sự kiện theo slug
+        $event = Event::query()
+            ->where('slug', $slug)
+            ->select(
+                'event_name',
+                'date_start',
+                'date_end',
+                'type_event',
+                'discount',
+                'status',
+                'created_at',
+                'updated_at'
+            )
+            ->get();
+        // lấy ra mảng sản phẩm của sự kiện
+        $products = Event::query()
+            ->where('slug', $slug)
+            ->join('product_event', 'product_event.event_id', '=', 'events.event_id')
+            ->join('products', 'products.product_id', '=', 'product_event.product_id')
+            ->select(
+                'product_name',
+                'product_image'
+            )
+            ->get();
+        // trả về mảng các giá trị dưới dạng json
+        return view(
+            'admin.banners.show',
+            compact(
                 [
                     'message' => 'chi tiết sự kiện',
                     'event' => $event,
                     'products' => $products
                 ]
-            );
-        } catch (\Throwable $th) {
-            Log::error(__CLASS__ . "@" . __FUNCTION__, [
-                'Line' => $th->getLine(),
-                'message' => $th->getMessage(),
-            ]);
-
-            if ($th instanceof ModelNotFoundException) {
-                return response()->json(
-                    ['message' => "Không tìm thấy sự kiện"],
-                    Response::HTTP_NOT_FOUND
-                );
-            }
-        }
+            )
+        );
     }
 
     /**
@@ -132,26 +119,12 @@ class EventController extends Controller
         if (empty($event[0])) {
 
             // nếu không tồn tại sự kiện sẽ trả về lỗi 404
-            return response()->json(['errors' => "không tìm thấy event"], Response::HTTP_NOT_FOUND);
+            return view('error-404', compact(['errors' => "không tìm thấy event"]));
         } else {
-
             // dùng vòng lặp để so sánh tên của sự kiện được gừi lên có trùng với tên của sự kiện ở DB hay không
             foreach ($listEvent as $value) {
                 if ($value->event_name == $request->event_name) {
-                    return response()->json(['data' => $event, 'errors' => "tên sự kiện bị trùng"], Response::HTTP_BAD_REQUEST);
-                } else {
-                    $request['slug'] = Str::slug($request->event_name);
-                    $validator = Validator::make(
-                        $request->all(),
-                        [
-                            'event_name' => 'required|min:5',
-                            'date_start' => 'required',
-                            'date_end' => 'required',
-                            'type_event' => 'required'
-                        ]
-                    );
-                    // nếu trùng trả về lỗi
-                    return response()->json(['errors' => "tên sự kiện bị trùng"], Response::HTTP_BAD_REQUEST);
+                    return view('admin.events.update', compact(['data' => $event, 'errors' => "tên sự kiện bị trùng"]));
                 }
             }
 
@@ -180,12 +153,15 @@ class EventController extends Controller
 
             // check validate fails
             if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], Response::HTTP_BAD_REQUEST);
+                return view('admin.events.index', compact(['event' => $event, 'errors' => $validator->errors()]));
             } else {
                 Event::query()->where('event_id', $id)->update($request->all());
-                return response()->json([
-                    'data' => Event::query()->where('event_id', $id)->get()
-                ], Response::HTTP_OK);
+                return view('admin.events.update', compact(
+                    [
+                        'event' => Event::query()->where('event_id', $id)->get(),
+                        'message' => "cập nhật thành công"
+                    ]
+                ));
             }
         }
     }
@@ -198,12 +174,7 @@ class EventController extends Controller
         try {
             $data = Event::query()->where('event_id', $id)->get();
             $data->delete();
-            return response()->json(
-                [
-                    'message' => 'Xóa sự kiện thành công',
-                    Response::HTTP_OK
-                ]
-            );
+            return view('admin.events.index', compact(['message' => 'xóa thành công']));
         } catch (\Throwable $th) {
             Log::error(__CLASS__ . "@" . __FUNCTION__, [
                 'Line' => $th->getLine(),
@@ -211,10 +182,7 @@ class EventController extends Controller
             ]);
 
             if ($th instanceof ModelNotFoundException) {
-                return response()->json(
-                    ['message' => "Không tìm thấy sự kiện"],
-                    Response::HTTP_NOT_FOUND
-                );
+                return view('error-404', compact(['error' => 'không tìm thấy sự kiện']));
             }
         }
     }

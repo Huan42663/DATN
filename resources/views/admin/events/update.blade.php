@@ -2,9 +2,19 @@
 
 @section('title', 'sửa sự kiện')
 
-@section('model', 'Event')
-
-@section('function', 'Update')
+@section('page-header')
+    <div class="page-header">
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Events</h5>
+            </div>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ Route('home') }}">Home</a></li>
+                <li class="breadcrumb-item">Update</li>
+            </ul>
+        </div>
+    </div>
+@endsection
 
 @section('content')
     <div class="main-content">
@@ -37,7 +47,7 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                           <input type="datetime-local" class="form-control" name="" id="">
+                                            <input type="datetime-local" class="form-control" name="" id="">
                                         </div>
                                     </div>
                                 </div>

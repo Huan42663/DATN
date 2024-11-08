@@ -2,9 +2,19 @@
 
 @section('title', 'danh sách sự kiện')
 
-@section('model', 'Event')
-
-@section('function', 'List')
+@section('page-header')
+    <div class="page-header">
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Events</h5>
+            </div>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ Route('home') }}">Home</a></li>
+                <li class="breadcrumb-item">List</li>
+            </ul>
+        </div>
+    </div>
+@endsection
 
 @section('content')
     <!-- [Recent Orders] start -->

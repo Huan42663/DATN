@@ -2,9 +2,19 @@
 
 @section('title', 'thêm sự kiện')
 
-@section('model', 'Events')
-
-@section('function', 'Show')
+@section('page-header')
+    <div class="page-header">
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Events</h5>
+            </div>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ Route('home') }}">Home</a></li>
+                <li class="breadcrumb-item">Show</li>
+            </ul>
+        </div>
+    </div>
+@endsection
 
 @section('content')
     <div class="main-content">
