@@ -141,9 +141,9 @@ Route::prefix('/Administration')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('Administration.users.list');
         Route::get('/create', [UserController::class, 'create'])->name('Administration.users.create');
         Route::post('/create', [UserController::class, 'store'])->name('Administration.users.store');
-        Route::get('/{email}', [UserController::class, 'show'])->name('Administration.users.show');
-        Route::put('/{user}', [UserController::class, 'update'])->name('Administration.users.update');
-        Route::put('/{user}', [UserController::class, 'destroy'])->name('Administration.users.destroy');
+        Route::get('/show/{user}', [UserController::class, 'show'])->name('Administration.users.show');
+        Route::put('/update/{user}', [UserController::class, 'update'])->name('Administration.users.update');
+        Route::put('/destroy/{user}', [UserController::class, 'destroy'])->name('Administration.users.destroy');
     });
 })->name('Administration');
 

@@ -9,7 +9,7 @@
                 <h5 class="m-b-10">Events</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('home') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
                 <li class="breadcrumb-item">List</li>
             </ul>
         </div>
