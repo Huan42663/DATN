@@ -9,7 +9,7 @@
                 <h5 class="m-b-10">Events</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('home') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
                 <li class="breadcrumb-item">Show</li>
             </ul>
         </div>
@@ -23,20 +23,36 @@
                 <div class="card stretch stretch-full">
                     <div class="card-body">
                         <div class="mb-4 d-flex align-items-center justify-content-between">
-                            <h5 class="fw-bold mb-0">Event name:</h5>
+                            <h5 class="fw-bold mb-0">Tên sự kiện: {{ $event->event_name }}</h5>
                         </div>
                         <table class="table">
                             <tr>
-                                <th>date start </th>
-                                <td>123123144asd</td>
+                                <th>Ngày bắt đầu </th>
+                                <td>{{ $event->date_start }}</td>
                             </tr>
                             <tr>
-                                <th>date end</th>
-                                <td>123123144asd</td>
+                                <th>Ngày kết thúc</th>
+                                <td>{{ $event->date_end }}</td>
                             </tr>
                             <tr>
-                                <th>type event</th>
-                                <td>123123144asd</td>
+                                <th>Kiểu sự kiện</th>
+                                <td>
+                                    @if ($event->type_event == '1')
+                                        <span class="badge bg-soft-primary text-success"> Giảm giá</span>
+                                    @elseif ($event->type_event == '0')
+                                        <span class="badge bg-soft-danger text-warning"> Giới thiệu</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Trạng thái</th>
+                                <td>
+                                    @if ($event->status == '1')
+                                        <span class="badge bg-soft-primary text-primary"> Đang hoạt động</span>
+                                    @elseif ($event->status == '0')
+                                        <span class="badge bg-soft-danger text-danger"> Ngừng hoạt động</span>
+                                    @endif
+                                </td>
                             </tr>
                         </table>
                     </div>
@@ -48,72 +64,83 @@
                         <div class="tab-pane fade show active p-4" id="overviewTab" role="tabpanel">
                             <div class="about-section mb-5">
                                 <div class="mb-4 d-flex align-items-center justify-content-between">
-                                    <h5 class="fw-bold mb-0">List Products in Event:</h5>
+                                    <h5 class="fw-bold mb-0">Danh sách sản phẩm trong sự kiện:</h5>
                                 </div>
                             </div>
-                            <div class="profile-details mb-5">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <tbody>
-                                            <tr class="">
-                                                <td><input type="checkbox"></td>
-                                                <td scope="row">Name</td>
-                                                <td>Image</td>
-                                            </tr>
-                                            <tr class="">
-                                                <td><input type="checkbox"></td>
-                                                <td scope="row">Name</td>
-                                                <td>Image</td>
-                                            </tr>
-                                            <tr class="">
-                                                <td><input type="checkbox"></td>
-                                                <td scope="row">Name</td>
-                                                <td>Image</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                            <form action="{{ route('Administration.events.show-remove', $event->slug) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="profile-details mb-5">
+                                    <div class="table-responsive">
+                                        <table class="table" id="example">
+                                            <thead>
+                                                <th></th>
+                                                <th>Tên sản phẩm</th>
+                                                <th>Ảnh sản phẩm</th>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($product_event as $product)
+                                                    <tr class="">
+                                                        <td><input name="products[]" value="{{ $product->product_id }}"
+                                                                type="checkbox"></td>
+                                                        <td scope="row">{{ $product->product_name }}</td>
+                                                        <td><img src="{{ asset('storage/' . $product->product_image) }}"
+                                                                alt=""></td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="mb-5 d-flex align-items-center justify-content-between">
+                                        <button type="submit"class=" btn btn-light-brand">
+                                            <i class="feather-trash-2 me-2"></i> Delete
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="mb-5 d-flex align-items-center justify-content-between">
-                                    <a href="javascript:void(0);" class=" btn btn-light-brand">
-                                        <i class="feather-trash-2 me-2"></i>
-                                        <span>Delete</span>
-                                    </a>
-                                </div>
-                            </div>
+                            </form>
+
                             <div class="about-section mb-5">
                                 <div class="mb-4 d-flex align-items-center justify-content-between">
-                                    <h5 class="fw-bold mb-0">ADD Products into Event:</h5>
+                                    <h5 class="fw-bold mb-0">Thêm sản phẩm vào sự kiện:</h5>
                                 </div>
                             </div>
-                            <div class="profile-details mb-5">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <tbody>
-                                            <tr class="">
-                                                <td><input type="checkbox"></td>
-                                                <td scope="row">Name</td>
-                                                <td>Image</td>
-                                            </tr>
-                                            <tr class="">
-                                                <td><input type="checkbox"></td>
-                                                <td scope="row">Name</td>
-                                                <td>Image</td>
-                                            </tr>
-                                            <tr class="">
-                                                <td><input type="checkbox"></td>
-                                                <td scope="row">Name</td>
-                                                <td>Image</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                            <form action="{{ route('Administration.events.show-add', $event->slug) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="profile-details mb-5">
+                                    <div class="table-responsive">
+                                        <table class="table" id="example-1">
+                                            <thead>
+                                                <th></th>
+                                                <th>Tên sản phẩm</th>
+                                                <th>Ảnh sản phẩm</th>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($products as $product)
+                                                    <tr class=""
+                                                        @foreach ($product_event as $item)
+                                                    @if ($item->product_id == $product->product_id)
+                                                        style="display: none"
+                                                            @endif @endforeach>
+                                                        <td>
+                                                            <input name="products[]" value="{{ $product->product_id }}"
+                                                                type="checkbox">
+                                                        </td>
+                                                        <td scope="row">{{ $product->product_name }}</td>
+                                                        <td><img src="{{ asset('storage/' . $product->product_image) }}"
+                                                                alt=""></td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="mb-5 d-flex align-items-center justify-content-between">
+                                        <button type="submit"class=" btn btn-light-brand">
+                                            <i class="feather-plus me-2"></i> ADD
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="mb-5 d-flex align-items-center justify-content-between">
-                                    <a href="customers-create.html" class="btn btn-primary">
-                                        <i class="feather-plus me-2"></i>
-                                        <span>ADD</span>
-                                    </a>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>

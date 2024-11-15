@@ -131,9 +131,12 @@ Route::prefix('/Administration')->group(function () {
         Route::get('/', [EventController::class, 'index'])->name('Administration.events.list');
         Route::get('/create', [EventController::class, 'create'])->name('Administration.events.create');
         Route::post('/create', [EventController::class, 'store'])->name('Administration.events.store');
-        Route::get('/{slug}', [EventController::class, 'show'])->name('Administration.events.show');
-        Route::put('/{event}', [EventController::class, 'update'])->name('Administration.events.update');
-        Route::delete('/{event}', [EventController::class, 'destroy'])->name('Administration.events.destroy');
+        Route::get('/show/{event}', [EventController::class, 'show'])->name('Administration.events.show');
+        Route::put('/show-add/{event}', [EventController::class, 'add'])->name('Administration.events.show-add');
+        Route::put('/show-remove/{event}', [EventController::class, 'remove'])->name('Administration.events.show-remove');
+        Route::get('/edit/{event}', [EventController::class, 'edit'])->name('Administration.events.edit');
+        Route::put('/update/{event}', [EventController::class, 'update'])->name('Administration.events.update');
+        Route::delete('/destroy/{event}', [EventController::class, 'destroy'])->name('Administration.events.destroy');
     });
 
     // ROUTE USER
