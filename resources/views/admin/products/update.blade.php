@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'thêm sự kiện')
+@section('title', 'Cập nhật sản phẩm')
 
 @section('page-header')
     <div class="page-header">
@@ -9,8 +9,8 @@
                 <h5 class="m-b-10">Products</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('home') }}">Home</a></li>
-                <li class="breadcrumb-item">update</li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.products.list') }}">List</a></li>
+                <li class="breadcrumb-item">Update</li>
             </ul>
         </div>
     </div>
@@ -18,152 +18,124 @@
 
 @section('content')
     <div class="main-content">
-
         <div class="row">
             <div class="col-lg-12">
-                <div class="card border-top-0">
+                <div class="card border-top-0 shadow-sm">
                     <div class="tab-content">
-                        <div class="card-body personal-info">
-                            <div class="mb-4 d-flex align-items-center justify-content-between">
-                                <h5 class="fw-bold mb-0 me-4">
-                                    <span class="d-block mb-2">Update Product:</span>
-                                </h5>
-                            </div>
-                            <form action="" enctype="multipart/form-data">
-                                <div class="row mb-4 align-items-center">
-                                    <div class="col-lg-4">
-                                        <label for="product_name" class="fw-semibold">Product Name: </label>
-                                    </div>
-                                    <div class="col-lg-8">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="product_name"
-                                                placeholder="Product Name">
+                        <div class="card-body">
+                            <h5 class="fw-bold mb-4">Cập nhật sản phẩm</h5>
+
+                            <form action="{{ route('Administration.products.update', $product->product_slug) }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                @method('PUT')
+
+                                <!-- Thông tin chung của sản phẩm -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="product_name" class="fw-semibold">Tên sản phẩm:</label>
+                                            <input type="text" class="form-control" id="product_name" name="product_name"
+                                                value="{{ $product->product_name }}" placeholder="Tên sản phẩm">
+                                            @error('product_name')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row mb-4 align-items-center">
-                                    <div class="col-lg-4">
-                                        <label for="price" class="fw-semibold">Price: </label>
-                                    </div>
-                                    <div class="col-lg-8">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="price" placeholder="price">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-4 align-items-center">
-                                    <div class="col-lg-4">
-                                        <label for="price_sale" class="fw-semibold">Price Sale: </label>
-                                    </div>
-                                    <div class="col-lg-8">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="price_sale"
-                                                placeholder="price sale">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-4 align-items-center">
-                                    <div class="col-lg-4">
-                                        <label for="price_sale" class="fw-semibold">Quantity: </label>
-                                    </div>
-                                    <div class="col-lg-8">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="price_sale"
-                                                placeholder="Quantity">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-4 align-items-center">
-                                    <div class="col-lg-4">
-                                        <label for="price_sale" class="fw-semibold">Weight: </label>
-                                    </div>
-                                    <div class="col-lg-8">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="price_sale" placeholder="Weight">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-4 align-items-center">
-                                    <div class="col-lg-4">
-                                        <label for="description" class="fw-semibold"> Description</label>
-                                    </div>
-                                    <div class="col-lg-8">
-                                        <div class="input-group">
-                                            <textarea id="editor" rows="10"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-4 align-items-center">
-                                    <div class="col-lg-4">
-                                        <label for="product_image" class="fw-semibold"> Product Images </label>
-                                    </div>
-                                    <div class="col-lg-8">
-                                        <div class="input-group">
-                                            <input type="file" class="form-control" multiple id="product_image">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-4 align-items-center">
-                                    <div class="col-lg-4">
-                                        <label for="status" class="fw-semibold"> Status </label>
-                                    </div>
-                                    <div class="col-lg-8">
-                                        <div class="input-group">
-                                            <select name="" id="status" class="form-control">
-                                                <option value="1" checked>Active</option>
-                                                <option value="2">Inactive</option>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="status" class="fw-semibold">Trạng thái:</label>
+                                            <select name="status" id="status" class="form-control">
+                                                <option value="1" {{ $product->status == 1 ? 'selected' : '' }}>Hoạt động</option>
+                                                <option value="2" {{ $product->status == 2 ? 'selected' : '' }}>Ngừng hoạt động</option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row mb-4 align-items-center">
-                                    <div class="col-lg-4">
-                                        <label for="status" class="fw-semibold"> color </label>
+
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="description" class="fw-semibold">Mô tả:</label>
+                                            <textarea id="editor" name="description" rows="5" class="form-control">{{ $product->description }}</textarea>
+                                        </div>
                                     </div>
-                                    <div class="col-lg-8">
-                                        <div class="input-group">
-                                            <select class="form-select form-control max-select"
-                                                data-select2-selector="tag" data-max-select2="tag" multiple>
-                                                <option value="">VIP</option>
-                                                <option value="">Bugs</option>
-                                                <option value="">Team</option>
-                                                <option value="">Primary</option>
-                                                <option value="">Updates</option>
-                                                <option value="">Personal</option>
-                                                <option value="">Promotions</option>
-                                                <option value="">Customs</option>
-                                                <option value="">Wholesale</option>
-                                                <option value="">Low Budget</option>
-                                                <option value="">High Budget</option>
-                                            </select>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="product_image" class="fw-semibold">Hình ảnh sản phẩm:</label>
+                                            @if ($product->product_image)
+                                                <img src="{{ asset('storage/images/products/' . $product->product_image) }}" 
+                                                    alt="Hình ảnh sản phẩm" class="img-thumbnail mb-2" style="max-width: 100%; height: auto;">
+                                            @endif
+                                            <input type="file" class="form-control" id="product_image" name="product_image">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row mb-4 align-items-center">
-                                    <div class="col-lg-4">
-                                        <label for="status" class="fw-semibold"> Size </label>
-                                    </div>
-                                    <div class="col-lg-8">
-                                        <div class="input-group">
-                                            <select class="form-select form-control max-select"
-                                                data-select2-selector="tag" data-max-select2="tag" multiple>
-                                                <option value="">VIP</option>
-                                                <option value="">Bugs</option>
-                                                <option value="">Team</option>
-                                                <option value="">Primary</option>
-                                                <option value="">Updates</option>
-                                                <option value="">Personal</option>
-                                                <option value="">Promotions</option>
-                                                <option value="">Customs</option>
-                                                <option value="">Wholesale</option>
-                                                <option value="">Low Budget</option>
-                                                <option value="">High Budget</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
+
+                                <hr class="my-4">
+
+                                <h5 class="fw-bold mb-3">Biến thể sản phẩm</h5>
+                                
+                                <!-- Hiển thị từng biến thể -->
                                 <div class="row">
-                                    <button type="submit" class="btn btn-lg btn-light-brand">Add New</button>
+                                    @foreach ($productVariants as $index => $variant)
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card p-3 border">
+                                                <h6 class="fw-semibold">Biến thể {{ $index + 1 }}</h6>
+
+                                                <div class="form-group mb-3">
+                                                    <label for="size_{{ $index }}" class="fw-semibold">Kích cỡ:</label>
+                                                    <select name="variants[{{ $index }}][size_id]" id="size_{{ $index }}" class="form-control">
+                                                        <option value="0" {{ $variant->size_id == 0 ? 'selected' : '' }}>Tất cả</option>
+                                                        @foreach ($sizes as $size)
+                                                            <option value="{{ $size->size_id }}" {{ $variant->size_id == $size->size_id ? 'selected' : '' }}>
+                                                                {{ $size->size_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group mb-3">
+                                                    <label for="color_{{ $index }}" class="fw-semibold">Màu sắc:</label>
+                                                    <select name="variants[{{ $index }}][color_id]" id="color_{{ $index }}" class="form-control">
+                                                        <option value="0" {{ $variant->color_id == 0 ? 'selected' : '' }}>Tất cả</option>
+                                                        @foreach ($colors as $color)
+                                                            <option value="{{ $color->color_id }}" {{ $variant->color_id == $color->color_id ? 'selected' : '' }}>
+                                                                {{ $color->color_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group mb-3">
+                                                    <label for="price_{{ $index }}" class="fw-semibold">Giá:</label>
+                                                    <input type="text" class="form-control" id="price_{{ $index }}" 
+                                                        name="variants[{{ $index }}][price]" value="{{ $variant->price }}" placeholder="Giá">
+                                                </div>
+
+                                                <div class="form-group mb-3">
+                                                    <label for="sale_price_{{ $index }}" class="fw-semibold">Giá giảm:</label>
+                                                    <input type="text" class="form-control" id="sale_price_{{ $index }}" 
+                                                        name="variants[{{ $index }}][sale_price]" value="{{ $variant->sale_price }}" placeholder="Giá giảm">
+                                                </div>
+
+                                                <div class="form-group mb-3">
+                                                    <label for="quantity_{{ $index }}" class="fw-semibold">Số lượng:</label>
+                                                    <input type="text" class="form-control" id="quantity_{{ $index }}" 
+                                                        name="variants[{{ $index }}][quantity]" value="{{ $variant->quantity }}" placeholder="Số lượng">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="weight_{{ $index }}" class="fw-semibold">Trọng lượng:</label>
+                                                    <input type="text" class="form-control" id="weight_{{ $index }}" 
+                                                        name="variants[{{ $index }}][weight]" value="{{ $variant->weight }}" placeholder="Trọng lượng">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                <div class="row">
+                                    <button type="submit" class="btn btn-lg btn-primary">Cập nhật sản phẩm</button>
                                 </div>
                             </form>
                         </div>

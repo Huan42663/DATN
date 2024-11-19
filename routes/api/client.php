@@ -54,3 +54,7 @@ Route::get('cart', [CartController::class, 'index']);
 Route::post('cart', [CartController::class, 'store']);
 Route::put('cart/{cart}', [CartController::class, 'UpdateCartDetail']);
 Route::delete('cart/{id}', [CartController::class, 'DestroyCart']);
+
+Route::post('orders/{orderId}/confirm', [OrderController::class, 'confirmOrder'])->name('orders.confirm');
+Route::post('orders/{orderId}/cancel', [OrderController::class, 'cancelOrder'])->name('orders.cancel');
+Route::put('orders/{orderId}/update-status', [OrderController::class, 'updateOrderStatus'])->name('orders.update');

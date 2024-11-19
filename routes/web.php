@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryPostController;
 use App\Http\Controllers\Admin\CategoryProductController;
@@ -90,9 +90,17 @@ Route::prefix('/Administration')->group(function () {
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('Administration.products.list');
         Route::get('/create', [ProductController::class, 'create'])->name('Administration.products.create');
+        Route::get('/create-variant', [ProductController::class, 'createVariant'])->name('Administration.products.create-variant');
+        Route::get('/create-variant-update', [ProductController::class, 'createVariantUpdate'])->name('Administration.products.create-variant-update');
+        Route::post('/create-variant-update1', [ProductController::class, 'createVariantUpdate1'])->name('Administration.products.create-variant-update1');
+        Route::post('/create-variant-update', [ProductController::class, 'createVariant2'])->name('Administration.products.createVariant2');
+        Route::post('/create-variant', [ProductController::class, 'createVariant1'])->name('Administration.products.createVariant1');
+        Route::post('/delte-variant', [ProductController::class, 'deleteVariant'])->name('Administration.products.deleteVariant');
         Route::post('/create', [ProductController::class, 'store'])->name('Administration.products.store');
-        Route::get('/{slug}', [ProductController::class, 'show'])->name('Administration.products.show');
-        Route::put('/{product}', action: [ProductController::class, 'update'])->name('Administration.products.update');
+        Route::get('/show-{product_slug}', [ProductController::class, 'show'])->name('Administration.products.show');
+        Route::get('/{product_slug}/edit', [ProductController::class, 'edit'])->name('Administration.products.edit');
+        Route::put('/{product_slug}', [ProductController::class, 'update'])->name('Administration.products.update');
+        Route::delete('/delete-multiple', [ProductController::class, 'deleteMultiple'])->name('Administration.products.deleteMultiple');
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('Administration.products.destroy');
     });
 

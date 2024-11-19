@@ -13,7 +13,7 @@ class ImageColor extends Model
     protected $fillable =[
         'image_color_id',
         'image_color_name',
-        'product_variant_id',
+        'product_id',
         'color_id'
     ];
     public function color(){

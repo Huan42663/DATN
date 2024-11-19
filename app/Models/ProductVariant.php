@@ -10,6 +10,7 @@ class ProductVariant extends Model
 {
     use HasFactory, SoftDeletes;
     protected $table = 'product_variant';
+    protected $primaryKey = "product_variant_id";
     protected $fillable = [
         'product_variant_id',
         'size_id',
