@@ -182,8 +182,10 @@ Route::prefix('/')->group(function () {
     Route::put('account', [AuthController::class, 'update'])->name('Client.account.update');
     Route::put('forgotPassword', [AuthController::class, 'update'])->name('Client.account.update');
     Route::get('login', [AuthController::class, 'showLoginForm'])->name('Client.account.showLoginForm');
+    Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::get('logout', [AuthController::class, 'logout'])->name('Client.account.logout');
     Route::get('register', [AuthController::class, 'showRegisterForm'])->name('Client.account.showRegisterForm');
+    Route::post('register', [AuthController::class, 'register'])->name('register');
 
     // ROUTE POST
     Route::get('posts/{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');
