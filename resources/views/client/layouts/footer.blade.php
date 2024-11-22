@@ -3,51 +3,40 @@
         <div class="container">
             <div class="content-footer py-[60px] flex justify-between flex-wrap gap-y-8">
                 <div class="company-infor basis-1/4 max-lg:basis-full pr-7"><a class="logo" href="index.html">
-                        <div class="heading4">Anvogue</div>
+                        <div class="heading4">JS STORE</div>
                     </a>
                     <div class="flex gap-3 mt-3">
                         <div class="flex flex-col "><span class="text-button">Mail:</span><span
                                 class="text-button mt-3">Phone:</span><span class="text-button mt-3">Address:</span>
                         </div>
-                        <div class="flex flex-col "><span class="">hi.avitex@gmail.com</span><span
-                                class="mt-3">1-333-345-6868</span><span class="mt-3 pt-px">549 Oak St.Crystal
+                        <div class="flex flex-col "><span class="">jsstore@gmail.com</span><span
+                                class="mt-3">0987654321</span><span class="mt-3 pt-px">549 Oak St.Crystal
                                 Lake,
                                 IL 60014</span></div>
                     </div>
                 </div>
+                @php
+                $Category_post = (new App\Models\CategoryPost())::query()->where('showFooter', true)->get();
+                $post =  (new App\Models\Post())::query()->get();
+                @endphp
                 <div class="right-content flex flex-wrap gap-y-8 basis-3/4 max-lg:basis-full">
-                    <div class="list-nav flex justify-between basis-2/3 max-md:basis-full gap-4">
-                        <div class="item flex flex-col basis-1/3 ">
-                            <div class="text-button-uppercase pb-3">Infomation</div><a
-                                class="caption1 has-line-before duration-300 w-fit" href="pages/contact.html">Contact
-                                us</a><a class="caption1 has-line-before duration-300 w-fit pt-2"
-                                href="#!">Career</a><a class="caption1 has-line-before duration-300 w-fit pt-2"
-                                href="my-account.html">My
-                                Account</a><a class="caption1 has-line-before duration-300 w-fit pt-2"
-                                href="order-tracking.html">Order &amp; Returns</a><a
-                                class="caption1 has-line-before duration-300 w-fit pt-2" href="pages/faqs.html">FAQs</a>
+                    <div class="list-nav flex justify-around basis-2/3 max-md:basis-full gap-4">
+                        @foreach ($Category_post as $item )
+                        <div class="item flex flex-col me-2">
+                            <div class="text-button-uppercase pb-3">{{$item->category_post_name}}</div>
+                            @php
+                                $i=0;
+                                foreach ($post as $value):
+                                   
+                            @endphp
+                                @if($value->category_post_id == $item->category_post_id)
+                                    <a class="caption1 has-line-before duration-300 w-fit" href="{{route('Client.posts.detail',$value->slug)}}">{{$value->title}}</a>
+                                @endif
+                            @php
+                                endforeach
+                            @endphp
                         </div>
-                        <div class="item flex flex-col basis-1/3 ">
-                            <div class="text-button-uppercase pb-3">Quick Shop</div><a
-                                class="caption1 has-line-before duration-300 w-fit"
-                                href="shop/breadcrumb1.html">Women</a><a
-                                class="caption1 has-line-before duration-300 w-fit pt-2"
-                                href="shop/breadcrumb1.html">Men</a><a
-                                class="caption1 has-line-before duration-300 w-fit pt-2"
-                                href="shop/breadcrumb1.html">Clothes</a><a
-                                class="caption1 has-line-before duration-300 w-fit pt-2"
-                                href="shop/breadcrumb1.html">Accessories</a><a
-                                class="caption1 has-line-before duration-300 w-fit pt-2" href="404">Blog</a>
-                        </div>
-                        <div class="item flex flex-col basis-1/3 ">
-                            <div class="text-button-uppercase pb-3">Customer Services</div><a
-                                class="caption1 has-line-before duration-300 w-fit" href="pages/faqs.html">Orders
-                                FAQs</a><a class="caption1 has-line-before duration-300 w-fit pt-2"
-                                href="pages/faqs.html">Shipping</a><a
-                                class="caption1 has-line-before duration-300 w-fit pt-2" href="pages/faqs.html">Privacy
-                                Policy</a><a class="caption1 has-line-before duration-300 w-fit pt-2"
-                                href="order-tracking.html">Return &amp; Refund</a>
-                        </div>
+                        @endforeach
                     </div>
                     <div class="newsletter basis-1/3 pl-7 max-md:basis-full max-md:pl-0">
                         <div class="text-button-uppercase">Newletter</div>
@@ -81,34 +70,10 @@
                     </div>
                 </div>
             </div>
-            <div
+            {{-- <div
                 class="footer-bottom py-3 flex items-center justify-between gap-5 max-lg:justify-center max-lg:flex-col border-t border-line">
                 <div class="left flex items-center gap-8">
                     <div class="copyright caption1 text-secondary">©2023 Anvogue. All Rights Reserved.</div>
-                    <div class="select-block flex items-center gap-5 max-md:hidden">
-                        <div class="choose-language flex items-center gap-1.5"><select name="language"
-                                id="chooseLanguageFooter" class="caption2 bg-transparent">
-                                <option value="English">English</option>
-                                <option value="Espana">Espana</option>
-                                <option value="France">France</option>
-                            </select><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                fill="#1F1F1F" viewBox="0 0 256 256">
-                                <path
-                                    d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z">
-                                </path>
-                            </svg></div>
-                        <div class="choose-currency flex items-center gap-1.5"><select name="currency"
-                                id="chooseCurrencyFooter" class="caption2 bg-transparent">
-                                <option value="USD">USD</option>
-                                <option value="EUR">EUR</option>
-                                <option value="GBP">GBP</option>
-                            </select><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                fill="#1F1F1F" viewBox="0 0 256 256">
-                                <path
-                                    d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z">
-                                </path>
-                            </svg></div>
-                    </div>
                 </div>
                 <div class="right flex items-center gap-2">
                     <div class="caption1 text-secondary">Payment:</div>
@@ -143,7 +108,7 @@
                             src="_next/Frame-50430.png?url=%2Fimages%2Fpayment%2FFrame-5.png&amp;w=1080&amp;q=75" />
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>

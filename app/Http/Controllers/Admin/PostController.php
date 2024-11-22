@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CategoryPost;
 use App\Models\Post;
 use App\Models\PostImage;
 use Illuminate\Support\Facades\Validator;
@@ -17,8 +18,16 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::query()->get();
-        return response ()->json(['message'=>'Danh sách bài viết','data'=> $posts],Response::HTTP_OK);
+        $posts = Post::with('categoryPost')->orderByDesc('post_id')->get();
+        $categoryPost = CategoryPost::get();
+        return View('admin.posts.index',compact('posts'));
+    }
+
+    public function create()
+    {
+        $posts = Post::with('categoryPost')->get();
+        $categoryPost = CategoryPost::get();
+        return View('admin.posts.create',compact('posts','categoryPost'));
     }
     /**
      * Store a newly created resource in storage.
@@ -26,8 +35,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request['slug'] = Str::slug($request['title']);
-        $validator = Validator::make(
-            $request->all(),
+        $request-> validate(
             [
                 'title' => 'required|unique:posts,title',
                 'short_description' => 'nullable',
@@ -50,22 +58,17 @@ class PostController extends Controller
             'content'           => $request['content'],
             'category_post_id'  => $request['category_post_id']
         ];
-        
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors(),'data'=>$request->all()], Response::HTTP_BAD_REQUEST);
-        } else {
             $post_id = Post::create($data);
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
                 foreach ($file as $key) {
                     $path_image = $key->store('posts');
                     $data=['post_id'=>$post_id->post_id,'image_name'=>$path_image];
-                    $image = PostImage::create($data);
+                    PostImage::create($data);
                 }
             }
             
-            return response()->json(['message'=>'Thêm bài viết thành công','data' => $post_id], Response::HTTP_CREATED);
-        }
+            return redirect()->back()->with("success","Thêm Bài Viết Thành Công");
     }
 
     /**
@@ -74,26 +77,26 @@ class PostController extends Controller
     public function show(string $slug)
     {
         $post = Post::query()->with('PostImage')->where('slug',$slug)->get();
+        $categoryPost = CategoryPost::get();
         if(!$post){
-            return response()->json('Không tồn tại bài viết',Response::HTTP_NOT_FOUND);
+            return redirect()->route('Administration.posts.list')->with("error","Không tìm thấy bài viết ");
         }else
         {    
-        return response()->json(['data'=>$post],Response::HTTP_OK);
+            return View('admin.posts.update',compact('post','categoryPost'));
         }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Post $post)
     {
-        $post = Post::query()->where('post_id',$id)->get();
-        if(!$post){
-            return response()->json('Bài viết không tồn tại',Response::HTTP_NOT_FOUND);
+        $postCheck = Post::query()->where('post_id',$post->post_id)->get();
+        if(!$postCheck){
+            return redirect()->back()->with("error","Không tìm thấy bài viết");
         }
         else{
-            $validator = Validator::make(
-                $request->all(),
+            $request-> validate(
                 [
                     'title' => 'required',
                     'short_description' => 'nullable',
@@ -103,37 +106,36 @@ class PostController extends Controller
                 ],
                 [
                     'title.required' => 'title bài viết không được để trống',
-                    'title.unique' => 'title bài viết đã bị trùng',
                     'content.required' => 'Nội dung  không được để trống',
                     'category_post_id.required' => 'danh mục không được để trống',
                 ]
     
             );
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors(),'data'=>$request->all()], Response::HTTP_BAD_REQUEST);
-            }
-             else {
-                $checkPost = Post::query()->where('post_id','!=',$id)->get();
+                $checkPost = Post::query()->where('post_id','!=',$post->post_id)->get();
                 foreach($checkPost as $key){
                     if($key->category_post_name == $request['title']){
                         return response()->json('Danh mục đã tồn tại',402);
                     }
                 }
-                if($request['title'] != $post[0]->title){
+                if($request['title'] != $postCheck[0]->title){
                     $request['slug'] = Str::slug($request['title']);
+                }else{
+                    $request['slug'] = $postCheck[0]->slug;
                 }
-                $data=$request->except('image');
-                $post = Post::query()->where('post_id',$id)->update($data);
+                $data= [ 
+                    'title'             =>$request['title'],
+                    'short_description' => $request['short_description'],
+                    'slug'              =>$request['slug'],
+                    'content'           => $request['content'],
+                    'category_post_id'  => $request['category_post_id']
+                ];
+                
+                $post->update($data);
 
                 if ($request->hasFile('image')) {
                     $file = $request->file('image');
-                    foreach ($file as $key) {
-                        $path_image = $key->store('posts');
-                        $data1 =['post_id'=>$id,'image_name'=>$path_image];
-                        PostImage::create($data1);
-                    }
                     if($file){
-                        $image = PostImage::query()->where('post_id',$id)->get();
+                        $image = PostImage::query()->where('post_id',$post->post_id)->get();
                         foreach($image as  $value) {
                             if (file_exists('storage/' . $value->image_name)) {
                                 unlink('storage/' .  $value->image_name);
@@ -142,23 +144,28 @@ class PostController extends Controller
                         }
                             
                     }
+                    foreach ($file as $key) {
+                        $path_image = $key->store('posts');
+                        $data1 =['post_id'=>$post->post_id,'image_name'=>$path_image];
+                        PostImage::create($data1);
+                    }
+                    
                 }
-            return response()->json('Cập nhật bài viết thành công',Response::HTTP_OK);
-            }
+                return redirect()->route('Administration.posts.show',$request['slug'])->with("success","Sửa Bài Viết Thành Công");
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Post $post)
     {
-        $post = Post::query()->where('post_id',$id)->get();
-        if(!$post){
-            return response()->json('Không tìm thấy bài viết',Response::HTTP_NOT_FOUND);
+        $Check = Post::query()->where('post_id',$post)->get();
+        if(!$Check){
+            return redirect()->back()->with("error","Không tìm thấy bài viết");
         }else{
             $post->delete();
-            return response()->json('Xóa bài viết thành công',Response::HTTP_OK);
+            return redirect()->back()->with("success","Xóa bài viết thành công");
         }
     }
 }
