@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryPostController;
 use App\Http\Controllers\Admin\CategoryProductController;
@@ -90,9 +90,17 @@ Route::prefix('/Administration')->group(function () {
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('Administration.products.list');
         Route::get('/create', [ProductController::class, 'create'])->name('Administration.products.create');
+        Route::get('/create-variant', [ProductController::class, 'createVariant'])->name('Administration.products.create-variant');
+        Route::get('/create-variant-update', [ProductController::class, 'createVariantUpdate'])->name('Administration.products.create-variant-update');
+        Route::post('/create-variant-update1', [ProductController::class, 'createVariantUpdate1'])->name('Administration.products.create-variant-update1');
+        Route::post('/create-variant-update', [ProductController::class, 'createVariant2'])->name('Administration.products.createVariant2');
+        Route::post('/create-variant', [ProductController::class, 'createVariant1'])->name('Administration.products.createVariant1');
+        Route::post('/delte-variant', [ProductController::class, 'deleteVariant'])->name('Administration.products.deleteVariant');
         Route::post('/create', [ProductController::class, 'store'])->name('Administration.products.store');
-        Route::get('/{slug}', [ProductController::class, 'show'])->name('Administration.products.show');
-        Route::put('/{product}', action: [ProductController::class, 'update'])->name('Administration.products.update');
+        Route::get('/show-{product_slug}', [ProductController::class, 'show'])->name('Administration.products.show');
+        Route::get('/{product_slug}/edit', [ProductController::class, 'edit'])->name('Administration.products.edit');
+        Route::put('/{product_slug}', [ProductController::class, 'update'])->name('Administration.products.update');
+        Route::delete('/delete-multiple', [ProductController::class, 'deleteMultiple'])->name('Administration.products.deleteMultiple');
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('Administration.products.destroy');
     });
 
@@ -118,12 +126,13 @@ Route::prefix('/Administration')->group(function () {
 
     // ROUTE BANNER
     Route::prefix('banners')->group(function () {
-        Route::get('/', [BannerController::class, 'index'])->name('Administration.banners.list');
+        Route::get('/', [BannerController::class, 'index'])->name('Administration.banners.index');
         Route::get('/create', [BannerController::class, 'create'])->name('Administration.banners.create');
         Route::post('/create', [BannerController::class, 'store'])->name('Administration.banners.store');
         Route::get('/{banner}', [BannerController::class, 'show'])->name('Administration.banners.show');
-        Route::put('/{banner}', [BannerController::class, 'update'])->name('Administration.banners.update');
-        Route::delete('/{banner}', [BannerController::class, 'destroy'])->name('Administration.banners.destroy');
+        Route::get('/edit/{banner}', [BannerController::class, 'edit'])->name('Administration.banners.edit');
+        Route::put('/update/{banner}', [BannerController::class, 'update'])->name('Administration.banners.update');
+        Route::delete('/destroy/{banner}', [BannerController::class, 'destroy'])->name('Administration.banners.destroy');
     });
 
     // ROUTE EVENT
@@ -131,9 +140,12 @@ Route::prefix('/Administration')->group(function () {
         Route::get('/', [EventController::class, 'index'])->name('Administration.events.list');
         Route::get('/create', [EventController::class, 'create'])->name('Administration.events.create');
         Route::post('/create', [EventController::class, 'store'])->name('Administration.events.store');
-        Route::get('/{slug}', [EventController::class, 'show'])->name('Administration.events.show');
-        Route::put('/{event}', [EventController::class, 'update'])->name('Administration.events.update');
-        Route::delete('/{event}', [EventController::class, 'destroy'])->name('Administration.events.destroy');
+        Route::get('/show/{event}', [EventController::class, 'show'])->name('Administration.events.show');
+        Route::put('/show-add/{event}', [EventController::class, 'add'])->name('Administration.events.show-add');
+        Route::put('/show-remove/{event}', [EventController::class, 'remove'])->name('Administration.events.show-remove');
+        Route::get('/edit/{event}', [EventController::class, 'edit'])->name('Administration.events.edit');
+        Route::put('/update/{event}', [EventController::class, 'update'])->name('Administration.events.update');
+        Route::delete('/destroy/{event}', [EventController::class, 'destroy'])->name('Administration.events.destroy');
     });
 
     // ROUTE USER
@@ -141,9 +153,9 @@ Route::prefix('/Administration')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('Administration.users.list');
         Route::get('/create', [UserController::class, 'create'])->name('Administration.users.create');
         Route::post('/create', [UserController::class, 'store'])->name('Administration.users.store');
-        Route::get('/{email}', [UserController::class, 'show'])->name('Administration.users.show');
-        Route::put('/{user}', [UserController::class, 'update'])->name('Administration.users.update');
-        Route::put('/{user}', [UserController::class, 'destroy'])->name('Administration.users.destroy');
+        Route::get('/show/{user}', [UserController::class, 'show'])->name('Administration.users.show');
+        Route::put('/update/{user}', [UserController::class, 'update'])->name('Administration.users.update');
+        Route::put('/destroy/{user}', [UserController::class, 'destroy'])->name('Administration.users.destroy');
     });
 })->name('Administration');
 
@@ -169,9 +181,9 @@ Route::prefix('/')->group(function () {
     Route::get('account', [AuthController::class, 'show'])->name('Client.account.show');
     Route::put('account', [AuthController::class, 'update'])->name('Client.account.update');
     Route::put('forgotPassword', [AuthController::class, 'update'])->name('Client.account.update');
-    Route::get('login', [AuthController::class, 'login'])->name('Client.account.login');
+    Route::get('login', [AuthController::class, 'showLoginForm'])->name('Client.account.showLoginForm');
     Route::get('logout', [AuthController::class, 'logout'])->name('Client.account.logout');
-    Route::get('register', [AuthController::class, 'register'])->name('Client.account.register');
+    Route::get('register', [AuthController::class, 'showRegisterForm'])->name('Client.account.showRegisterForm');
 
     // ROUTE POST
     Route::get('posts/{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');

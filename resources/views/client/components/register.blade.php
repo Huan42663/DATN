@@ -30,7 +30,7 @@
                     <div class="mt-2 text-secondary">Welcome back. Sign in to access your personalized experience,
                         saved preferences, and more. We<!-- -->&#x27;re<!-- --> thrilled to have you with us again!
                     </div>
-                    <div class="block-button md:mt-7 mt-4"><a class="button-main" href="{{ route('login') }}">Login</a></div>
+                    <div class="block-button md:mt-7 mt-4"><a class="button-main" href="{{ route('Client.account.showLoginForm') }}">Login</a></div>
                 </div>
             </div>
         </div>

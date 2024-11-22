@@ -9,8 +9,8 @@
                 <h5 class="m-b-10">Products</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('home') }}">Home</a></li>
-                <li class="breadcrumb-item">create</li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.products.list') }}">List</a></li>
+                <li class="breadcrumb-item">Create</li>
             </ul>
         </div>
     </div>
@@ -29,15 +29,25 @@
                                     <span class="d-block mb-2">Create A Product:</span>
                                 </h5>
                             </div>
-                            <form action="" enctype="multipart/form-data">
+                            @if (session('message'))
+                                <div class="alert alert-success">
+                                    {{ session('message') }}
+                                </div>
+                            @endif
+                            <form action="{{ route('Administration.products.store') }}" method="post"
+                                enctype="multipart/form-data">
+                                @csrf
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
                                         <label for="product_name" class="fw-semibold">Product Name: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="product_name"
-                                                placeholder="Product Name">
+                                            <input type="text" class="form-control" id="product_name" name="product_name"
+                                                placeholder="Product Name"><br>
+                                            @error('product_name')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -47,7 +57,11 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="price" placeholder="price">
+                                            <input type="number" min="1" class="form-control" id="price" name="price"
+                                                placeholder="price">
+                                            @error('price')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -57,8 +71,11 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="sale_price"
+                                            <input type="number" min="0" class="form-control" id="sale_price" name="sale_price"
                                                 placeholder="price sale">
+                                            @error('sale_price')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -68,8 +85,11 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="quantity"
+                                            <input type="number" min="1" class="form-control" id="quantity" name="quantity"
                                                 placeholder="Quantity">
+                                            @error('quantity')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -79,7 +99,11 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="weight" placeholder="Weight">
+                                            <input type="number" min="1" class="form-control" id="weight" name="weight"
+                                                placeholder="Weight">
+                                            @error('weight')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -89,8 +113,11 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <textarea id="editor" rows="10"></textarea>
+                                            <textarea id="editor" name="description" rows="10"></textarea>
                                         </div>
+                                        @error('description')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="row mb-4 align-items-center">
@@ -99,7 +126,8 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="file" class="form-control" multiple id="product_image">
+                                            <input type="file" class="form-control" multiple id="product_image"
+                                                name="product_image">
                                         </div>
                                     </div>
                                 </div>
@@ -109,7 +137,7 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <select name="" id="status" class="form-control">
+                                            <select name="status" id="status" class="form-control">
                                                 <option value="1" checked>Active</option>
                                                 <option value="2">Inactive</option>
                                             </select>
@@ -120,23 +148,20 @@
                                     <div class="col-lg-4">
                                         <label for="status" class="fw-semibold"> color </label>
                                     </div>
+
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <select class="form-select form-control max-select"
-                                                data-select2-selector="tag" data-max-select2="tag" multiple>
-                                                <option value="">VIP</option>
-                                                <option value="">Bugs</option>
-                                                <option value="">Team</option>
-                                                <option value="">Primary</option>
-                                                <option value="">Updates</option>
-                                                <option value="">Personal</option>
-                                                <option value="">Promotions</option>
-                                                <option value="">Customs</option>
-                                                <option value="">Wholesale</option>
-                                                <option value="">Low Budget</option>
-                                                <option value="">High Budget</option>
+                                                data-select2-selector="tag" data-max-select2="tag" multiple
+                                                name="colors[]">
+                                                <option value="0">ALL</option>
+                                                @foreach ($colors as $key => $item)
+                                                    <option value="{{ $item->color_id }}">{{ $item->color_name }}</option>
+                                                @endforeach
+
                                             </select>
                                         </div>
+
                                     </div>
                                 </div>
                                 <div class="row mb-4 align-items-center">
@@ -146,18 +171,12 @@
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <select class="form-select form-control max-select"
-                                                data-select2-selector="tag" data-max-select2="tag" multiple>
-                                                <option value="">VIP</option>
-                                                <option value="">Bugs</option>
-                                                <option value="">Team</option>
-                                                <option value="">Primary</option>
-                                                <option value="">Updates</option>
-                                                <option value="">Personal</option>
-                                                <option value="">Promotions</option>
-                                                <option value="">Customs</option>
-                                                <option value="">Wholesale</option>
-                                                <option value="">Low Budget</option>
-                                                <option value="">High Budget</option>
+                                                data-select2-selector="tag" data-max-select2="tag" multiple
+                                                name="sizes[]">
+                                                <option value="0">ALL</option>
+                                                @foreach ($sizes as $key => $item)
+                                                    <option value="{{ $item->size_id }}">{{ $item->size_name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>

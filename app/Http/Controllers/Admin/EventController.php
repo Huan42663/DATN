@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Models\ProductEvent;
+use App\Models\Products;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -18,8 +20,8 @@ class EventController extends Controller
      */
     public function index()
     {
-        $data = Event::all();
-        return view('admin.events.index', compact(['data' => $data]));
+        $events = Event::all();
+        return view('admin.events.index', compact('events'));
     }
 
     /**
@@ -27,49 +29,68 @@ class EventController extends Controller
      */
     public function create()
     {
-        return view('admin.events.create');
+        $products = Products::all();
+        return view('admin.events.create', compact('products'));
     }
     public function store(Request $request)
     {
+
         // tự động tạo slug theo tên sự kiện
         $request['slug'] = Str::slug($request->event_name);
+
         // validate form
-        $validator = Validator::make(
-            $request->all(),
+        $request->validate(
             [
                 'event_name' => 'required|min:5|unique:events,event_name',
-                'date_start' => 'required',
-                'date_end' => 'required',
+                'date_start' => 'required|date|after:today',
+                'date_end' => 'required|date|after:date_start',
+                'discount' => 'nullable|integer',
                 'type_event' => 'required'
 
             ],
             [
                 'event_name.required' => 'tên sự kiện không được để trống',
                 'event_name.unique' => 'tên sự kiện đã bị trùng',
+                'discount.integer' => 'giảm giá phải là số',
                 'date_start.required' => 'thời gian bắt đầu không được để trống',
+                'date_start.after' => 'thời gian bắt đầu không phù hợp',
+                'date_start.date' => 'thời gian bắt đầu không phù hợp',
+                'date_end.date' => 'thời gian kết thúc không phù hợp',
+                'date_end.after' => 'thời gian kết thúc không phù hợp',
                 'date_end.required' => 'thời gian kết thúc không được để trống',
                 'event_name.min' => 'tên sự kiện không được nhỏ hơn 5 ký tự',
                 'type_event.required' => 'kiểu sự kiện không được để trống'
             ]
-
         );
-        // check validate fails nếu không có thì thêm vào bảng event
-        if ($validator->fails()) {
-            return view('admin.events.create', compact(['errors' => $validator->errors()]));
-        } else {
-            $event = Event::create($request->all());
-            return view('admin.events.index', compact(['event' => $event, 'message' => 'thêm thành công']));
+
+        $data = $request->except('_token', '_method', 'example_length', 'products');
+        $event = Event::query()->create($data);
+        // dd($event->id);
+
+        if (!empty($request->products)) {
+            foreach ($request->products as $value) {
+                ProductEvent::create(['event_id' => $event->id, 'product_id' => $value]);
+            }
         }
+        return redirect()->route('Administration.events.list')->with('message', 'thêm thành công');
     }
 
     /**
      * Display the specified resource.
      */
+    public function edit(string $id)
+    {
+        $event = Event::where('event_id', $id)->first();
+        $products = Products::all();
+        $product_event = ProductEvent::where('event_id', $id)->get();
+        return view('admin.events.update', compact('event', 'products', 'product_event'));
+    }
     public function show(string $slug)
     {
+
         // lấy ra sự kiện theo slug
         $event = Event::query()
-            ->where('slug', $slug)
+            ->where('slug', '=', $slug)
             ->select(
                 'event_name',
                 'date_start',
@@ -77,38 +98,52 @@ class EventController extends Controller
                 'type_event',
                 'discount',
                 'status',
-                'created_at',
-                'updated_at'
+                'event_id',
+                'slug'
             )
-            ->get();
+            ->first();
         // lấy ra mảng sản phẩm của sự kiện
-        $products = Event::query()
+        $product_event = ProductEvent::query()
             ->where('slug', $slug)
-            ->join('product_event', 'product_event.event_id', '=', 'events.event_id')
+            ->join('events', 'product_event.event_id', '=', 'events.event_id')
             ->join('products', 'products.product_id', '=', 'product_event.product_id')
             ->select(
+                'products.product_id',
                 'product_name',
                 'product_image'
             )
             ->get();
-        // trả về mảng các giá trị dưới dạng json
-        return view(
-            'admin.banners.show',
-            compact(
-                [
-                    'message' => 'chi tiết sự kiện',
-                    'event' => $event,
-                    'products' => $products
-                ]
-            )
-        );
+        $products = Products::all();
+        return view('admin.events.show', compact('event', 'products', 'product_event'));
     }
-
+    public function remove(Request $request, string $slug)
+    {
+        if($request->products){
+            foreach ($request->products as $product) {
+                ProductEvent::where('product_id', '=', $product, 'AND', 'events.slug', '=', $slug)
+                    ->join('events', 'events.event_id', '=', 'product_event.event_id')
+                    ->delete();
+            }
+        }
+        return redirect()->back();
+    }
+    public function add(Request $request, string $slug)
+    {
+        $event = Event::where('slug', $slug)->first();
+        if($request->products){
+            foreach ($request->products as $product) {
+                ProductEvent::create(['event_id' => $event->event_id, 'product_id' => $product]);
+            }
+        }
+        return redirect()->back();
+    }
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
+
+        // dd($request);
         // lấy ra sự kiện theo id
         $event = Event::query()->where('event_id', $id)->get();
 
@@ -119,50 +154,55 @@ class EventController extends Controller
         if (empty($event[0])) {
 
             // nếu không tồn tại sự kiện sẽ trả về lỗi 404
-            return view('error-404', compact(['errors' => "không tìm thấy event"]));
+            return view('error-404')->with('error', "không tìm thấy event");
         } else {
             // dùng vòng lặp để so sánh tên của sự kiện được gừi lên có trùng với tên của sự kiện ở DB hay không
             foreach ($listEvent as $value) {
                 if ($value->event_name == $request->event_name) {
-                    return view('admin.events.update', compact(['data' => $event, 'errors' => "tên sự kiện bị trùng"]));
+                    return view('admin.events.list')->with('error', "Tên sự kiện bị trùng");
                 }
             }
 
-            // tự động tạo slug theo tên sự kiện được thay đổi
+            // tự động tạo slug theo tên sự kiện
             $request['slug'] = Str::slug($request->event_name);
 
             // validate form
-            $validator = Validator::make(
-                $request->all(),
+            $request->validate(
                 [
                     'event_name' => 'required|min:5',
-                    'date_start' => 'required',
-                    'date_end' => 'required',
+                    'date_start' => 'required|date|after:today',
+                    'date_end' => 'required|date|after:date_start',
+                    'discount' => 'nullable|integer',
                     'type_event' => 'required'
 
                 ],
                 [
                     'event_name.required' => 'tên sự kiện không được để trống',
+                    'discount.integer' => 'giảm giá phải là số',
                     'date_start.required' => 'thời gian bắt đầu không được để trống',
+                    'date_start.after' => 'thời gian bắt đầu không phù hợp',
+                    'date_start.date' => 'thời gian bắt đầu không phù hợp',
+                    'date_end.date' => 'thời gian kết thúc không phù hợp',
+                    'date_end.after' => 'thời gian kết thúc không phù hợp',
                     'date_end.required' => 'thời gian kết thúc không được để trống',
                     'event_name.min' => 'tên sự kiện không được nhỏ hơn 5 ký tự',
                     'type_event.required' => 'kiểu sự kiện không được để trống'
                 ]
-
             );
 
-            // check validate fails
-            if ($validator->fails()) {
-                return view('admin.events.index', compact(['event' => $event, 'errors' => $validator->errors()]));
-            } else {
-                Event::query()->where('event_id', $id)->update($request->all());
-                return view('admin.events.update', compact(
-                    [
-                        'event' => Event::query()->where('event_id', $id)->get(),
-                        'message' => "cập nhật thành công"
-                    ]
-                ));
+            $data = $request->except('_token', '_method', 'example_length', 'products');
+            Event::query()->where('event_id', $id)->update($data);
+
+            if (!empty($request->products)) {
+                $check = ProductEvent::where('event_id', $id)->get();
+                foreach ($check as $item) {
+                    ProductEvent::where('event_id', $item->event_id)->delete();
+                }
+                foreach ($request->products as $value) {
+                    ProductEvent::create(['event_id' => $id, 'product_id' => $value]);
+                }
             }
+            return redirect()->route('Administration.events.list')->with('message', 'cập nhật thành công');
         }
     }
 
@@ -174,7 +214,7 @@ class EventController extends Controller
         try {
             $data = Event::query()->where('event_id', $id)->get();
             $data->delete();
-            return view('admin.events.index', compact(['message' => 'xóa thành công']));
+            return view('admin.events.index')->with('message', 'xóa thành công');
         } catch (\Throwable $th) {
             Log::error(__CLASS__ . "@" . __FUNCTION__, [
                 'Line' => $th->getLine(),
@@ -182,7 +222,7 @@ class EventController extends Controller
             ]);
 
             if ($th instanceof ModelNotFoundException) {
-                return view('error-404', compact(['error' => 'không tìm thấy sự kiện']));
+                return view('error-404')->with('error', 'không tìm thấy sự kiện');
             }
         }
     }

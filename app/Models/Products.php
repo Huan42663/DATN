@@ -19,7 +19,7 @@ class Products extends Model
         'status'
     ];
 
-   
+
     public function rates()
     {
         return $this->hasMany(Rate::class, 'product_variant_id', 'product_variant_id');
@@ -28,13 +28,17 @@ class Products extends Model
     {
         return $this->hasMany(ProductVariant::class, 'product_id');
     }
-    public function productEvent()
-    {
-        return $this->hasOne(ProductEvent::class, 'product_id', 'product_id');
-    }
+    // public function productEvent()
+    // {
+    //     return $this->hasMany(ProductEvent::class);
+    // }
 
     public function events()
     {
-        return $this->hasMany(Event::class, 'event_id');
+        return $this->belongsToMany(Event::class, 'product_event');
+    }
+    public function products()
+    {
+        return $this->belongsToMany(Products::class, 'product_event');
     }
 }

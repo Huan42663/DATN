@@ -28,7 +28,7 @@
                     <div class="heading4">New Customer</div>
                     <div class="mt-2 text-secondary">Be part of our growing family of new customers! Join us today
                         and unlock a world of exclusive benefits, offers, and personalized experiences.</div>
-                    <div class="block-button md:mt-7 mt-4"><a class="button-main" href="{{ route('register') }}">Register</a>
+                    <div class="block-button md:mt-7 mt-4"><a class="button-main" href="{{ route('Client.account.showRegisterForm') }}">Register</a>
                     </div>
                 </div>
             </div>
