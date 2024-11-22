@@ -30,37 +30,29 @@ class VoucherController extends Controller
             } else {
                 $key->type = "Giảm theo giá tiền";
             }
-        }
-        return response()->json(
-            [
-                "message" => "Danh Sách Voucher",
-                "Data" => $data
-            ],
-            Response::HTTP_OK
-        );
+        };
+        return View('admin.vouchers.index',compact('data'));
     }
-
+    public function create()
+    {
+        return View('admin.vouchers.create');
+    }
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         if ($request['date_start'] < Carbon::now()) {
-            return response()->json([
-                'error' => 'Thời Gian bắt đầu phải lớn hơn hoặc bằng thời gian hiện tại ',
-                'data'  => $request->all()
-            ], 422);
+            $data = $request->all();
+            return View('admin.vouchers.create',compact('data'))->with('date_start',"Thời gian bắt đầu phải bằng hoặc lớn hơn thời gian hiện tại");
         }
-        if ($request['date_end'] < $request['date_start']) {
-            return response()->json([
-                'error' => 'Thời Gian kết thúc phải lớn hơn hoặc bằng thời gian bắt đầu ',
-                'data'  => $request->all()
-            ], 422);
+        if ($request['date_end'] > $request['date_start']) {
+            $data = $request->all();
+            return View('admin.vouchers.create',compact('data'))->with('date_end',"Thời gian kết thúc phải lớn hơn thời gian bắt đầu");
         }
 
 
-        $validator = Validator::make(
-            $request->all(),
+        $request->validate(
             [
                 "voucher_code" => "required|unique:vouchers,voucher_code",
                 "type"         => "required|integer",
@@ -87,10 +79,8 @@ class VoucherController extends Controller
             ]
         );
         if ($request['type'] == 1 && $request["value"] > 100) {
-            return response()->json([
-                'error' => 'giá trị theo giảm giá theo % phải nhỏ hơn 100',
-                'data'  => $request->all()
-            ], 422);
+            $data = $request->all();
+            return View('admin.vouchers.create',compact('data'))->with('value',"Kiểu giảm giá theo % chỉ tối đa là 100");
         }
         $data = [
             "voucher_code" => $request['voucher_code'],
@@ -101,107 +91,52 @@ class VoucherController extends Controller
             "date_end"     => $request['date_end'],
         ];
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        } else {
             $voucher = Voucher::create($data);
-            // broadcast(new VoucherEvent($voucher));
-            return response()->json(
-                [
-                    'message' => "Thêm Voucher Thành Công",
-                    'data' => $voucher
-                ],
-                Response::HTTP_CREATED
-            );
+            broadcast(new VoucherEvent($voucher));
+            return redirect()->back()->with("success","Thêm Voucher Thành Công");;
+           
         }
-    }
 
     /**
      * Display the specified resource.
      */
     public function show(string $voucher_code)
     {
-
-        try {
             $data = Voucher::query()->where("voucher_code", '=', $voucher_code)->get();
             $count = Count($data);
             if ($count > 0) {
-                if ($data[0]->type == 1) {
-                    $data[0]->type = "Giảm theo %";
-                } else {
-                    $data[0]->type = "Giảm theo giá tiền";
-                }
-                return response()->json(
-                    [
-                        'message' => "Chi tiết voucher",
-                        'data' => $data
-                    ]
-                );
+                return View('admin.vouchers.update',compact('data'));
             } else {
-                return response()->json(
-                    ['error' => "Không tìm thấy"],
-                    Response::HTTP_NOT_FOUND
-                );
+                return redirect()->route('Administration.vouchers.list')->with("error","Không tìm thấy voucher");
             }
-        } catch (\Throwable $th) {
-            Log::error(__CLASS__ . "@" . __FUNCTION__, [
-                'Line' => $th->getLine(),
-                'message' => $th->getMessage(),
-            ]);
-
-            if ($th instanceof ModelNotFoundException) {
-                return response()->json(
-                    ['error' => "Không tìm thấy"],
-                    Response::HTTP_NOT_FOUND
-                );
-            }
-        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $voucher_code)
+    public function update(Request $request, Voucher $voucher)
     {
-        $voucher = Voucher::query()->where("voucher_code", '=', $voucher_code)->get();
-        $count = Count($voucher);
-        if ($count <= 0) {
-            return response()->json([
-                'error' => 'Không tìm thấy voucher',
-            ], Response::HTTP_NOT_FOUND);
-        } else {
-            $voucherCheck = Voucher::query()->where("voucher_code", '!=', $voucher_code)->get();
+        $voucher1 = Voucher::query()->where("voucher_id", $voucher->voucher_id)->get();
+        $voucherCheck = Voucher::query()->where("voucher_id", '!=', $voucher1[0]->voucher_id)->get();
+        // dd($voucherCheck);
             foreach ($voucherCheck as $value) {
-                if ($value->voucher_code == $request->voucher_code) {
-                    return response()->json([
-                        'error' => 'Mã giảm giá đã có',
-                        'data'  => $voucher
-                    ], 422);
+                if ($value->voucher_code === $request->voucher_code) {
+                    return redirect()->back()->with("error","Mã voucher đã có");
                 }
             }
             if ($request['date_start'] < Carbon::now()) {
-                return response()->json([
-                    'error' => 'Thời Gian bắt đầu phải lớn hơn hoặc bằng thời gian hiện tại ',
-                    'data'  => $voucher
-                ], 422);
+                return redirect()->back()->with("error","Ngày bắt đầu phải lớn hơn hoặc bằng hiện tại");
             }
             if ($request['date_end'] < $request['date_start']) {
-                return response()->json([
-                    'error' => 'Thời Gian kết thúc phải lớn hơn hoặc bằng thời gian bắt đầu ',
-                    'data'  => $voucher
-                ], 422);
+                return redirect()->back()->with("error","Ngày kết thúc phải lớn hơn ngày bắt đầu");
             }
 
 
-            $validator = Validator::make(
-                $request->all(),
+            $request->validate(
                 [
                     "voucher_code" => "required",
                     "type"         => "required|integer",
-                    "value"        => "required|integer",
+                    "value"        => "required|integer|min:1",
                     "quantity"     => "required|integer",
                     "date_start"   => "required|date",
                     "date_end"     => "required|date",
@@ -209,65 +144,39 @@ class VoucherController extends Controller
                 [
                     "voucher_code.required"         => "Không được bỏ trống mã giảm giá",
                     "type.required"                 => "Không được bỏ trống loại giảm giá",
-                    "type.integer"                  => "loại mã giảm giá không hợp lệ",
+                    "type.integer"                  => "Loại giảm giá của voucher không hợp lệ",
                     "value.required"                => "Không được bỏ trông giá trị của mã giảm giá",
                     "value.integer"                 => "Giá trị của voucher phải là số nguyên",
+                    "value.min"                     => "Giá trị của voucher phải là lớn hơn 0",
                     "quantity.required"             => "Không được bỏ trông giá trị của mã giảm giá",
                     "quantity.integer"              => "Giá trị của voucher phải là số nguyên",
                     "date_start.required"           => "Vui Lòng nhập thời gian bắt đầu của mã giảm giá",
                     "date_start.date"               => "Thời gian bắt đầu của mã giảm giá không hợp lệ",
                     "date_end.required"             => "Vui Lòng nhập thời gian kết thúc của mã giảm giá",
                     "date_end.date"                 => "Thời gian kết thúc của mã giảm giá không hợp lệ",
-
+    
                 ]
             );
 
-            if ($request['type'] == 1 && $request["value"] > 100) {
-                return response()->json([
-                    'error' => 'giá trị theo giảm giá theo % phải nhỏ hơn 100',
-                    'data'  => $request->all()
-                ], 422);
+            if ($request['type'] == 0 && $request["value"] > 100) {
+                return redirect()->back()->with("error","Mức giảm tối đa cho phần trăm là 100");
             }
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Validation failed',
-                    'errors'  => $validator->errors(),
-                    'data'    => $voucher
-                ], 422);
-            } else {
-                Voucher::query()->where("voucher_code", '=', $voucher_code)->update($request->all());
-                $color1 = Voucher::query()->where("voucher_code", '=', $voucher_code)->get();
-                return response()->json(
-                    [
-                        'message' => "Sửa Màu Thành Công",
-                        'data' => $color1
-                    ],
-                    Response::HTTP_OK
-                );
+                $voucher->update($request->all());
+                return redirect()->back()->with("success","Sửa voucher thành công");
             }
-        }
-    }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $voucher_code)
+    public function destroy(Voucher $voucher)
     {
-        $voucher = Voucher::query()->where("voucher_code", '=', $voucher_code)->get();
-        $count = Count($voucher);
-        if ($count <= 0) {
-            return response()->json([
-                'error' => 'Không tìm thấy voucher',
-            ], Response::HTTP_NOT_FOUND);
-        } else {
-            $voucher = Voucher::query()->where("voucher_code", '=', $voucher_code)->delete();
-            return response()->json(
-                [
-                    'message' => "Xóa Voucher Thành Công",
-                ],
-                Response::HTTP_OK
-            );
+        $voucher1 = Voucher::query()->where("voucher_id", '=', $voucher->voucher_id)->get();
+        if(!$voucher1){
+            return redirect()->back()->with("error","Không tìm thấy voucher");
+        }else{
+            Voucher::query()->where("voucher_id", '=', $voucher->voucher_id)->delete();
+            return redirect()->back()->with("success","Xóa voucher thành công");
         }
     }
 }

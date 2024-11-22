@@ -14,10 +14,15 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    public function index(){
-        $cart = $this->showCart(Auth::user()->id);
-
-        return response()->json($cart,Response::HTTP_OK);
+    public function index(Request $request){
+        // $cart = $this->showCart(Auth::user()->id);
+        $cart = $this->showCart(1);
+        if(isset($request->cart_detail_id)){
+            // dd($_POST);
+            return response()->json(['success' => true],200);
+        }
+        // dd($cart);
+        return View('client.cart',compact('cart'));
     }
     public function store(Request $request){
         $cart_id = Cart::query()->where('user_id',Auth::user()->id)->get();
@@ -63,35 +68,29 @@ class CartController extends Controller
         return response()->json("Thêm sản phẩm vào giỏ hàng thành công",Response::HTTP_CREATED);  
 
     }
-    public function UpdateCartDetail(Request $request, $id)
+    public function UpdateCartDetail(Request $request)
     {
-        $cartUpdate = Cart::query()->join('cart_detail','carts.cart_id','=','cart_detail.cart_id')
-                                   ->where('carts.user_id',Auth::user()->id)
-                                   ->where('product_variant_id',$id)
-                                   ->get();
-       
-        if(isset($request['add'])){
-            $quantityUpdate = $cartUpdate[0]->quantity + 1;
+        $check = CartDetail::query()->where('cart_detail_id',$request->cart_detail_id)->get();
+        if(!$check){
+            return response()->json(['error' => 'cant not product variant'],404);
+        }else{
+            $data =[
+                'cart_detail_id' =>$request->cart_detail_id,
+                'quantity'       =>$request->quantity
+            ];
+            CartDetail::query()->where('cart_detail_id',$request->cart_detail_id)->update($data);
+            
+            return response()->json(['success' => true],404);
         }
-        if(isset($request['remove'])){
-            $quantityUpdate = $cartUpdate[0]->quantity - 1;
-        }
-
-        if($quantityUpdate == 0){
-            $cartUpdate1 = CartDetail::query()->where('cart_id',1)->where('product_variant_id',$id)->delete();
-        }if($quantityUpdate > 0){
-            $cartUpdate1 = CartDetail::query()->where('cart_id',1)->where('product_variant_id',$id)->update(array('quantity'=>$quantityUpdate));
-        }
-        
-        $cart =$this->showCart(1);
-        return response()->json( $cart,Response::HTTP_OK);
-                                     
     }
-    public function DestroyCart($id)
+    public function DestroyCart(Request $request)
     {
-        CartDetail::where('cart_detail_id',$id)->delete();
-        $cart =$this->showCart(1);
-        return response()->json( $cart,Response::HTTP_OK);
+        foreach($request->cart_detail_id as $item){
+            CartDetail::find($item)->delete();
+        }
+        // CartDetail::where('cart_detail_id',$id)->delete();
+        // $cart =$this->showCart(1);
+        return redirect()->route('Client.cart.list');
                                      
     }
     function showCart( $id) {
@@ -105,7 +104,7 @@ class CartController extends Controller
         ->leftJoin("image_color","variant_image_color.image_color_id","=","image_color.image_color_id")
         ->selectRaw(
         'cart_detail.cart_detail_id,products.product_name,products.product_slug,image_color.image_color_name AS image_color,products.product_image,
-                     sizes.size_name as size ,colors.color_name as color,cart_detail.quantity,product_variant.price,
+                     sizes.size_name as size ,colors.color_name as color,cart_detail.quantity,product_variant.price,product_variant.quantity as Instock,
                      CASE WHEN product_variant.sale_price > 0 THEN product_variant.sale_price
                      END AS sale_price,
                      CASE 

@@ -27,6 +27,7 @@
     <link rel="stylesheet" type="text/css" href="/admin/assets/vendors/css/select2.min.css">
     <link rel="stylesheet" type="text/css" href="/admin/assets/vendors/css/select2-theme.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.css">
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" />
     <!--! END: Vendors CSS-->
@@ -65,6 +66,7 @@
         </div>
 
         @include('admin.layouts.footer')
+        {{-- @vite('resources/js/voucher.js') --}}
     </main>
     <!--! ================================================================ !-->
     <!--! [End] Main Content !-->
@@ -79,7 +81,7 @@
     <script src="/admin/assets/vendors/js/vendors.min.js"></script>
     <!-- vendors.min.js {always must need to be top} -->
     <script src="/admin/assets/vendors/js/daterangepicker.min.js"></script>
-    <script src="/admin/assets/vendors/js/apexcharts.min.js"></script>
+    {{-- <script src="/admin/assets/vendors/js/apexcharts.min.js"></script> --}}
     <script src="/admin/assets/vendors/js/circle-progress.min.js"></script>
     <!--! END: Vendors JS !-->
     <script src="/admin/assets/vendors/js/select2.min.js"></script>
@@ -105,6 +107,48 @@
                 console.error(error);
             });
     </script>
+    {{-- <script type="importmap">
+        {
+            "imports": {
+                "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.js",
+                "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.3.1/"
+            }
+        }
+    </script>
+    <script type="module">
+        import {
+            ClassicEditor,
+            Essentials,
+            Paragraph,
+            Bold,
+            Italic,
+            Font
+        } from 'ckeditor5';
+
+        ClassicEditor
+            .create( document.querySelector( '#editor' ), {
+                plugins: [ Essentials, Paragraph, Bold, Italic, Font ],
+                toolbar: [
+                    'undo', 'redo', '|', 'bold', 'italic', '|',
+                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
+                ]
+            } )
+            .then( editor => {
+                window.editor = editor;
+            } )
+            .catch( error => {
+                console.error( error );
+            } );
+    </script> --}}
+    <!-- A friendly reminder to run on a server, remove this during the integration. -->
+    {{-- <script>
+            window.onload = function() {
+                if ( window.location.protocol === "file:" ) {
+                    alert( "This sample requires an HTTP server. Please serve this file with a web server." );
+                }
+            };
+    </script> --}}
+    
 </body>
 
 
