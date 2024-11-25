@@ -20,4 +20,7 @@ class Event extends Model
         'slug',
         'status'
     ];
+    public function banner(){
+        return $this->belongsTo(Banner::class,'event_id');
+    }
 }
