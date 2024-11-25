@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryPostController;
 use App\Http\Controllers\Admin\CategoryProductController;
@@ -102,6 +103,8 @@ Route::prefix('/Administration')->group(function () {
         Route::put('/{product_slug}', [ProductController::class, 'update'])->name('Administration.products.update');
         Route::delete('/delete-multiple', [ProductController::class, 'deleteMultiple'])->name('Administration.products.deleteMultiple');
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('Administration.products.destroy');
+        Route::post('/delete-image', [ProductController::class, 'destroyImage'])->name('Administration.products.destroyImage');
+        Route::post('/create-list-images', [ProductController::class, 'createListImages'])->name('Administration.products.createListImages');
     });
 
     // ROUTE CATEGORY PRODUCT
@@ -190,11 +193,15 @@ Route::prefix('/')->group(function () {
     Route::get('posts/detail-{slug}', [ClientPostController::class, 'index'])->name('Client.posts.detail');
 
     // ROUTE ORDER
-    Route::get('orders', [ClientOrderController::class, 'index'])->name('Client.orders.list');
+    Route::get('orders', [ClientOrderController::class, 'index'])->middleware('auth')->name('Client.orders.list');
     Route::get('orders/create', [ClientOrderController::class, 'create'])->name('Client.orders.create');
     Route::post('orders', [ClientOrderController::class, 'store'])->name('Client.orders.store');
-    Route::get('orders/{order}', [ClientOrderController::class, 'show'])->name('Client.orders.show');
+    Route::get('orders/{order_code}/{order_id}', [ClientOrderController::class, 'show'])->middleware('auth')->name('Client.orders.show');
     Route::put('orders/{order}', [ClientOrderController::class, 'show'])->name('Client.orders.update');
+    Route::post('order/{order_code}/{order_id}/cancel', [CLientOrderController::class, 'cancel'])->middleware('auth')->name('Client.orders.cancel');
+    Route::post('order/{order_code}/{order_id}/confirmDelivered', [CLientOrderController::class, 'confirmDelivered'])->middleware('auth')->name('Client.orders.confirmDelivered');
+
+  
 
     // ROUTE EVENT
     // Route::get('events/',[ClientEventController::class],'list')->name('Client.events.list');

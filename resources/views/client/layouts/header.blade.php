@@ -1946,8 +1946,7 @@
                 </div><span class="menu_bar-title caption2 font-semibold">Cart</span>
             </a></div>
     </div>
-    <div
-        class="slider-block style-one bg-linear xl:h-[860px] lg:h-[800px] md:h-[580px] sm:h-[500px] h-[350px] max-[420px]:h-[320px] w-full">
+    <div class="slider-block style-one bg-linear xl:h-[860px] lg:h-[800px] md:h-[580px] sm:h-[500px] h-[350px] max-[420px]:h-[320px] w-full">
         <div class="slider-main h-full w-full">
             <div class="swiper h-full relative">
                 <div class="swiper-wrapper">
