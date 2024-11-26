@@ -118,7 +118,7 @@ class EventController extends Controller
     }
     public function remove(Request $request, string $slug)
     {
-        if($request->products){
+        if ($request->products) {
             foreach ($request->products as $product) {
                 ProductEvent::where('product_id', '=', $product, 'AND', 'events.slug', '=', $slug)
                     ->join('events', 'events.event_id', '=', 'product_event.event_id')
@@ -130,7 +130,7 @@ class EventController extends Controller
     public function add(Request $request, string $slug)
     {
         $event = Event::where('slug', $slug)->first();
-        if($request->products){
+        if ($request->products) {
             foreach ($request->products as $product) {
                 ProductEvent::create(['event_id' => $event->event_id, 'product_id' => $product]);
             }

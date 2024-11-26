@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryPostController;
 use App\Http\Controllers\Admin\CategoryProductController;
@@ -110,7 +111,8 @@ Route::prefix('/Administration')->group(function () {
         Route::get('/create', [CategoryProductController::class, 'create'])->name('Administration.categoryProduct.create');
         Route::post('/create', [CategoryProductController::class, 'store'])->name('Administration.categoryProduct.store');
         Route::get('/{slug}', [CategoryProductController::class, 'show'])->name('Administration.categoryProduct.show');
-        Route::put('/{category}', [CategoryProductController::class, 'update'])->name('Administration.categoryProduct.update');
+        Route::get('/{category}/edit', [CategoryProductController::class, 'edit'])->name('Administration.categoryProduct.edit');
+        Route::put('/{category}/update', [CategoryProductController::class, 'update'])->name('Administration.categoryProduct.update');
         Route::delete('/{category}', [CategoryProductController::class, 'destroy'])->name('Administration.categoryProduct.destroy');
     });
 
@@ -120,6 +122,7 @@ Route::prefix('/Administration')->group(function () {
         Route::get('/create', [CategoryPostController::class, 'create'])->name('Administration.categoryPost.create');
         Route::post('/create', [CategoryPostController::class, 'store'])->name('Administration.categoryPost.store');
         Route::get('/{slug}', [CategoryPostController::class, 'show'])->name('Administration.categoryPost.show');
+        Route::get('/{category}/edit', [CategoryPostController::class, 'edit'])->name('Administration.categoryPost.edit');
         Route::put('/{category}', [CategoryPostController::class, 'update'])->name('Administration.categoryPost.update');
         Route::delete('/{category}', [CategoryPostController::class, 'destroy'])->name('Administration.categoryPost.destroy');
     });
