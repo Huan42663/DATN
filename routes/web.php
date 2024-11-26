@@ -6,6 +6,10 @@ use App\Http\Controllers\Admin\CategoryPostController;
 use App\Http\Controllers\Admin\CategoryProductController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\CategoryPostController;
+use App\Http\Controllers\Admin\CategoryProductController;
+use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PostController;
@@ -181,7 +185,7 @@ Route::prefix('/')->group(function () {
 
     // ROUTE PRODUCT
     Route::get('products', [CLientProductController::class, 'index'])->name('Client.product.list');
-    Route::get('products/search?{keyword}', [CLientProductController::class, 'index'])->name('Client.product.search');
+    Route::get('products/search', [CLientProductController::class, 'index'])->name('Client.product.search');
     Route::get('products/{slug}', [CLientProductController::class, 'index'])->name('Client.product.category');
     Route::get('products/detail-{slug}', [CLientProductController::class, 'index'])->name('Client.product.detail');
 

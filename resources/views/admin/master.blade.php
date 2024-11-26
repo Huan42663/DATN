@@ -28,6 +28,7 @@
     <link rel="stylesheet" type="text/css" href="/admin/assets/vendors/css/select2-theme.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.css">
     <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css">
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" />
     <!--! END: Vendors CSS-->
@@ -60,12 +61,36 @@
     <main class="nxl-container">
         <div class="nxl-content">
             @yield('page-header')
-
+            <div class="page-header-left d-flex align-items-center">
+                <div class="page-header-title">
+                    <h5 class="m-b-10">@yield('model')</h5>
+                </div>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item">@yield('function')</li>
+                </ul>
+            </div>
+            <div class="page-header-right ms-auto">
+                <div class="page-header-right-items">
+                    <div class="d-flex d-md-none">
+                        <a href="javascript:void(0)" class="page-header-right-close-toggle">
+                            <i class="feather-arrow-left me-2"></i>
+                            <span>Back</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="d-md-none d-flex align-items-center">
+                    <a href="javascript:void(0)" class="page-header-right-open-toggle">
+                        <i class="feather-align-right fs-20"></i>
+                    </a>
+                </div>
+            </div>
             @yield('content')
 
         </div>
 
         @include('admin.layouts.footer')
+        {{-- @vite('resources/js/voucher.js') --}}
         {{-- @vite('resources/js/voucher.js') --}}
     </main>
     <!--! ================================================================ !-->
@@ -81,6 +106,7 @@
     <script src="/admin/assets/vendors/js/vendors.min.js"></script>
     <!-- vendors.min.js {always must need to be top} -->
     <script src="/admin/assets/vendors/js/daterangepicker.min.js"></script>
+    {{-- <script src="/admin/assets/vendors/js/apexcharts.min.js"></script> --}}
     {{-- <script src="/admin/assets/vendors/js/apexcharts.min.js"></script> --}}
     <script src="/admin/assets/vendors/js/circle-progress.min.js"></script>
     <!--! END: Vendors JS !-->
