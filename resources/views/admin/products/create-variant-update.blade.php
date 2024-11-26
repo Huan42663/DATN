@@ -11,7 +11,7 @@
             <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ Route('Administration.products.list') }}">List</a></li>
                 <li class="breadcrumb-item"><a href="{{ url()->previous() }}">Show</a></li>
-                
+
 
                 <li class="breadcrumb-item">create-Variant</li>
             </ul>
@@ -41,39 +41,51 @@
                                 @csrf
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="status" class="fw-semibold"> color </label>
+                                        <label for="status" class="fw-semibold">Color</label>
                                     </div>
 
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <select class="form-select form-control max-select"
-                                                data-select2-selector="tag" data-max-select2="tag" multiple
-                                                name="colors[]">
-                                                <option value="0">ALL</option>
+                                            <select class="form-select form-control max-select" data-select2-selector="tag"
+                                                data-max-select2="tag" multiple name="colors[]">
+                                                <option value="0"
+                                                    {{ in_array(0, old('colors', [])) ? 'selected' : '' }}>ALL</option>
                                                 @foreach ($colors as $key => $item)
-                                                    <option value="{{ $item->color_id }}">{{ $item->color_name }}</option>
+                                                    <option value="{{ $item->color_id }}"
+                                                        {{ in_array($item->color_id, old('colors', [])) ? 'selected' : '' }}>
+                                                        {{ $item->color_name }}
+                                                    </option>
                                                 @endforeach
-
                                             </select>
+                                            @error('colors')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
-
                                     </div>
                                 </div>
+
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
                                         <label for="status" class="fw-semibold"> Size </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <select class="form-select form-control max-select"
-                                                data-select2-selector="tag" data-max-select2="tag" multiple
-                                                name="sizes[]">
-                                                <option value="0">ALL</option>
+                                            <select class="form-select form-control max-select" data-select2-selector="tag"
+                                                data-max-select2="tag" multiple name="sizes[]">
+                                                <option value="0"
+                                                    {{ in_array(0, old('sizes', [])) ? 'selected' : '' }}>ALL</option>
                                                 @foreach ($sizes as $key => $item)
-                                                    <option value="{{ $item->size_id }}">{{ $item->size_name }}</option>
+                                                    <option value="{{ $item->size_id }}"
+                                                        {{ in_array($item->size_id, old('sizes', [])) ? 'selected' : '' }}>
+                                                        {{ $item->size_name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
+                                            @error('sizes')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
+
                                     </div>
                                 </div>
                                 <div class="row mb-4 align-items-center">
@@ -82,12 +94,13 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="price" name="price"
-                                                placeholder="price">
-                                            @error('product_name')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
+                                            <input type="number" class="form-control" id="price" name="price"
+                                                placeholder="price" value={{ old('price') }}>
+
                                         </div>
+                                        @error('price')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="row mb-4 align-items-center">
@@ -96,9 +109,13 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="sale_price" name="sale_price"
-                                                placeholder="price sale">
+                                            <input type="number" class="form-control" id="sale_price" name="sale_price"
+                                                placeholder="price sale" value={{ old('sale_price') }}>
+
                                         </div>
+                                        @error('sale_price')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="row mb-4 align-items-center">
@@ -107,9 +124,13 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="quantity" name="quantity"
-                                                placeholder="Quantity">
+                                            <input type="number" class="form-control" id="quantity" name="quantity"
+                                                placeholder="Quantity" value={{ old('quantity') }}>
+
                                         </div>
+                                        @error('quantity')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="row mb-4 align-items-center">
@@ -118,12 +139,16 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="weight" name="weight"
-                                                placeholder="Weight">
+                                            <input type="number" class="form-control" id="weight" name="weight"
+                                                placeholder="Weight" value={{ old('weight') }}>
+
                                         </div>
+                                        @error('weight')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
-                                {{-- <input type="hidden" name="action" value="update"> --}}
+                                <input type="hidden" name="action" value="update">
                                 <div class="row">
                                     <button type="submit" class="btn btn-lg btn-light-brand">Add New</button>
                                 </div>

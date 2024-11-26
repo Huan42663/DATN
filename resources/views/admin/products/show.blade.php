@@ -25,9 +25,10 @@
                         @foreach ($data1 as $product)
                             <div class="mb-4 text-center">
                                 <div class="wd-150 ht-150 mx-auto mb-3 position-relative">
-                                   
+
                                     <div class=" wd-150 ht-150 border border-5 border-gray-3">
-                                        <img src="{{ asset('storage/public/images/products/' . $product->product_image) }}" alt="Product Image" class="img-fluid">
+                                        <img width="100%" src="{{ asset('storage/' . $product->product_image) }}"
+                                            alt="Product Image" class="img-fluid">
                                     </div>
                                     <div class="wd-10 ht-10 text-success rounded-circle position-absolute translate-middle"
                                         style="top: 76%; right: 10px">
@@ -90,7 +91,6 @@
                                                 <th>Price</th>
                                                 <th>Sale Price</th>
                                                 <th>Quantity</th>
-                                                <th class="text-end">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -126,7 +126,7 @@
                                                     <td>
                                                         {{ $variant->quantity }}
                                                     </td>
-                                                    <td class="text-end">
+                                                    {{-- <td class="text-end">
                                                         <div class="hstack gap-2 justify-content-end">
                                                             <a href="javascript:void(0);" class="avatar-text avatar-md">
                                                                 <i class="feather-edit"></i>
@@ -135,7 +135,7 @@
                                                                 <i class="feather-trash-2"></i>
                                                             </a>
                                                         </div>
-                                                    </td>
+                                                    </td> --}}
                                                 </tr>
                                             @endforeach
 
@@ -156,42 +156,59 @@
                                 </div>
                             </div>
                             <div class="profile-details mb-5">
-                                <button class="btn btn-primary">
-                                    <i class="feather-plus me-2"></i>
-                                    <span>ADD New</span>
-                                </button>
-                                <table id="example" class="table table-hover mb-0">
-                                    {{-- @foreach ($data[1] as $image)
+                                <form action="{{ route('Administration.products.createListImages') }}"
+                                    enctype="multipart/form-data" method="POST">
+                                    @csrf
+                                    <div class="form-group">
+                                        <input type="file" name="imageColor[]" class="form-control" multiple>
+                                        <input type="hidden" name="product_id" value="{{ $data1[0]->product_id }}"
+                                            id="">
+                                        <button class="mt-1 btn btn-primary group-text">
+                                            <i class="feather-plus me-2"></i>
+                                            <a href="">
+                                                <span>ADD New</span>
+                                            </a>
+                                        </button>
+                                    </div>
+                                </form>
+                                <form action="{{ route('Administration.products.destroyImage') }}" method="post">
+                                    @csrf
+                                    {{-- @method('DELETE') --}}
+                                    <table id="example" class="table table-hover mb-0">
                                         <thead>
                                             <tr>
-                                                <th>{{ $image->image_color_name }}</th>
-                                                <th class="text-end">Actions</th>
+                                                <th></th>
+                                                <th>Image</th>
                                             </tr>
-
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>
-                                                    <div class="hstack gap-3">
-                                                        <div class="avatar-image avatar-lg rounded">
-                                                            <img class="img-fluid w-5000"
-                                                                src="{{ Storage::url($image->image_color_name) }}"
-                                                                alt="">
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="text-end">
-                                                    <div class="hstack gap-2 justify-content-center align-item-center">
-                                                        <a href="javascript:void(0);" class="avatar-text avatar-md">
-                                                            <i class="feather-trash-2"></i>
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    @endforeach --}}
+                                            @foreach ($data3 as $variant)
+                                                <tr>
+                                                    <td>
+                                                        <input type="checkbox" name="imageColor[]"
+                                                            value="{{ $variant->image_color_id }}">
+                                                    </td>
+                                                    <td>
 
-                                </table>
+                                                        <div class="hstack gap-3">
+                                                            <div>
+                                                                <img width="100px"
+                                                                    src="{{ asset('storage/' . $variant->image_color_name) }}"
+                                                                    alt="">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+                                                </tr>
+                                            @endforeach
+
+                                        </tbody>
+                                    </table>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="feather-minus me-2"></i>
+                                        <span>DELETE</span>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>

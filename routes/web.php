@@ -49,32 +49,40 @@ Route::prefix('/Administration')->group(function () {
 
     // ROUTE SIZE
     Route::prefix('sizes')->group(function () {
-        Route::get('/', [SizeController::class, 'index'])->name('Administration.sizes.list');
-        Route::get('/create', [SizeController::class, 'create'])->name('Administration.sizes.create');
-        Route::post('/create', [SizeController::class, 'store'])->name('Administration.sizes.store');
-        Route::get('/{size_name}', [SizeController::class, 'show'])->name('Administration.sizes.show');
+        Route::get('/', [SizeController::class, 'index'])->name('Administration.sizes.list'); 
+        Route::post('/', [SizeController::class, 'store'])->name('Administration.sizes.store'); 
+        Route::get('/{size_id}', [SizeController::class, 'show'])->name('Administration.sizes.show'); 
         Route::put('/{size}', [SizeController::class, 'update'])->name('Administration.sizes.update');
         Route::delete('/{size}', [SizeController::class, 'destroy'])->name('Administration.sizes.destroy');
     });
 
     // ROUTE COLOR
     Route::prefix('colors')->group(function () {
-        Route::get('/', [ColorController::class, 'index'])->name('Administration.colors.list');
-        Route::get('/create', [ColorController::class, 'create'])->name('Administration.colors.create');
-        Route::post('/create', [ColorController::class, 'store'])->name('Administration.colors.store');
-        Route::get('/{color_name}', [ColorController::class, 'show'])->name('Administration.colors.show');
+        Route::get('/', [ColorController::class, 'index'])->name('Administration.colors.list'); 
+        Route::post('/', [ColorController::class, 'store'])->name('Administration.colors.store'); 
+        Route::get('/{color_id}', [ColorController::class, 'show'])->name('Administration.colors.show'); 
         Route::put('/{color}', [ColorController::class, 'update'])->name('Administration.colors.update');
-        Route::delete('/{color}', [ColorController::class, 'destroy'])->name('Administration.colors.delete');
+        Route::delete('/{color}', [ColorController::class, 'destroy'])->name('Administration.colors.destroy');
     });
 
     // ROUTE POST
     Route::prefix('posts')->group(function () {
-        Route::get('/', [PostController::class, 'index'])->name('Administration.posts.list');
-        Route::get('/create', [PostController::class, 'create'])->name('Administration.posts.create');
+        Route::get('/', [PostController::class, 'index'])->name('Administration.posts.list'); 
+        Route::get('/create', [PostController::class, 'create'])->name('Administration.posts.create'); 
         Route::post('/create', [PostController::class, 'store'])->name('Administration.posts.store');
-        Route::get('/{slug}', [PostController::class, 'show'])->name('Administration.posts.show');
-        Route::put('/{post', [PostController::class, 'update'])->name('Administration.posts.update');
+        Route::get('/{slug}', [PostController::class, 'show'])->name('Administration.posts.show'); 
+        Route::put('/{post}', [PostController::class, 'update'])->name('Administration.posts.update');
         Route::delete('/{post}', [PostController::class, 'destroy'])->name('Administration.posts.destroy');
+    });
+
+    // ROUTE VOUCHER
+    Route::prefix('vouchers')->group(function () {
+        Route::get('/', [VoucherController::class, 'index'])->name('Administration.vouchers.list'); 
+        Route::get('/create', [VoucherController::class, 'create'])->name('Administration.vouchers.create'); 
+        Route::post('/create', [VoucherController::class, 'store'])->name('Administration.vouchers.store');
+        Route::get('/{voucher_code}', [VoucherController::class, 'show'])->name('Administration.vouchers.show'); 
+        Route::put('/{voucher}', [VoucherController::class, 'update'])->name('Administration.vouchers.update');
+        Route::delete('/{voucher}', [VoucherController::class, 'destroy'])->name('Administration.vouchers.destroy');
     });
 
     // ROUTE VOUCHER
@@ -103,6 +111,8 @@ Route::prefix('/Administration')->group(function () {
         Route::put('/{product_slug}', [ProductController::class, 'update'])->name('Administration.products.update');
         Route::delete('/delete-multiple', [ProductController::class, 'deleteMultiple'])->name('Administration.products.deleteMultiple');
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('Administration.products.destroy');
+        Route::post('/delete-image', [ProductController::class, 'destroyImage'])->name('Administration.products.destroyImage');
+        Route::post('/create-list-images', [ProductController::class, 'createListImages'])->name('Administration.products.createListImages');
     });
 
     // ROUTE CATEGORY PRODUCT
@@ -176,28 +186,34 @@ Route::prefix('/')->group(function () {
     Route::get('products/detail-{slug}', [CLientProductController::class, 'index'])->name('Client.product.detail');
 
     // ROUTE CART
-    Route::get('cart', [CartController::class, 'index'])->name('Client.cart.list');
-    Route::put('cart/{product}', [CartController::class, 'update'])->name('Client.cart.update');
-    Route::delete('cart/{product}', [CartController::class, 'destroy'])->name('Client.cart.destroy');
+    Route::get('cart', [CartController::class,'index'])->name('Client.cart.list');
+    Route::post('cart', [CartController::class,'UpdateCartDetail'])->name('Client.cart.update');
+    Route::delete('cart', [CartController::class,'DestroyCart'])->name('Client.cart.destroy');
 
     // ROUTE ACCOUNT USER, LOGIN, REGISTER, FORGOT PASSWORD
     Route::get('account', [AuthController::class, 'show'])->name('Client.account.show');
     Route::put('account', [AuthController::class, 'update'])->name('Client.account.update');
     Route::put('forgotPassword', [AuthController::class, 'update'])->name('Client.account.update');
     Route::get('login', [AuthController::class, 'showLoginForm'])->name('Client.account.showLoginForm');
+    Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::get('logout', [AuthController::class, 'logout'])->name('Client.account.logout');
     Route::get('register', [AuthController::class, 'showRegisterForm'])->name('Client.account.showRegisterForm');
+    Route::post('register', [AuthController::class, 'register'])->name('register');
 
     // ROUTE POST
     Route::get('posts/{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');
     Route::get('posts/detail-{slug}', [ClientPostController::class, 'index'])->name('Client.posts.detail');
 
     // ROUTE ORDER
-    Route::get('orders', [ClientOrderController::class, 'index'])->name('Client.orders.list');
+    Route::get('orders', [ClientOrderController::class, 'index'])->middleware('auth')->name('Client.orders.list');
     Route::get('orders/create', [ClientOrderController::class, 'create'])->name('Client.orders.create');
     Route::post('orders', [ClientOrderController::class, 'store'])->name('Client.orders.store');
-    Route::get('orders/{order}', [ClientOrderController::class, 'show'])->name('Client.orders.show');
+    Route::get('orders/{order_code}/{order_id}', [ClientOrderController::class, 'show'])->middleware('auth')->name('Client.orders.show');
     Route::put('orders/{order}', [ClientOrderController::class, 'show'])->name('Client.orders.update');
+    Route::post('order/{order_code}/{order_id}/cancel', [CLientOrderController::class, 'cancel'])->middleware('auth')->name('Client.orders.cancel');
+    Route::post('order/{order_code}/{order_id}/confirmDelivered', [CLientOrderController::class, 'confirmDelivered'])->middleware('auth')->name('Client.orders.confirmDelivered');
+
+  
 
     // ROUTE EVENT
     // Route::get('events/',[ClientEventController::class],'list')->name('Client.events.list');
@@ -205,3 +221,4 @@ Route::prefix('/')->group(function () {
 
 
 })->name('Client');
+

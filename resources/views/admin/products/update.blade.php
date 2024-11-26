@@ -10,6 +10,8 @@
             </div>
             <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ Route('Administration.products.list') }}">List</a></li>
+                <li class="breadcrumb-item"> <a
+                        href="{{ Route('Administration.products.show', $product->product_slug) }}">Show</a></li>
                 <li class="breadcrumb-item">Update</li>
             </ul>
         </div>
@@ -24,8 +26,13 @@
                     <div class="tab-content">
                         <div class="card-body">
                             <h5 class="fw-bold mb-4">Cập nhật sản phẩm</h5>
-
-                            <form action="{{ route('Administration.products.update', $product->product_slug) }}" method="POST" enctype="multipart/form-data">
+                            @if (session('message'))
+                                <div class="alert alert-success">
+                                    {{ session('message') }}
+                                </div>
+                            @endif
+                            <form action="{{ route('Administration.products.update', $product->product_slug) }}"
+                                method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
 
@@ -45,8 +52,10 @@
                                         <div class="form-group">
                                             <label for="status" class="fw-semibold">Trạng thái:</label>
                                             <select name="status" id="status" class="form-control">
-                                                <option value="1" {{ $product->status == 1 ? 'selected' : '' }}>Hoạt động</option>
-                                                <option value="2" {{ $product->status == 2 ? 'selected' : '' }}>Ngừng hoạt động</option>
+                                                <option value="1" {{ $product->status == 1 ? 'selected' : '' }}>Hoạt
+                                                    động</option>
+                                                <option value="2" {{ $product->status == 2 ? 'selected' : '' }}>Ngừng
+                                                    hoạt động</option>
                                             </select>
                                         </div>
                                     </div>
@@ -63,10 +72,12 @@
                                         <div class="form-group">
                                             <label for="product_image" class="fw-semibold">Hình ảnh sản phẩm:</label>
                                             @if ($product->product_image)
-                                                <img src="{{ asset('storage/images/products/' . $product->product_image) }}" 
-                                                    alt="Hình ảnh sản phẩm" class="img-thumbnail mb-2" style="max-width: 100%; height: auto;">
+                                                <img width="100px" src="{{ asset('storage/' . $product->product_image) }}"
+                                                    alt="Hình ảnh sản phẩm" class="img-thumbnail mb-2"
+                                                    style="max-width: 100%; height: auto;">
                                             @endif
-                                            <input type="file" class="form-control" id="product_image" name="product_image">
+                                            <input type="file" class="form-control" id="product_image"
+                                                name="product_image">
                                         </div>
                                     </div>
                                 </div>
@@ -74,7 +85,7 @@
                                 <hr class="my-4">
 
                                 <h5 class="fw-bold mb-3">Biến thể sản phẩm</h5>
-                                
+
                                 <!-- Hiển thị từng biến thể -->
                                 <div class="row">
                                     @foreach ($productVariants as $index => $variant)
@@ -83,11 +94,15 @@
                                                 <h6 class="fw-semibold">Biến thể {{ $index + 1 }}</h6>
 
                                                 <div class="form-group mb-3">
-                                                    <label for="size_{{ $index }}" class="fw-semibold">Kích cỡ:</label>
-                                                    <select name="variants[{{ $index }}][size_id]" id="size_{{ $index }}" class="form-control">
-                                                        <option value="0" {{ $variant->size_id == 0 ? 'selected' : '' }}>Tất cả</option>
+                                                    <label for="size_{{ $index }}" class="fw-semibold">Kích
+                                                        cỡ:</label>
+                                                    <select name="variants[{{ $index }}][size_id]"
+                                                        id="size_{{ $index }}" class="form-control">
+                                                        <option value="0"
+                                                            {{ $variant->size_id == 0 ? 'selected' : '' }}>Tất cả</option>
                                                         @foreach ($sizes as $size)
-                                                            <option value="{{ $size->size_id }}" {{ $variant->size_id == $size->size_id ? 'selected' : '' }}>
+                                                            <option value="{{ $size->size_id }}"
+                                                                {{ $variant->size_id == $size->size_id ? 'selected' : '' }}>
                                                                 {{ $size->size_name }}
                                                             </option>
                                                         @endforeach
@@ -95,11 +110,15 @@
                                                 </div>
 
                                                 <div class="form-group mb-3">
-                                                    <label for="color_{{ $index }}" class="fw-semibold">Màu sắc:</label>
-                                                    <select name="variants[{{ $index }}][color_id]" id="color_{{ $index }}" class="form-control">
-                                                        <option value="0" {{ $variant->color_id == 0 ? 'selected' : '' }}>Tất cả</option>
+                                                    <label for="color_{{ $index }}" class="fw-semibold">Màu
+                                                        sắc:</label>
+                                                    <select name="variants[{{ $index }}][color_id]"
+                                                        id="color_{{ $index }}" class="form-control">
+                                                        <option value="0"
+                                                            {{ $variant->color_id == 0 ? 'selected' : '' }}>Tất cả</option>
                                                         @foreach ($colors as $color)
-                                                            <option value="{{ $color->color_id }}" {{ $variant->color_id == $color->color_id ? 'selected' : '' }}>
+                                                            <option value="{{ $color->color_id }}"
+                                                                {{ $variant->color_id == $color->color_id ? 'selected' : '' }}>
                                                                 {{ $color->color_name }}
                                                             </option>
                                                         @endforeach
@@ -108,26 +127,37 @@
 
                                                 <div class="form-group mb-3">
                                                     <label for="price_{{ $index }}" class="fw-semibold">Giá:</label>
-                                                    <input type="text" class="form-control" id="price_{{ $index }}" 
-                                                        name="variants[{{ $index }}][price]" value="{{ $variant->price }}" placeholder="Giá">
+                                                    <input type="text" class="form-control"
+                                                        id="price_{{ $index }}"
+                                                        name="variants[{{ $index }}][price]"
+                                                        value="{{ $variant->price }}" placeholder="Giá">
                                                 </div>
 
                                                 <div class="form-group mb-3">
-                                                    <label for="sale_price_{{ $index }}" class="fw-semibold">Giá giảm:</label>
-                                                    <input type="text" class="form-control" id="sale_price_{{ $index }}" 
-                                                        name="variants[{{ $index }}][sale_price]" value="{{ $variant->sale_price }}" placeholder="Giá giảm">
+                                                    <label for="sale_price_{{ $index }}" class="fw-semibold">Giá
+                                                        giảm:</label>
+                                                    <input type="text" class="form-control"
+                                                        id="sale_price_{{ $index }}"
+                                                        name="variants[{{ $index }}][sale_price]"
+                                                        value="{{ $variant->sale_price }}" placeholder="Giá giảm">
                                                 </div>
 
                                                 <div class="form-group mb-3">
-                                                    <label for="quantity_{{ $index }}" class="fw-semibold">Số lượng:</label>
-                                                    <input type="text" class="form-control" id="quantity_{{ $index }}" 
-                                                        name="variants[{{ $index }}][quantity]" value="{{ $variant->quantity }}" placeholder="Số lượng">
+                                                    <label for="quantity_{{ $index }}" class="fw-semibold">Số
+                                                        lượng:</label>
+                                                    <input type="text" class="form-control"
+                                                        id="quantity_{{ $index }}"
+                                                        name="variants[{{ $index }}][quantity]"
+                                                        value="{{ $variant->quantity }}" placeholder="Số lượng">
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label for="weight_{{ $index }}" class="fw-semibold">Trọng lượng:</label>
-                                                    <input type="text" class="form-control" id="weight_{{ $index }}" 
-                                                        name="variants[{{ $index }}][weight]" value="{{ $variant->weight }}" placeholder="Trọng lượng">
+                                                    <label for="weight_{{ $index }}" class="fw-semibold">Trọng
+                                                        lượng:</label>
+                                                    <input type="text" class="form-control"
+                                                        id="weight_{{ $index }}"
+                                                        name="variants[{{ $index }}][weight]"
+                                                        value="{{ $variant->weight }}" placeholder="Trọng lượng">
                                                 </div>
                                             </div>
                                         </div>

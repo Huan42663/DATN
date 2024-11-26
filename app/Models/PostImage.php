@@ -10,6 +10,7 @@ class PostImage extends Model
 {
     use HasFactory;
     protected $table = 'post_image';
+    protected $primaryKey = 'post_image_id';
     protected $fillable =[
         'post_image_id',
         'image_name',

@@ -48,9 +48,6 @@
                                         <th>Quantity</th>
                                     </thead>
                                     <tbody>
-                                        {{-- @php
-                                            dd($_SESSION['data']);
-                                        @endphp --}}
                                         @foreach ($_SESSION['data'] as $item)
                                             <tr>
                                                 <td>

@@ -58,7 +58,8 @@
                                         <td>
                                             <div class="hstack gap-3">
                                                 <div class="avatar-image avatar-lg rounded">
-                                                    <img class="img-fluid" src="{{ asset('storage/public/images/products/' . $product->product_image) }}"
+                                                    <img width="100%" class="img-fluid"
+                                                        src="{{ asset('storage/' . $product->product_image) }}"
                                                         alt="Image">
                                                 </div>
 
@@ -75,7 +76,13 @@
                                                 class="d-block mb-1">{{ $product->product_image }}</a>
                                         </td>
                                         <td>
-                                            <a href="javascript:void(0);" class="d-block mb-1">{{ $product->status }}</a>
+                                            <a href="javascript:void(0);" class="d-block mb-1">
+                                                @if ($product->status == 1)
+                                                    Active
+                                                @elseif ($product->status == 2)
+                                                    Inactive
+                                                @endif
+                                            </a>
                                         </td>
                                         <td class="text-end">
                                             <div class="hstack gap-2 justify-content-end">
@@ -90,11 +97,11 @@
 
                                                 <form style="border-radius: none"
                                                     action="{{ route('Administration.products.destroy', $product->product_id) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa không?');">
+                                                    method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="avatar-text avatar-md">
+                                                    <button type="submit" class="avatar-text avatar-md"
+                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">
                                                         <i class="feather-trash-2 "></i>
                                                     </button>
                                                 </form>
@@ -109,7 +116,7 @@
                             <i class="feather-trash-2 me-2"></i> Delete
                         </button>
                     </form>
-                    
+
                 </div>
             </div>
         </div>
