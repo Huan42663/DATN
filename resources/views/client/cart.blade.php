@@ -11,6 +11,7 @@
     <div class="container mt-3">
         <div class="content-main flex justify-between max-xl:flex-col gap-y-8">
             <div class="xl:w-2/3 xl:pr-3 w-full">
+                @if(isset($cart['Cart']) && !empty($cart['Cart']))
                 <div class="heading bora-4"  style="border:2px solid black; border-radius:20px; padding:20px;">
                     <form action="{{route('Client.cart.destroy')}}" method="post">
                         @csrf
@@ -81,11 +82,11 @@
                         <button  class="btn btn-dark"  type="submit" style="background-color: black">Xóa Sản Phẩm</button>
                     </form>
                 </div>
-                
-                {{-- <div class="list-product-main w-full mt-3">
-                    <p class="text-button pt-3">No product in cart</p>
-                </div> --}}
-                    
+                @else
+                    <div class="list-product-main w-full mt-3">
+                        <p class="text-button pt-3">No product in cart</p>
+                    </div>
+                @endif
             </div>
             <div class="xl:w-1/3 xl:pl-12 w-full" >
                 <div class="checkout-block bg-surface p-6 rounded-2xl "  style="border:2px solid black">

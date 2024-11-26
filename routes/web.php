@@ -177,11 +177,11 @@ Route::prefix('/Administration')->group(function () {
 Route::prefix('/')->group(function () {
 
     // ROUTE HOME
-    Route::get('/', [HomeController::class, 'index'])->name('Client.Home');
+    Route::get('/', [CLientHomeController::class, 'index'])->name('Client.Home');
 
     // ROUTE PRODUCT
     Route::get('products', [CLientProductController::class, 'index'])->name('Client.product.list');
-    Route::get('products/search', [CLientProductController::class, 'index'])->name('Client.product.search');
+    Route::get('products/search', [CLientProductController::class, 'search'])->name('Client.product.search');
     Route::get('products/{slug}', [CLientProductController::class, 'index'])->name('Client.product.category');
     Route::get('products/detail-{slug}', [CLientProductController::class, 'index'])->name('Client.product.detail');
 
