@@ -38,8 +38,9 @@
     <meta name="description" content="Multipurpose eCommerce Template" />
     <link rel="icon" href="favicon.ico" type="image/x-icon" sizes="16x16" />
     <script src="{{asset('Client/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js')}}" crossorigin="" noModule=""></script>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tai+Viet&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 </head>
 
 <body class="__className_082e4d" style="background-color:rgb(249,246,241) ">

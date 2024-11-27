@@ -9,6 +9,35 @@ use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
+    public function index(){
+
+        $products = $this->product("","","");
+            if(isset($_GET['price'])){
+                $prices = explode("-", $_GET['price']);
+                $minPrice = $prices[0];
+                $maxPrice = $prices[1];
+                $products = $this->product("",$minPrice,$maxPrice);
+            }
+        return View('client.products',compact('products'));
+    }
+    public function search(){
+        $products ="";
+       if(isset($_GET['keyword'])){
+           $products = $this->product($_GET['keyword'],"","");
+           if(isset($_GET['price'])){
+                $prices = explode("-", $_GET['price']);
+                $minPrice = $prices[0];
+                $maxPrice = $prices[1];
+                $products = $this->product($_GET['keyword'],$minPrice,$maxPrice);
+                // dd($minPrice);
+           }
+          return View('client.product-search',compact('products'));
+       }
+       else{
+            return redirect()->route('Client.Home');
+       }
+        
+    }
     public function productDetail($slug)
     {
         // lấy ra thông tin của sản phẩm
@@ -128,5 +157,52 @@ class ProductController extends Controller
                 Response::HTTP_OK
             );
         }
+    }
+    function product($keyword,$minPrice,$maxPrice){
+        $product = "";
+        if(empty($keyword) && empty($minPrice) && empty($maxPrice)){
+            $product = Products::query()
+                        ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
+                        ->where('products.status',1)
+                        ->selectRaw('products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
+                        ->groupBy('products.product_id','products.product_name', 'products.product_image', 'product_slug')
+                        ->orderBy('products.product_id','desc')
+                        ->get();
+        }
+        if(empty($keyword) && $minPrice>=0 && $maxPrice>=0){
+            $product = Products::query()
+                        ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
+                        ->where('products.status',1)
+                        ->selectRaw('products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
+                        ->groupBy('products.product_id','products.product_name', 'products.product_image', 'product_slug')
+                        ->havingRaw("maxPrice >= $minPrice AND maxPrice <= $maxPrice")
+                        // ->having("maxPrice"," <= ",$maxPrice)
+                        ->orderBy('products.product_id','desc')
+                        ->get();
+        }
+        if(!empty($keyword) && empty($minPrice) && empty($maxPrice)){
+            $product = Products::query()
+                        ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
+                        ->where('products.status',1)
+                        ->where('products.product_name','LIKE',"%".$keyword."%")
+                        ->selectRaw('products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
+                        ->groupBy('products.product_id','products.product_name', 'products.product_image', 'product_slug')
+                        ->orderBy('products.product_id','desc')
+                        ->get();
+        }
+        if(!empty($keyword) && $minPrice>=0 && $maxPrice>=0){
+            $product = Products::query()
+                    ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
+                    ->where('products.status',1)
+                    ->where('products.product_name','LIKE',"%".$keyword."%")
+                    ->selectRaw('products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
+                    ->groupBy('products.product_id','products.product_name', 'products.product_image', 'product_slug')
+                    ->havingRaw("maxPrice >= $minPrice AND maxPrice <= $maxPrice")
+                    // ->having("maxPrice"," <= ",$maxPrice)
+                    ->orderBy('products.product_id','desc')
+                    ->get();
+            
+        }
+        return $product;
     }
 }

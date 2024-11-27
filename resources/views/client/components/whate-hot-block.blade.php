@@ -70,14 +70,14 @@
                 <div class="flex items-center gap-2 flex-wrap mt-1 duration-300 relative z-[1]">
                     <div class=" text-title">
                         @if ($product->minPrice > 0)
-                            {{number_format($product->minPrice, 0, ',', '.') . 'VNĐ';}}
+                            {{number_format($product->minPrice, 0, ',', '.') . ' VNĐ';}}
                         @else
-                            {{number_format($product->maxPrice, 0, ',', '.') . 'VNĐ';}}
+                            {{number_format($product->maxPrice, 0, ',', '.') . ' VNĐ';}}
                         @endif
                     </div>
                     <div class="product-origin-price caption1 text-secondary2"><del>
                         @if ($product->minPrice > 0)
-                            {{number_format($product->maxPrice, 0, ',', '.') . 'VNĐ';}}
+                            {{number_format($product->maxPrice, 0, ',', '.') . ' VNĐ';}}
                         @endif
                         </del>
                     </div>

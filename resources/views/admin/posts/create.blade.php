@@ -89,8 +89,11 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <textarea name="content" id="content" cols="30" rows="10" class="form-control">{{old('title')}}</textarea>
+                                            <textarea id="editor" name="description" rows="10" data-auto-grow="false" >{{old('title')}}</textarea>
                                         </div>
+                                        {{-- <div class="input-group">
+                                            <textarea name="content" id="content" cols="30" rows="10" class="form-control">{{old('title')}}</textarea>
+                                        </div> --}}
                                         @error('content')
                                         <span class="text-danger">{{$message}}</span>
                                         @enderror

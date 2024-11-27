@@ -168,4 +168,13 @@ class PostController extends Controller
             return redirect()->back()->with("success","Xóa bài viết thành công");
         }
     }
+    public function destroyImage(Post $post){
+        $image = PostImage::query()->where('post_id',$post->post_id)->get();
+        foreach($image as  $value) {
+            if (file_exists('storage/' . $value->image_name)) {
+                unlink('storage/' .  $value->image_name);
+            }
+            $value->delete();
+        }
+    }
 }

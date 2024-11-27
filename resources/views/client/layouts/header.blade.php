@@ -1052,7 +1052,7 @@
     $HOT = (new App\Models\Products())
         ::query()
         ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
-        ->join('order_detail', 'product_variant.product_variant_id', '=', 'order_detail.product_variant_id')
+        ->join('order_detail', 'products.product_id', '=', 'order_detail.product_id')
         ->join('orders', 'order_detail.order_id', '=', 'orders.order_id')
         ->where('products.status', 1)
         ->selectRaw(
@@ -1063,6 +1063,10 @@
         ->get();
     $category = (new App\Models\Category())::query()->get();
     $Banner = (new App\Models\Banner())::query()->get();
+    if(Auth::user()){
+        $Cart = (new App\Models\Cart())::query()->leftJoin('cart_detail','carts.cart_id','=','cart_detail.cart_id')
+        ->where('user_id',Auth::user()->id)->count();
+    }
 @endphp
 <div id="header" class="relative w-full">
     <div class="header-menu style-one absolute top-0 left-0 right-0 w-full md:h-[74px] h-[56px] bg-transparent">
@@ -1072,13 +1076,13 @@
                 </div>
                 <div class="left flex items-center gap-16"><a
                         class="flex items-center max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2"
-                        href="index.html">
-                        <div class="heading4">Anvogue</div>
+                        href="{{route('Client.Home')}}">
+                        <div class="heading4">JS STORE</div>
                     </a>
                     <div class="menu-main h-full max-lg:hidden">
                         <ul class="flex items-center gap-8 h-full">
                             <li class="h-full"><a
-                                    class="text-button-capitalize duration-300 h-full flex items-center justify-center font-semibold text-blue-500"
+                                    class="text-button-uppercase duration-300 h-full flex items-center justify-center font-semibold text-blue-500"
                                     href="#!">Danh Mục</a>
                                 <div class="mega-menu absolute top-[74px] left-0 bg-white w-screen">
                                     <div class="container">
@@ -1090,7 +1094,7 @@
                                                             <a class="text-decoration: underline"
                                                                 href="{{ route('Client.product.category', $item->category_slug) }}">
                                                                 <div
-                                                                    class="text-button-capitalize pb-2 font-semibold text-blue-500">
+                                                                    class="text-button-uppercase pb-2 font-semibold text-blue-500">
                                                                     {{ $item->category_name }}</div>
                                                             </a>
                                                             <ul>
@@ -1117,7 +1121,7 @@
                                                         class="banner-ads-item bg-linear rounded-2xl relative overflow-hidden cursor-pointer mt-2">
                                                         <div class="text-content py-14 pl-8 relative z-[1]">
                                                             <div
-                                                                class="text-button-capitalize text-white bg-red px-2 py-0.5 inline-block rounded-sm">
+                                                                class="text-button-uppercase text-white bg-red px-2 py-0.5 inline-block rounded-sm">
                                                                 HOT</div>
                                                             <div class="heading6 mt-2">{{ $item->product_name }}</div>
                                                             <div class="body1 mt-3 text-secondary">Starting at :
@@ -1144,12 +1148,12 @@
                                 </div>
                             </li>
                             <li class="h-full"><a
-                                    class="text-button-capitalize duration-300 h-full flex items-center justify-center font-semibold text-blue-500 "
+                                    class="text-button-uppercase duration-300 h-full flex items-center justify-center font-semibold text-blue-500 "
                                     href="{{ route('Client.product.list') }}">Sản Phẩm</a>
                             </li>
                             @foreach ($Category_post as $item)
                                 <li class="h-full">
-                                    <a class="text-button-capitalize duration-300 h-full flex items-center justify-center font-semibold text-blue-500 "
+                                    <a class="text-button-uppercase duration-300 h-full flex items-center justify-center font-semibold text-blue-500 "
                                         href="{{ route('Client.posts.category', $item->category_post_slug) }}">{{ $item->category_post_name }}
                                     </a>
                                 </li>
@@ -1162,7 +1166,7 @@
                         <div class="input-group mb-3 mt-3">
                             <form action="{{route('Client.product.search')}}" method="GET" class=d-flex>
                                 @csrf
-                                <input type="text" class="form-control" placeholder="search" aria-label="search" aria-describedby="button-addon2" style="border-radius: 20px">
+                                <input type="text" name="keyword" class="form-control" placeholder="search" aria-label="search" aria-describedby="button-addon2" style="border-radius: 20px">
                                 <button class="btn btn" type="submit" id="button-addon2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"
                                     viewBox="0 0 256 256">
                                     <path
@@ -1184,8 +1188,8 @@
                                 </svg>
                                 </button>
                                 <ul class="dropdown-menu">
-                                  <li><a class="dropdown-item" href="{{route('Client.account.login')}}">Login</a></li>
-                                  <li><a class="dropdown-item" href="{{route('Client.account.register')}}">Register</a></li>
+                                  <li><a class="dropdown-item" href="{{route('Client.account.showLoginForm')}}">Login</a></li>
+                                  <li><a class="dropdown-item" href="{{route('Client.account.showRegisterForm')}}">Register</a></li>
                                   <li><a class="dropdown-item" href="{{route('Client.account.show')}}">Info</a></li>
                                   <li><a class="dropdown-item" href="{{route('Administration.Home')}}">Admin</a></li>
                                   <li><a class="dropdown-item" href="{{route('Client.account.logout')}}">Logout</a></li>
@@ -1200,7 +1204,13 @@
                                             d="M239.89,198.12l-14.26-120a16,16,0,0,0-16-14.12H176a48,48,0,0,0-96,0H46.33a16,16,0,0,0-16,14.12l-14.26,120A16,16,0,0,0,20,210.6a16.13,16.13,0,0,0,12,5.4H223.92A16.13,16.13,0,0,0,236,210.6,16,16,0,0,0,239.89,198.12ZM128,32a32,32,0,0,1,32,32H96A32,32,0,0,1,128,32ZM32,200,46.33,80H80v24a8,8,0,0,0,16,0V80h64v24a8,8,0,0,0,16,0V80h33.75l14.17,120Z">
                                         </path>
                                     </svg>
-                                    <span class="quantity cart-quantity absolute -right-1.5 -top-1.5 text-xs text-white bg-black w-4 h-4 flex items-center justify-center rounded-full">0</span>
+                                    <span class="quantity cart-quantity absolute -right-1.5 -top-1.5 text-xs text-white bg-black w-4 h-4 flex items-center justify-center rounded-full">
+                                        @if(isset($Cart) && $Cart > 0)
+                                            {{$Cart}}
+                                        @else
+                                            0
+                                        @endif
+                                    </span>
                                 </div>
                             </a>
                     </div>
@@ -1756,7 +1766,7 @@
                                                                             srcSet="/_next/image?url=%2Fimages%2Fproduct%2Fcolor%2Fred.png&amp;w=128&amp;q=75 1x, /_next/image?url=%2Fimages%2Fproduct%2Fcolor%2Fred.png&amp;w=256&amp;q=75 2x"
                                                                             src="_next/reda989.png?url=%2Fimages%2Fproduct%2Fcolor%2Fred.png&amp;w=256&amp;q=75" />
                                                                         <div
-                                                                            class="tag-action bg-black text-white caption2 capitalize px-1.5 py-0.5 rounded-sm">
+                                                                            class="tag-action bg-black text-white caption2 uppercase px-1.5 py-0.5 rounded-sm">
                                                                             red</div>
                                                                     </div>
                                                                     <div
