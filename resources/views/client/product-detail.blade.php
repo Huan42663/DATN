@@ -29,10 +29,10 @@
     @endphp
     <div class="container mt-5" style="font-family: calibri">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <div class="row">
-                    <img src="{{ asset('storage/images/products/' . $product->product_image) }}"
-                        alt="{{ $product->product_image }}" class="img-fluid">
+                    <img src="{{asset('storage/'.$product->product_image)}}"
+                        alt="{{ $product->product_image }}" class="">
                 </div>
                 <div class="row">
                     <p>
@@ -61,7 +61,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
                 <form action="{{ route('Client.cart.update') }}" method="POST">
                     @csrf
                     <input type="hidden" name="product_name" value="{{ $product->product_name }}">
@@ -113,15 +113,15 @@
         </div>
         <div class="mt-5 row">
             <div class="d-flex row justify-content-center text-center">
-                <div class="col-4">
-                    <h1>Sản phẩm liên quan</h1>
+                <div class="col-4 mb-4">
+                    <h1 >Sản phẩm liên quan</h1>
                     <hr>
                 </div>
             </div>
             @foreach ($related_products[0] as $item)
                 <div class="col-3 bg-secondary bg-opacity-10 rounded m-1">
                     <div class="row">
-                        <img src="" alt="adsdasdas" class="img-fluid">
+                        <img src="{{asset('storage/'.$item->product_image)}}" alt="adsdasdas" class="img-fluid">
                     </div>
                     <div class="row">
                         <a class="text-decoration-none text-dark"
