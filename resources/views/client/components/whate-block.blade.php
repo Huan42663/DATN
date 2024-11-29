@@ -2,9 +2,6 @@
         <a href="{{route('Client.product.detail',$product->product_slug)}}">
         <div class="product-main cursor-pointer block">
             <div class="product-thumb bg-white relative overflow-hidden rounded-2xl">
-                <div
-                    class="product-tag text-button-uppercase bg-green px-3 py-0.5 inline-block rounded-full absolute top-3 left-3 z-[1]">
-                    New</div>
                 <div class="product-img w-full h-full aspect-[3/4]">
                     <img alt="Raglan Sleeve T-shirt"
                         fetchPriority="high" width="500" height="500" decoding="async" data-nimg="1"
@@ -40,14 +37,14 @@
                 <div class="flex items-center gap-2 flex-wrap mt-1 duration-300 relative z-[1]">
                     <div class="product-price text-title">
                         @if ($product->minPrice > 0)
-                            {{number_format($product->minPrice, 0, ',', '.') . ' VNĐ';}}
+                            {{number_format($product->minPrice, 0, ',', '.') . 'VNĐ';}}
                         @else
-                            {{number_format($product->maxPrice, 0, ',', '.') . ' VNĐ';}}
+                            {{number_format($product->maxPrice, 0, ',', '.') . 'VNĐ';}}
                         @endif
                     </div>
                     <div class="product-origin-price caption1 text-secondary2"><del>
                         @if ($product->minPrice > 0)
-                            {{number_format($product->maxPrice, 0, ',', '.') . ' VNĐ';}}
+                            {{number_format($product->maxPrice, 0, ',', '.') . 'VNĐ';}}
                         @endif
                         </del>
                     </div>

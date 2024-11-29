@@ -34,7 +34,8 @@ class OrderController extends Controller
              $infoOrder =   Order::query()->where('order_code', '=', $order_code)->get();
                 
              $detail   =   Order::join('order_detail', 'orders.order_id', '=', 'order_detail.order_id')
-                            ->join('product_variant', 'order_detail.product_variant_id', "=", 'product_variant.product_variant_id')
+                            ->join('products', 'order_detail.product_id', "=", 'products.product_id')
+                            ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
                             ->join('products', 'product_variant.product_id', "=", 'products.product_id')
                             ->join('sizes', 'product_variant.size_id', "=", 'sizes.size_id')
                             ->join('colors', 'product_variant.color_id', "=", 'colors.color_id')

@@ -38,17 +38,18 @@ class HomeController extends Controller
                                     ->join('order_detail','products.product_id','=','order_detail.product_id')
                                     ->join('orders','order_detail.order_id','=','orders.order_id')
                                     ->where('products.status',1)
-                                    ->selectRaw('products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
+                                    ->selectRaw('products.product_name, products.product_image,product_slug, COUNT(products.product_id) as quantityProduct, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
                                     ->groupBy('products.product_name','products.product_image','product_slug')
+                                    ->orderBy('quantityProduct','desc')
                                     ->limit(8)
                                     ->get();
-
         $productNew              = Products::query()
                                 ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
                                 ->where('products.status',1)
-                                ->selectRaw('products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
-                                ->groupBy('products.product_name', 'products.product_image', 'product_slug')
+                                ->selectRaw('products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
+                                ->groupBy('products.product_id','products.product_name', 'products.product_image', 'product_slug')
                                 ->limit(8)
+                                ->orderBy('products.product_id','desc')
                                 ->get();
         $Banner                 = Banner::query()->get();
 
@@ -78,5 +79,4 @@ class HomeController extends Controller
     
         return View('client.home', compact('Category_post_header','Category_post_footer','Banner','events','productNew','Product_hot'));
     }
-
 }

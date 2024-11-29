@@ -41,4 +41,14 @@ class Products extends Model
     {
         return $this->belongsToMany(Products::class, 'product_event');
     }
+
+    public function size()
+{
+    return $this->belongsTo(Size::class, 'size_id', 'size_id');
+}
+
+public function color()
+{
+    return $this->belongsTo(Color::class, 'color_id', 'color_id');
+}
 }
