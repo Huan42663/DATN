@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\CategoryPost;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log as FacadesLog;
-use Log;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
 
 
 
@@ -21,16 +22,13 @@ class CategoryPostController extends Controller
     public function index()
     {
         //
-        $categoryPosts = CategoryPost::all();
+        $category_post = CategoryPost::query()->get();
+        return view('admin.post-categories.index', compact('category_post'));
+    }
 
-
-        return response()->json(
-            [
-                'message' => "Danh mục Bài viết",
-                'data' => $categoryPosts
-            ],
-            Response::HTTP_OK
-        );
+    public function create()
+    {
+        return view('admin.post-categories.create');
     }
 
     /**
@@ -38,17 +36,28 @@ class CategoryPostController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate(['category_post_name' => 'required|string|max:255']);
-        $request['category_post_slug'] = Str::slug($request['category_post_name']);
-        $categoryPost = CategoryPost::create($request->all());
+        $slug = Str::slug($request->category_post_name);
+        // dd($request->all());
 
-        return response()->json(
+        // Xác thực dữ liệu
+        $request->validate(
             [
-                'message' => 'Danh mục bài viết đã được tạo thành cônng',
-                'data' => $categoryPost
+                'category_post_name' => 'required|string|max:255',
             ],
-            Response::HTTP_CREATED
+            [
+                'category_post_name.required' => 'Tên danh mục bài viết không được để trống',
+                'category_post_name.string' => 'Tên danh mục bài viết phải là chuỗi',
+                'category_post_name.max' => 'Tên danh mục bài viết không được lớn hơn 255 ký tự',
+            ]
         );
+        $data = $request->except('_token', '_method', 'example_length', 'category_post');
+        $data['category_post_slug'] = $slug;
+        $data['showHeader'] = $request->has('showHeader') ? 1 : 0;
+        $data['showFooter'] = $request->has('showFooter') ? 1 : 0;
+
+        $category_post = CategoryPost::query()->create($data);
+
+        return redirect()->route('Administration.categoryPost.list')->with('message', 'thêm thành công');
     }
 
     /**
@@ -56,73 +65,55 @@ class CategoryPostController extends Controller
      */
     public function show(string $slug)
     {
-        try {
-            $data = CategoryPost::query()->where("category_post_slug", '=', $slug)->get();
-            $count = Count($data);
-            if ($count > 0) {
-                return response()->json(
-                    [
-                        'message' => "Chi tiết danh mục Bài viết",
-                        'data' => $data
-                    ]
-                );
-            } else {
-                return response()->json(
-
-                    ['error' => "Không tìm thấy"],
-                    Response::HTTP_NOT_FOUND
-                );
-            }
-        } catch (\Throwable $th) {
-            FacadesLog::error(__CLASS__ . "@" . __FUNCTION__, [
-                'Line' => $th->getLine(),
-                'message' => $th->getMessage(),
-            ]);
-
-            if ($th instanceof ModelNotFoundException) {
-                return response()->json(
-                    ['error' => "Không tìm thấy"],
-                    Response::HTTP_NOT_FOUND
-                );
-            }
-        }
+        $category_post = CategoryPost::query()
+            ->where('category_post_slug', $slug)
+            ->select(
+                'category_post_name'
+            )
+            ->get();
+        return view('admin.post-categories.show', compact('category_post'));
     }
 
+    public function edit($id)
+    {
+        $category_post = CategoryPost::where('category_post_id', $id)->first();;
+        return view('admin.post-categories.update', compact('category_post'));
+    }
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        $categoryPost = CategoryPost::where('category_post_id', $id)->get();
-
-        $validatedData = $request->validate(['category_post_name' => 'required|string|max:255']);
-
-        if (!$categoryPost) {
-            return response()->json(['message' => 'Không tìm thấy danh mục Bài viết']);
-        }
-        if($categoryPost[0]->category_post_name != $request['category_post_name']){
-            $category_post = CategoryPost::query()->where('category_post_id','!=',$categoryPost[0]->category_post_id)->get();
-            foreach($category_post as $key){
-                if($key->category_post_name == $request['category_post_name']){
-                    return response()->json('Danh mục đã tồn tại');
+        $category_post = CategoryPost::where('category_post_id', $id)->get();
+        $category_post = CategoryPost::query()->where('category_post_id', $id)->get();
+        $listCategoryPost = CategoryPost::query()->where('category_post_id', "!=", $id)->get();
+        if (empty($category_post[0])) {
+            return view('error-404', compact(['errors' => "Không tìm thấy danh mục sản phẩm"]));
+        } else {
+            foreach ($listCategoryPost as $value) {
+                if ($value->category_post_name == $request->category_post_name) {
+                    return view('admin.post-categories.update', compact(['data' => $category_post, 'errors' => "Tên danh mục bị trùng"]));
+                } else {
+                    $request['category_post_slug'] = Str::slug($request->category_post_name);
+                    $request->validate(
+                        [
+                            'category_post_name' => 'required|string|max:255',
+                        ],
+                        [
+                            'category_post_name.required' => 'Tên danh mục bài viết không được để trống',
+                            'category_post_name.max' => 'Tên danh mục bài viết không được lớn hơn 255 ký tự',
+                        ]
+                    );
                 }
-            }
-            $request['category_post_slug'] = Str::slug($request['category_post_name']);
-            $categoryPost = CategoryPost::where('category_post_id', $id)->update($request->all());
-        }
-        else{
-            $categoryPost = CategoryPost::where('category_post_id', $id)->update($request->all());
-        }
-       
-        $categoryPost1 = CategoryPost::where('category_post_id', $id)->get();
+                $data = $request->except('_token', '_method', 'example_length', 'category_post');
+                $data['showHeader'] = $request->has('showHeader') ? 1 : 0;
+                $data['showFooter'] = $request->has('showFooter') ? 1 : 0;
 
-        return response()->json(
-            [
-                'message' => 'Danh mục bài viết đã được cập nhật thành công!!',
-                'data' => $categoryPost1
-            ],
-            Response::HTTP_OK
-        );
+                $category_post = CategoryPost::query()->where('category_post_id', $id)->update($data);
+
+                return redirect()->route('Administration.categoryPost.list')->with('message', 'Cập nhật thành công');
+            }
+        }
     }
 
     /**
@@ -130,23 +121,11 @@ class CategoryPostController extends Controller
      */
     public function destroy(string $id)
     {
-
-        $categoryPost = CategoryPost::where('category_post_id', $id)->delete();
-
-        if ($categoryPost) {
-            return response()->json(
-                [
-                    'message' => 'Danh mục Bài viết đã được xóa thành công'
-                ],
-                Response::HTTP_OK
-            );
+        $category_post = CategoryPost::query()->where('category_post_id', '=', $id)->delete();
+        if (!$category_post) {
+            return view('error-404', compact(['error' => 'không tìm danh mục sản phẩm']));
         } else {
-            return response()->json(
-                [
-                    'error' => 'Danh mục Bài viết không tồn tại'
-                ],
-                Response::HTTP_NOT_FOUND
-            );
+            return redirect()->route('Administration.categoryPost.list')->with('message', 'Xóa danh mục bài viết thành công');
         }
     }
 }

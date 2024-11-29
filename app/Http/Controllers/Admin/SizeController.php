@@ -19,14 +19,8 @@ class SizeController extends Controller
     public function index()
     {
 
-        $data = Size::query()->get();
-        return response()->json(
-            [
-                'message' => "Danh sách size",
-                'data' => $data
-            ],
-            Response::HTTP_OK
-        );
+        $data = Size::query()->orderByDesc('size_id')->get();
+        return View('admin.sizes.index',compact('data'));
     }
 
     /**
@@ -34,135 +28,62 @@ class SizeController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
+        $request->validate(
             ['size_name' => "required|unique:sizes,size_name"],
             [
                 "size_name.required" => "Không được bỏ trống",
                 "size_name.unique" => "Size đã có"
             ]
-        );
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        } else {
-            $Size = Size::create($request->all());
-            return response()->json(
-                [
-                    'message' => "Thêm Size Thành Công",
-                    'data' => $Size
-                ],
-                Response::HTTP_CREATED
             );
-        }
+            $data=['size_name'=>$request['size_name']];
+            Size::create($data);
+            return redirect()->back()->with("success","Thêm Size Thành Công");
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $size_id)
     {
-        try {
-            $data = Size::query()->where("size_id", '=', $id)->get();
-            $count = Count($data);
-            if ($count > 0) {
-                return response()->json(
-                    [
-                        'message' => "Chi tiết size",
-                        'data' => $data
-                    ]
-                );
+            $SizeInfo = Size::query()->where("size_id", '=', $size_id)->get();
+            $data = Size::query()->orderByDesc('size_id')->get();
+            if ($SizeInfo) {
+                return View('admin.sizes.index',compact('SizeInfo','data'));
             } else {
-                return response()->json(
-                    ['message' => "Không tìm thấy"],
-                    Response::HTTP_NOT_FOUND
-                );
+                return View('admin.sizes.index',compact('data'))->with('error','Không tìm thấy size');
             }
-        } catch (\Throwable $th) {
-            FacadesLog::error(__CLASS__ . "@" . __FUNCTION__, [
-                'Line' => $th->getLine(),
-                'message' => $th->getMessage(),
-            ]);
-
-            if ($th instanceof ModelNotFoundException) {
-                return response()->json(
-                    ['message' => "Không tìm thấy"],
-                    Response::HTTP_NOT_FOUND
-                );
-            }
-        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Size $size)
     {
-        $size = Size::query()->where("size_id", '=', $id)->get();
-        $count = Count($size);
-        if ($count <= 0) {
-            return response()->json([
-                'error' => 'Không tìm thấy size',
-            ], Response::HTTP_NOT_FOUND);
-        } else {
-            $sizeCheck = Size::query()->where("size_id", '!=', $id)->get();
-            foreach ($sizeCheck as $value) {
-                if ($value->size_name == $request["size_name"]) {
-                    return response()->json([
-                        'error' => 'Tên size đã có',
-                    ], 422);
-                }
-            }
-            $validator = Validator::make(
-                $request->all(),
-                ['size_name' => "sometimes|required"],
-                [
-                    "size_name.required" => "Không được bỏ trống"
-                ]
-
-            );
-            if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            } else {
-                $Size = Size::query()->where("size_id", '=', $id)->update($request->all());
-                $size1 = Size::query()->where("size_id", '=', $id)->get();
-                return response()->json(
-                    [
-                        'message' => "Sửa Size Thành Công",
-                        'data' => $size1
-                    ],
-                    Response::HTTP_OK
-                );
+        $SizeInfo = Size::query()->where("size_id", '=', $size->size_id)->get();
+        $data = Size::query()->orderByDesc('size_id')->get();
+       
+        $sizeCheck = Size::query()->where("size_id", '!=', $size->size_id)->get();
+        foreach ($sizeCheck as $value) {
+            if ($value->size_name == $request["size_name"]) {
+                return View('admin.sizes.index',compact('SizeInfo','data'))->with('error','Size đã có');
             }
         }
-    }
+        $request->validate(
+            ['size_name' => "required"],
+        [
+            "size_name.required" => "Không được bỏ trống"
+        ]) ;
+            $data=['size_name'=>$request['size_name']];
+            $size->update($data);
+            return redirect()->route('Administration.sizes.list')->with('success','Sửa Size Thành Công');;
+        }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Size $size)
     {
-        $size = Size::query()->where('size_id', '=', $id)->delete();
-        if (!$size) {
-            return response()->json(
-                [
-                    'error' => "Không tìm thấy size",
-                ],
-                Response::HTTP_NOT_FOUND
-            );
-        } else {
-            return response()->json(
-                [
-                    'message' => "Xóa Size Thành Công",
-                ],
-                Response::HTTP_OK
-            );
-        }
+        $size->delete();
+        return redirect()->route('Administration.sizes.list')->with('success','Xóa Size Thành Công');
     }
 }

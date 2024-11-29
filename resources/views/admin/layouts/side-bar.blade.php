@@ -256,20 +256,54 @@
                     </ul>
                 </li>
                 <li class="nxl-item nxl-hasmenu">
-                    <a href="javascript:void(0);" class="nxl-link">
+                    <a class="nxl-link" href="{{route('Administration.orders.list')}}">
                         <span class="nxl-micon"><i class="feather-life-buoy"></i></span>
-                        <span class="nxl-mtext">Help Center</span><span class="nxl-arrow"><i
+                        <span class="nxl-mtext">Order</span><span class="nxl-arrow"><i
+                                class="feather-chevron-right"></i></span>
+                    </a>
+                </li>
+                <li class="nxl-item nxl-hasmenu">
+                    <a class="nxl-link" href="{{route('Administration.sizes.list')}}">
+                        <span class="nxl-micon"><i class="feather-life-buoy"></i></span>
+                        <span class="nxl-mtext">Size</span><span class="nxl-arrow"><i
+                                class="feather-chevron-right"></i></span>
+                    </a>
+                </li>
+                <li class="nxl-item nxl-hasmenu">
+                    <a class="nxl-link" href="{{route('Administration.colors.list')}}">
+                        <span class="nxl-micon"><i class="feather-life-buoy"></i></span>
+                        <span class="nxl-mtext">Color</span><span class="nxl-arrow"><i
+                                class="feather-chevron-right"></i></span>
+                    </a>
+                </li>
+                <li class="nxl-item nxl-hasmenu">
+                    <a href="javascript:void(0);" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-briefcase"></i></span>
+                        <span class="nxl-mtext">Post</span><span class="nxl-arrow"><i
                                 class="feather-chevron-right"></i></span>
                     </a>
                     <ul class="nxl-submenu">
-                        <li class="nxl-item"><a class="nxl-link"
-                                href="https://themeforest.net/user/theme_ocean/">Support</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="help-knowledgebase.html">KnowledgeBase</a>
+                        <li class="nxl-item"><a class="nxl-link" href="{{route('Administration.posts.list')}}">Danh Sách</a>
                         </li>
-                        <li class="nxl-item"><a class="nxl-link" href=".docs/documentations.html">Documentations</a>
+                        <li class="nxl-item"><a class="nxl-link"
+                                href="{{route('Administration.posts.create')}}">Thêm Mới</a></li>
+                    </ul>
+                </li>
+                <li class="nxl-item nxl-hasmenu">
+                    <a href="javascript:void(0);" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-briefcase"></i></span>
+                        <span class="nxl-mtext">Voucher</span><span class="nxl-arrow"><i
+                                class="feather-chevron-right"></i></span>
+                    </a>
+                    <ul class="nxl-submenu">
+                        <li class="nxl-item"><a class="nxl-link" href="{{route('Administration.vouchers.list')}}">Danh Sách</a>
+                        </li>
+                        <li class="nxl-item"><a class="nxl-link"
+                                href="{{route('Administration.vouchers.create')}}">Thêm Mới</a>
                         </li>
                     </ul>
                 </li>
+
             </ul>
             <div class="card text-center">
                 <div class="card-body">

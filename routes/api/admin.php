@@ -49,4 +49,3 @@ Route::put('banners/{id}', [BannerController::class, 'update']);
 
 Route::apiResource('products', ProductController::class);
 Route::get('products/{id}/rates', [ProductController::class, 'getRates']);
-
