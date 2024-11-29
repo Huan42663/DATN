@@ -80,12 +80,12 @@ class CartController extends Controller
             ];
             CartDetail::query()->where('cart_detail_id',$request->cart_detail_id)->update($data);
             
-            return response()->json(['success' => true],404);
+            return response()->json(['success' => true],200);
         }
     }
     public function DestroyCart(Request $request)
     {
-        foreach($request->cart_detail_id as $item){
+        foreach($request->cart_variant_id as $item){
             CartDetail::find($item)->delete();
         }
         // CartDetail::where('cart_detail_id',$id)->delete();

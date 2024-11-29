@@ -1052,7 +1052,7 @@
     $HOT = (new App\Models\Products())
         ::query()
         ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
-        ->join('order_detail', 'product_variant.product_variant_id', '=', 'order_detail.product_variant_id')
+        ->join('order_detail', 'products.product_id', '=', 'order_detail.product_id')
         ->join('orders', 'order_detail.order_id', '=', 'orders.order_id')
         ->where('products.status', 1)
         ->selectRaw(
@@ -1184,11 +1184,11 @@
                                 </svg>
                                 </button>
                                 <ul class="dropdown-menu">
-                                  <li><a class="dropdown-item" href="{{route('Client.account.login')}}">Login</a></li>
+                                  {{-- <li><a class="dropdown-item" href="{{route('Client.account.login')}}">Login</a></li>
                                   <li><a class="dropdown-item" href="{{route('Client.account.register')}}">Register</a></li>
                                   <li><a class="dropdown-item" href="{{route('Client.account.show')}}">Info</a></li>
                                   <li><a class="dropdown-item" href="{{route('Administration.Home')}}">Admin</a></li>
-                                  <li><a class="dropdown-item" href="{{route('Client.account.logout')}}">Logout</a></li>
+                                  <li><a class="dropdown-item" href="{{route('Client.account.logout')}}">Logout</a></li> --}}
                                 </ul>
                               </div>
                               <a href="{{route('Client.cart.list')}}">

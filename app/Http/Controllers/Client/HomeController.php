@@ -35,7 +35,7 @@ class HomeController extends Controller
 
         $Product_hot             =  Products::query()
                                     ->join('product_variant','products.product_id','=','product_variant.product_id')
-                                    ->join('order_detail','product_variant.product_variant_id','=','order_detail.product_variant_id')
+                                    ->join('order_detail','products.product_id','=','order_detail.product_id')
                                     ->join('orders','order_detail.order_id','=','orders.order_id')
                                     ->where('products.status',1)
                                     ->selectRaw('products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')

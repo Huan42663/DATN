@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Products;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
+    public function index() {}
     public function productDetail($slug)
     {
         // lấy ra thông tin của sản phẩm
@@ -18,21 +20,23 @@ class ProductController extends Controller
                 'product_image',
                 'product_name',
                 'description',
+                'product_id'
             )
-            ->get();
+            ->first();
+
         // kiểm tra sản phẩm có tồn tại hay không
-        if (empty($product[0])) {
-            return response()->json(['errors' => 'không tìm thấy sản phẩm'], Response::HTTP_NOT_FOUND);
+        if (empty($product)) {
+            return view('error-404');
         } else {
 
             // lấy ra giá nhỏ nhất
-            $product['0']['min_price'] = Products::query()
+            $product['min_price'] = Products::query()
                 ->where('product_slug', "=", $slug)
                 ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
                 ->min('product_variant.price');
 
             // lấy ra giá lớn nhất
-            $product['0']['max_price'] = Products::query()
+            $product['max_price'] = Products::query()
                 ->where('product_slug', "=", $slug)
                 ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
                 ->max('product_variant.price');
@@ -47,11 +51,13 @@ class ProductController extends Controller
                     'price',
                     'sale_price',
                     'quantity',
+                    'product_variant.color_id',
+                    'product_variant.size_id',
                     'color_name',
-                    'size_name'
+                    'size_name',
+                    'product_variant.product_id',
                 )
                 ->get();
-
             // lấy ra 1 mảng các ảnh của biến thể
             $product_images = Products::query()
                 ->where('product_slug', $slug)
@@ -63,7 +69,7 @@ class ProductController extends Controller
                 ->get();
 
             // lấy ra các danh mục của sản phẩm
-            $product['0']['categories'] = Products::query()
+            $product['categories'] = Products::query()
                 ->where('product_slug', $slug)
                 ->join('category_product', 'products.product_id', '=', 'category_product.product_id')
                 ->join('categories', 'category_product.category_id', '=', 'categories.category_id')
@@ -73,11 +79,11 @@ class ProductController extends Controller
                 ->get();
 
             // lấy ra sản phẩm tương tự
-            $count = count($product['0']['categories']);
+            $count = count($product['categories']);
             $related_products = [];
             for ($i = 0; $i < $count; $i++) {
                 $resuilt =  Products::query()
-                    ->where('category_name',  "LIKE", $product['0']['categories'][$i]->category_name)
+                    ->where('category_name',  "LIKE", $product['categories'][$i]->category_name)
                     ->join('category_product', 'products.product_id', '=', 'category_product.product_id')
                     ->join('categories', 'category_product.category_id', '=', 'categories.category_id')
                     ->select(
@@ -87,6 +93,7 @@ class ProductController extends Controller
                         'description',
                         'product_slug'
                     )
+                    ->limit(8)
                     ->get();
                 $related_products[$i] = $resuilt;
             }
@@ -100,7 +107,7 @@ class ProductController extends Controller
                 ->select(
                     'star',
                     'content',
-                    'fullname'
+                    'fullName'
                 )
                 ->get();
 
@@ -115,17 +122,16 @@ class ProductController extends Controller
                 )
                 ->get();
 
-            //  trả về dữ liệu dưới dạng json
-            return response()->json(
-                [
-                    'product' => $product,
-                    'product_variant' => $product_variant,
-                    'product_images' => $product_images,
-                    'related_products' => $related_products,
-                    'rates' => $rates,
-                    'rate_images' => $rate_images,
-                ],
-                Response::HTTP_OK
+            return view(
+                'client.product-detail',
+                compact(
+                    'product',
+                    'product_variant',
+                    'product_images',
+                    'related_products',
+                    'rates',
+                    'rate_images',
+                )
             );
         }
     }
