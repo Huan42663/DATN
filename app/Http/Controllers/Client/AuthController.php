@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -52,7 +55,7 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('Client.account.showLoginForm');
+        return redirect()->route('');
     }
 
     // Hiển thị form đăng ký
@@ -89,14 +92,36 @@ class AuthController extends Controller
             'phone' => 'required|string|max:15|unique:users,phone',
         ]);
 
-        // Tạo tài khoản người dùng
-        User::create([
-            'fullName' => $request->fullName,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
-            'role' => 'guest', // Role mặc định
-        ]);
+
+        try {
+            // Tạo tài khoản người dùng
+            $user = User::create([
+                'fullName' => $request->fullName,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'phone' => $request->phone,
+                'role' => 'guest', // Role mặc định
+            ]);
+
+            // if ($user) {
+            //     Log::info('User created:', ['id' => $user->id, 'email' => $user->email]);
+            //     dd($user->id); // Hiển thị user_id
+            // } else {
+            //     Log::error('User creation failed.');
+            //     return redirect()->back()->with('error', 'Failed to create account.');
+            // }
+
+            // Tạo giỏ hàng
+            Cart::create([
+                'user_id' => $user->user_id,
+            ]);
+
+            return redirect()->route('Client.account.showLoginForm')->with('success', 'Account created successfully. Please log in.');
+        } catch (\Exception $e) {
+            // Log lỗi và hiển thị thông báo
+            Log::error('Registration Error: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+        }
 
         // Chuyển hướng sau khi đăng ký thành công
         return redirect()->route('Client.account.showLoginForm')->with('success', 'Account created successfully.');
