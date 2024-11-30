@@ -26,7 +26,8 @@ class User extends Authenticatable
         'phone',
         'avatar',
         'status',
-        'role'
+        'role',
+        'google_id'
     ];
     protected $primaryKey = 'user_id';
     /**

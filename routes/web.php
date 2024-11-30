@@ -17,6 +17,7 @@ use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\ProductController as CLientProductController;
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CategoryController;
+use App\Http\Controllers\Client\EventController as ClientEventController;
 use App\Http\Controllers\Client\HomeController as CLientHomeController;
 use App\Http\Controllers\Client\OrderController as CLientOrderController;
 use App\Http\Controllers\Client\PostController as CLientPostController;
@@ -177,18 +178,18 @@ Route::prefix('/Administration')->group(function () {
 Route::prefix('/')->group(function () {
 
     // ROUTE HOME
-    Route::get('/', [HomeController::class, 'index'])->name('Client.Home');
+    Route::get('/', [CLientHomeController::class, 'index'])->name('Client.Home');
 
     // ROUTE PRODUCT
     Route::get('products', [CLientProductController::class, 'index'])->name('Client.product.list');
-    Route::get('products/search?{keyword}', [CLientProductController::class, 'index'])->name('Client.product.search');
+    Route::get('products/search', [CLientProductController::class, 'index'])->name('Client.product.search');
     Route::get('products/{slug}', [CLientProductController::class, 'index'])->name('Client.product.category');
-    Route::get('products/detail-{slug}', [CLientProductController::class, 'index'])->name('Client.product.detail');
+    Route::get('products/detail/{slug}', [CLientProductController::class, 'productDetail'])->name('Client.product.detail');
 
     // ROUTE CART
-    Route::get('cart', [CartController::class,'index'])->name('Client.cart.list');
-    Route::post('cart', [CartController::class,'UpdateCartDetail'])->name('Client.cart.update');
-    Route::delete('cart', [CartController::class,'DestroyCart'])->name('Client.cart.destroy');
+    Route::get('cart', [CartController::class, 'index'])->name('Client.cart.list');
+    Route::post('cart', [CartController::class, 'UpdateCartDetail'])->name('Client.cart.update');
+    Route::delete('cart', [CartController::class, 'DestroyCart'])->name('Client.cart.destroy');
 
     // ROUTE ACCOUNT USER, LOGIN, REGISTER, FORGOT PASSWORD
     Route::get('account', [AuthController::class, 'show'])->name('Client.account.show');
@@ -216,9 +217,6 @@ Route::prefix('/')->group(function () {
 
 
     // ROUTE EVENT
-    // Route::get('events/',[ClientEventController::class],'list')->name('Client.events.list');
-    // Route::get('events/{slug}',[ClientEventController::class],'show')->name('Client.events.show');
-
-
+    Route::get('events/', [ClientEventController::class, 'index'])->name('Client.events.list');
+    Route::get('events/{slug}', [ClientEventController::class, 'show'])->name('Client.events.show');
 })->name('Client');
-

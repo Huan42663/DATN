@@ -15,20 +15,17 @@ use Illuminate\Support\Facades\Auth;
 class CartController extends Controller
 {
     public function index(Request $request){
-        // $cart = $this->showCart(Auth::user()->id);
-        $cart = $this->showCart(1);
-        if(isset($request->cart_detail_id)){
-            // dd($_POST);
-            return response()->json(['success' => true],200);
+        $cart = "";
+        if(isset(Auth::user()->id)){
+            $cart = $this->showCart(Auth::user()->id);
         }
-        // dd($cart);
         return View('client.cart',compact('cart'));
     }
     public function store(Request $request){
         $cart_id = Cart::query()->where('user_id',Auth::user()->id)->get();
         $product = ProductVariant::query()
-                   ->leftJoin('sizes','product_variant.size_id','=','sizes.size_id')
-                   ->leftJoin('colors','product_variant.color_id','=','colors.color_id')
+                //    ->leftJoin('sizes','product_variant.size_id','=','sizes.size_id')
+                //    ->leftJoin('colors','product_variant.color_id','=','colors.color_id')
                    ->where('product_variant.product_id',$request['product_id'])
                    ->where('product_variant.size_id',$request['size_id'])
                    ->where('product_variant.color_id',$request['color_id'])
@@ -80,12 +77,12 @@ class CartController extends Controller
             ];
             CartDetail::query()->where('cart_detail_id',$request->cart_detail_id)->update($data);
             
-            return response()->json(['success' => true],404);
+            return response()->json(['success' => true],200);
         }
     }
     public function DestroyCart(Request $request)
     {
-        foreach($request->cart_detail_id as $item){
+        foreach($request->cart_variant_id as $item){
             CartDetail::find($item)->delete();
         }
         // CartDetail::where('cart_detail_id',$id)->delete();
