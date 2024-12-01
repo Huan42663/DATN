@@ -36,7 +36,6 @@ class SizeController extends Controller
             ]
             );
             $data=['size_name'=>$request['size_name']];
-            dd($data);
             Size::create($data);
             return redirect()->back()->with("success","Thêm Size Thành Công");
     }
@@ -97,7 +96,7 @@ class SizeController extends Controller
     }
     public function listSizeDelete(){
         $sizes = Size::onlyTrashed()->get();
-        // dd($sizes);
+        dd($sizes);
         return View('admin.sizes.listDelete',compact('sizes'));
     }
     public function restoreSize(Request $request){

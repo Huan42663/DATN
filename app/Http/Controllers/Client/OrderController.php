@@ -123,7 +123,7 @@ class OrderController extends Controller
 
         if($request->method_payment != "banking"){
             $order = Order::create($data1);
-            $order_code = "jsstore#24".rand(1000000,9999999).$order->order_id;
+            $order_code = "jsstore24".rand(1000000,9999999).$order->order_id;
             $data1['order_code'] = $order_code;
             $order->update($data1);
         }

@@ -184,6 +184,7 @@ Route::prefix('/')->group(function () {
 
     // ROUTE CART
     Route::get('cart', [CartController::class, 'index'])->name('Client.cart.list');
+    Route::post('create/cart', [CartController::class, 'store'])->name('Client.cart.store');
     Route::post('cart', [CartController::class, 'UpdateCartDetail'])->name('Client.cart.update');
     Route::delete('cart', [CartController::class, 'DestroyCart'])->name('Client.cart.destroy');
 
@@ -208,7 +209,7 @@ Route::prefix('/')->group(function () {
     Route::post('orders', [ClientOrderController::class, 'store'])->name('Client.orders.store');
     Route::get('orders/{order_code}/{order_id}', [ClientOrderController::class, 'show'])->middleware('auth')->name('Client.orders.show');
     Route::put('orders/{order}', [ClientOrderController::class, 'show'])->name('Client.orders.update');
-    Route::post('order/{order_code}/{order_id}/cancel', [CLientOrderController::class, 'cancel'])->middleware('auth')->name('Client.orders.cancel');
+    Route::post('order/{order_code}/{order_id}', [CLientOrderController::class, 'cancel'])->middleware('auth')->name('Client.orders.cancel');
     Route::post('order/{order_code}/{order_id}/confirmDelivered', [CLientOrderController::class, 'confirmDelivered'])->middleware('auth')->name('Client.orders.confirmDelivered');
 
 

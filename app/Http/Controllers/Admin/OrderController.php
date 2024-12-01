@@ -30,9 +30,10 @@ class OrderController extends Controller
      */
     public function show(string $order_code)
     {
-
            
-             $infoOrder =   Order::query()->where('order_code', '=', $order_code)->get();
+        // dd($order_code);
+             $infoOrder =   Order::query()->where('order_code', $order_code)->get();
+             
              $bill      =  Bill::query()->where('order_id', '=', $infoOrder[0]->order_id)->get();
                 
              $detail   =   Order::join('order_detail', 'orders.order_id', '=', 'order_detail.order_id')
@@ -52,7 +53,7 @@ class OrderController extends Controller
                             )
                             ->where('orders.order_code', '=', $order_code)
                             ->get();
-                            // dd($bill);
+                          
         return View('admin.orders.show',compact('infoOrder','detail','bill'));
         
     }
@@ -62,11 +63,11 @@ class OrderController extends Controller
      */
     public function update(Request $request, $order_id){
         $value =  Order::query()->where('order_id', '=', $order_id)->get();
-
-        if ($value->status == "unconfirm") $request["status"] = "confirmed";                     
-        elseif($value->status == "confirmed") $request["status"] = "shipping";           
-        elseif($value->status == "shipping") $request["status"] = "delivered";                
-        elseif($value->status == "delivered") $request["status"] = "received";              
+        // dd($value);
+        if ($value[0]->status == "unconfirm") $request["status"] = "confirmed";                     
+        elseif($value[0]->status == "confirmed") $request["status"] = "shipping";           
+        elseif($value[0]->status == "shipping") $request["status"] = "delivered";                
+        elseif($value[0]->status == "delivered") $request["status"] = "received";              
                        
         $data =['status'=>$request["status"]];
         Order::query()->where('order_id', '=', $order_id)->update($data);

@@ -1188,13 +1188,11 @@
                                 </svg>
                                 </button>
                                 <ul class="dropdown-menu">
-                                  {{-- <li><a class="dropdown-item" href="{{route('Client.account.login')}}">Login</a></li>
-                                  <li><a class="dropdown-item" href="{{route('Client.account.register')}}">Register</a></li>
                                   <li><a class="dropdown-item" href="{{route('Client.account.showLoginForm')}}">Login</a></li>
                                   <li><a class="dropdown-item" href="{{route('Client.account.showRegisterForm')}}">Register</a></li>
                                   <li><a class="dropdown-item" href="{{route('Client.account.show')}}">Info</a></li>
                                   <li><a class="dropdown-item" href="{{route('Administration.Home')}}">Admin</a></li>
-                                  <li><a class="dropdown-item" href="{{route('Client.account.logout')}}">Logout</a></li> --}}
+                                  <li><a class="dropdown-item" href="{{route('Client.account.logout')}}">Logout</a></li>
                                 </ul>
                               </div>
                               <a href="{{route('Client.cart.list')}}">

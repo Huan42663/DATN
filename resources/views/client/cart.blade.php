@@ -115,13 +115,13 @@
 <script>
 
     function Checkout() {
-    let cart_detail_id = document.getElementById("cart_variant_id").value;
-    console.log(cart_detail_id);
-    if (cart_detail_id == null) {
-        alert("Vui lòng chọn sản phẩm");
-        return false; 
-    }
-    return false;
+    // let cart_detail_id = document.getElementById("cart_variant_id").value;
+    // console.log(cart_detail_id);
+    // if (cart_detail_id == null) {
+    //     alert("Vui lòng chọn sản phẩm");
+    //     return false; 
+    // }
+    return true;
     }
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     const totalElement = document.getElementById('totalPrice');

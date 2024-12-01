@@ -55,7 +55,7 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('');
+        return redirect()->route('Client.Home');
     }
 
     // Hiển thị form đăng ký

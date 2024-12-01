@@ -118,7 +118,7 @@
                 </div>
             </div>
         </div>
-        @if(isset($bill) && !empty($bill))
+        @if(isset($bill) && count($bill)>0)
         <div class="row">
             <div class="col-xl-12">
                 <div class="card stretch stretch-full">
@@ -127,7 +127,7 @@
                             <div class="col-md-8 mb-4">
                                 <h4>Hóa Đơn Thanh Toán</h4>
                                 <br>
-                                <p><span class="fs-6 fw-bold">Mã Hóa Đơn : </span>{{$bill[0]->bill_code}}</p>
+                                <p><span class="fs-6 fw-bold">Mã Hóa Đơn : </span>{{$bill->bill_code}}</p>
                                 <p><span class="fs-6 fw-bold">Mã Đơn Hàng : </span>{{$bill[0]->order_code}}</p>
                                 <p><span class="fs-6 fw-bold">Số Tiền : </span>{{$bill[0]->amount}}</p>
                                 <p><span class="fs-6 fw-bold">Thời Gian Giao Dịch: </span>{{$bill[0]->created_at}}</p>

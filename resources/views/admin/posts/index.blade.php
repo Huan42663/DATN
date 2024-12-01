@@ -54,7 +54,9 @@
                                     <span  class="d-block mb-1">{{$value->title}}</span>
                                 </td>
                                 <td>
+                                    @if(isset($value->categoryPost->category_post_name))
                                     <span  class="d-block mb-1">{{$value->categoryPost->category_post_name}}</span>
+                                    @endif
                                 </td>
                                 <td>
                                     <span class="d-block mb-1">{{ $value->created_at}}</span>

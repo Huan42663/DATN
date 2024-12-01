@@ -16,14 +16,14 @@ class CartController extends Controller
 {
     public function index(Request $request){
         $cart = "";
-        // if(isset(Auth::user()->id)){
-        //     $cart = $this->showCart(Auth::user()->id);
-        // }
-        $cart = $this->showCart(1);
+        if(isset(Auth::user()->user_id)){
+            $cart = $this->showCart(Auth::user()->user_id);
+        }
+        // dd(Auth::check());
         return View('client.cart',compact('cart'));
     }
     public function store(Request $request){
-        $cart_id = Cart::query()->where('user_id',Auth::user()->id)->get();
+        $cart_id = Cart::query()->where('user_id',Auth::user()->user_id)->get();
         $product = ProductVariant::query()
                 //    ->leftJoin('sizes','product_variant.size_id','=','sizes.size_id')
                 //    ->leftJoin('colors','product_variant.color_id','=','colors.color_id')

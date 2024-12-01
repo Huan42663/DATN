@@ -88,8 +88,8 @@
                                         <label for="fullnameInput" class="fw-semibold">Short Description </label>
                                     </div>
                                     <div class="col-lg-8">
-                                        <div class="">
-                                            <textarea name="short_description" id="editor" cols="10" rows="3"  class="form-control" >{{old('title')}}</textarea>
+                                        <div class="input-group"">
+                                            <textarea name="short_description"  cols="10" rows="3"  class="form-control" >{{old('title')}}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -98,8 +98,8 @@
                                         <label for="fullnameInput" class="fw-semibold">Content </label>
                                     </div>
                                     <div class="col-lg-8">
-                                        <div class="input-group">
-                                            <textarea id="editor" name="description" rows="10" data-auto-grow="false" >{{old('title')}}</textarea>
+                                        <div class="">
+                                            <textarea id="editor" name="content" rows="10" data-auto-grow="false" >{{old('title')}}</textarea>
                                         </div>
                                         {{-- <div class="input-group">
                                             <textarea name="content" id="content" cols="30" rows="10" class="form-control">{{old('title')}}</textarea>
@@ -111,7 +111,7 @@
                                 </div>
                                 <div class="d-flex">
                                     <button type="submit" class="btn btn-sm btn-light-brand me-2">Thêm Mới</button>
-                                    <a href="{{route('Administration.posts.list')}}"><button type="button" class="btn btn-sm btn-primary">Danh sách voucher</button></a>
+                                    <a href="{{route('Administration.posts.list')}}"><button type="button" class="btn btn-sm btn-primary">Danh sách bài viết</button></a>
                                 </div>
                             </form>
                         </div>

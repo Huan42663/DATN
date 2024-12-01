@@ -706,14 +706,9 @@ class ProductController extends Controller
         );
 
 
-        if (asset($request['category_id'])) {
+        if (isset($request['category_id'])) {
             foreach($request['category_id'] as $item) {
-                CategoryProduct::create(
-                    $request->only([
-                        'category_id'=>$item,
-                    ]) + [
-                        'product_id' => $product->product_id,
-                    ]
+                CategoryProduct::create([ 'category_id'=>$item,'product_id' => $product->product_id,]
                 );
             }
         }
@@ -745,7 +740,6 @@ class ProductController extends Controller
                 'quantity' => $request['quantity'],
                 'weight' => $request['weight']
             ];
-            dd($dataVariant);
             ProductVariant::create($dataVariant);
             return redirect()->route('Administration.products.create')
                 ->with('message', 'Sản phẩm đã được thêm thành công nhưng chưa có biến thể');
