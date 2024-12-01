@@ -83,7 +83,7 @@
                     </div>
                     @if ($product->minPrice > 0 && $product->maxPrice >0)
                         <div class="product-sale caption1 font-medium bg-green px-3 py-0.5 inline-block rounded-full">
-                            {{($product->maxPrice - $product->minPrice)/$product->maxPrice * 100 .'%' }}
+                            {{round(($product->maxPrice - $product->minPrice)/$product->maxPrice * 100,0) .'%' }}
                         </div>
                     @endif
                 </div>

@@ -2,9 +2,19 @@
 
 @section('title', 'Thêm Bài Viết')
 
-@section('model', 'Post')
-
-@section('function', 'Create')
+@section('page-header')
+    <div class="page-header">
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Posts</h5>
+            </div>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
+                <li class="breadcrumb-item">Thêm Mới</li>
+            </ul>
+        </div>
+    </div>
+@endsection
 
 @section('content')
 
@@ -78,8 +88,8 @@
                                         <label for="fullnameInput" class="fw-semibold">Short Description </label>
                                     </div>
                                     <div class="col-lg-8">
-                                        <div class="input-group">
-                                            <textarea name="short_description" id="short_description" cols="10" rows="3"  class="form-control" >{{old('title')}}</textarea>
+                                        <div class="">
+                                            <textarea name="short_description" id="editor" cols="10" rows="3"  class="form-control" >{{old('title')}}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -99,7 +109,10 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-sm btn-light-brand">Add New</button>
+                                <div class="d-flex">
+                                    <button type="submit" class="btn btn-sm btn-light-brand me-2">Thêm Mới</button>
+                                    <a href="{{route('Administration.posts.list')}}"><button type="button" class="btn btn-sm btn-primary">Danh sách voucher</button></a>
+                                </div>
                             </form>
                         </div>
                     </div>

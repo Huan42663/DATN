@@ -1,9 +1,20 @@
 
 @extends('admin.master')
 
-@section('title', 'Order-Detial')
-@section('model', 'Orders-Detial')
-@section('function', 'Detial')
+@section('title', 'Order-Detail')
+@section('page-header')
+    <div class="page-header">
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Order Detail</h5>
+            </div>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
+                <li class="breadcrumb-item">Order Detail</li>
+            </ul>
+        </div>
+    </div>
+@endsection
 
 @section('content')
 
@@ -107,6 +118,26 @@
                 </div>
             </div>
         </div>
+        @if(isset($bill) && !empty($bill))
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card stretch stretch-full">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8 mb-4">
+                                <h4>Hóa Đơn Thanh Toán</h4>
+                                <br>
+                                <p><span class="fs-6 fw-bold">Mã Hóa Đơn : </span>{{$bill[0]->bill_code}}</p>
+                                <p><span class="fs-6 fw-bold">Mã Đơn Hàng : </span>{{$bill[0]->order_code}}</p>
+                                <p><span class="fs-6 fw-bold">Số Tiền : </span>{{$bill[0]->amount}}</p>
+                                <p><span class="fs-6 fw-bold">Thời Gian Giao Dịch: </span>{{$bill[0]->created_at}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
         <div class="row">
             <div class="col-xl-12">
                 <div class="card stretch stretch-full">
@@ -115,29 +146,29 @@
                             <div class="col-md-8 mb-4">
                                 <h4>Thông Tin Đơn Hàng</h4>
                             </div>
-                            <div class="col-md-4 mb-4 d-flex justify-content-between">
-                                <label class="form-label mt-1">Trạng Thái Đơn Hàng : </label>
+                            <div class="col-md-4 mb-4 d-flex justify-content-start">
+                                <label class="form-label mt-1 me-2">Trạng Thái Đơn Hàng : </label>
                                 @if ($infoOrder[0]->status == "unconfirm")
-                                <span class="badge bg-soft-warning text-warning" style="height: 27px;padding:10px">Chờ Xác Nhận</span>
+                                <span class="badge bg-soft-warning text-warning  me-2" style="height: 30px;padding:10px">Chờ Xác Nhận</span>
                                 <form action="{{route('Administration.orders.update', $infoOrder[0]->order_id )}}" method="post" class="d-flex">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="order_id" value="{{$infoOrder[0]->status}}">
                                     <input type="hidden" name="order_status" value="{{$infoOrder[0]->order_id}}">
-                                    <button class="btn btn-success" style="height: 10px;">Xác Nhận</button>
+                                    <button class="btn btn-success" style="height: 30px;">Cập Nhật</button>
                                 </form>
-                                @elseif($infoOrder[0]->status == "confirmed")
-                                    <span class="badge bg-soft-success text-success">Đã Xác Nhận</span>
+                                @elseif($infoOrder[0]->status == "confirmed")   
+                                    <span class="badge bg-soft-success text-success me-2" style="padding:10px">Đã Xác Nhận</span>
                                 @elseif($infoOrder[0]->status == "shipping")
-                                    <span class="badge bg-soft-success text-success">Đang Vận Chuyển</span>
+                                    <span class="badge bg-soft-success text-success me-2" style="padding:10px">Đang Vận Chuyển</span>
                                 @elseif($infoOrder[0]->status == "delivered")
-                                    <span class="badge bg-soft-success text-success">Đã Giao Đến Khách Hàng</span>
+                                    <span class="badge bg-soft-success text-success me-2" style="padding:10px">Đã Giao Đến Khách Hàng</span>
                                 @elseif($infoOrder[0]->status == "received")
-                                    <span class="badge bg-soft-warning text-warning">Đã Xác Nhận Nhận Hàng</span>
+                                    <span class="badge bg-soft-warning text-warning me-2" style="padding:10px">Đã Xác Nhận Nhận Hàng</span>
                                 @elseif($infoOrder[0]->status == "canceled")
-                                        <span class="badge bg-soft-danger text-danger">Hủy</span>
+                                        <span class="badge bg-soft-danger text-danger me-2" style="padding:10px">Hủy</span>
                                 @elseif($infoOrder[0]->status == "return")
-                                    <span class="badge bg-soft-dark text-dark">Trả Hàng</span>
+                                    <span class="badge bg-soft-dark text-dark me-2" style="padding:10px">Trả Hàng</span>
                                 @endif
                             </div>
                             <div class="col-md-12 mb-4">
@@ -161,7 +192,7 @@
                                                         @foreach ($detail as $value )
                                                         <tr>
                                                             <td>
-                                                                <span class="fs-12 text-muted d-block"><img src="{{asset("storage/".$value->product_image)}}" alt="{{$value->product_image}}"></span>
+                                                                <span class="fs-12 text-muted d-block"><img src="{{asset("storage/".$value->product_image)}}" alt="{{$value->product_image}}" width="100"></span>
                                                             </td>
                                                             <td>
                                                                 <span  class="d-block mb-1">{{$value->product_name}}</span>

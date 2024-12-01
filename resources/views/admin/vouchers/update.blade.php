@@ -2,9 +2,19 @@
 
 @section('title', 'Update Voucher')
 
-@section('model', 'Voucher')
-
-@section('function', 'Update')
+@section('page-header')
+    <div class="page-header">
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Vouchers</h5>
+            </div>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
+                <li class="breadcrumb-item">Cập Nhật</li>
+            </ul>
+        </div>
+    </div>
+@endsection
 
 @section('content')
 
@@ -100,8 +110,10 @@
                                         </div>
                                     </div>
                                 </div>
-                               
-                                <button type="submit" class="btn btn-sm btn-light-brand">Update</button>
+                               <div class="d-flex">
+                                    <button type="submit" class="btn btn-sm btn-light-brand me-2">Update</button>
+                                    <a href="{{route('Administration.vouchers.list')}}"><button type="button" class="btn btn-sm btn-primary">Danh sách voucher</button></a>
+                                </div>
                             </form>
                         </div>
                     </div>

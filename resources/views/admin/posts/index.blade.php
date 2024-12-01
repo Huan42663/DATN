@@ -2,8 +2,19 @@
 @extends('admin.master')
 
 @section('title', 'Posts')
-@section('model', 'Posts')
-@section('function', 'List')
+@section('page-header')
+    <div class="page-header">
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Posts</h5>
+            </div>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
+                <li class="breadcrumb-item">List</li>
+            </ul>
+        </div>
+    </div>
+@endsection
 
 @section('content')
 @if(session('success'))
@@ -14,10 +25,14 @@
 <div class="col-lg-12 mt-3" >
     <div class="card stretch stretch-full">
         <div class="card-body custom-card-action p-0">
+            <form action="{{route('Administration.posts.destroy')}}" method="post">
+                @csrf
+                @method('DELETE')
             <div class="table-responsive" style="padding: 20px;">
                 <table id="example" class="table table-hover mb-0">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>STT</th>
                             <th>Title</th>
                             <th>Danh Mục</th>
@@ -31,6 +46,7 @@
                         foreach ($posts as $value ):
                         @endphp
                              <tr>
+                                <td><input type="checkbox" name="post_id[]" value="{{$value->post_id}}"></td>
                                 <td>
                                     <span  class="d-block mb-1">{{$i}}</span>
                                 </td>
@@ -48,13 +64,6 @@
                                         <a href="{{route('Administration.posts.show', $value->slug)}}" class="avatar-text avatar-md">
                                             <i class="feather-eye"></i>
                                         </a>
-                                        <form action="{{route('Administration.posts.destroy', $value)}}" method="post">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="avatar-text avatar-md" type="submit" onclick="return confirm('Bạn có muốn xóa bài viết này không?')">
-                                                <i class="feather-trash-2"></i>
-                                            </button>
-                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -66,6 +75,10 @@
                         
                     </tbody>
                 </table>
+                <button class="btn btn-danger mb-3" type="submit" onclick="return confirm('Bạn có muốn xóa những bài viết này không?')">
+                    Xóa Bài Viết
+                </button>
+            </form>
             </div>
         </div>
     </div>

@@ -23,10 +23,10 @@
                 <div class="table-responsive">
                     <a href="{{ route('Administration.products.create') }}" class=" btn btn-primary">
                         <i class="feather-plus me-2"></i>
-                        <span>Create Event</span>
+                        <span>Thêm Sản Phẩm</span>
                     </a>
 
-                    <form action="{{ route('Administration.products.deleteMultiple') }}" method="POST">
+                    <form action="{{ route('Administration.products.deleteMultiple') }}" method="POST" style="padding: 10px">
                         @csrf
                         @method('DELETE')
 
@@ -35,16 +35,16 @@
                                 {{ session('message') }}
                             </div>
                         @endif
-                        <table id="example" class="table table-hover mb-0">
+                        <table id="example" class="table table-hover mb-0" >
                             <thead>
                                 <tr>
                                     <th>
                                         <input type="checkbox" id="selectAll" class="form-check-input">
                                     </th>
-                                    <th>Image</th>
-                                    <th>Product Name</th>
-                                    <th>Product Image</th>
-                                    <th>Status</th>
+                                    <th>Ảnh</th>
+                                    <th>Tên Sản Phẩm</th>
+                                    <th>Giá</th>
+                                    <th>Trạng Thái</th>
                                     <th class="text-end">Actions</th>
                                 </tr>
                             </thead>
@@ -72,15 +72,23 @@
                                             </div>
                                         </td>
                                         <td>
+                                            @if(isset($product->minPrice) && !empty($product->minPrice) && $product->minPrice < $product->maxPrice)
+                                                <span class="fw-bold text-danger">{{number_format($product->minPrice, 0, ',', '.') . ' VNĐ';}} - {{number_format($product->maxPrice, 0, ',', '.') . ' VNĐ';}}</span>
+                                            @else
+                                                <span class="fw-bold text-danger">{{number_format($product->maxPrice, 0, ',', '.') . ' VNĐ';}}</span>
+                                            @endif
+                                        </td>
+                                       
+                                        {{-- <td>
                                             <a href="javascript:void(0);"
                                                 class="d-block mb-1">{{ $product->product_image }}</a>
-                                        </td>
+                                        </td> --}}
                                         <td>
                                             <a href="javascript:void(0);" class="d-block mb-1">
                                                 @if ($product->status == 1)
-                                                    Active
+                                                <span class="badge bg-soft-success text-success">Hoạt Động</span>
                                                 @elseif ($product->status == 2)
-                                                    Inactive
+                                                <span class="badge bg-soft-danger text-danger">Không Hoạt Động</span>
                                                 @endif
                                             </a>
                                         </td>

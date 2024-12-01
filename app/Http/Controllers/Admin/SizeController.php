@@ -36,6 +36,7 @@ class SizeController extends Controller
             ]
             );
             $data=['size_name'=>$request['size_name']];
+            dd($data);
             Size::create($data);
             return redirect()->back()->with("success","Thêm Size Thành Công");
     }
@@ -52,6 +53,7 @@ class SizeController extends Controller
             } else {
                 return View('admin.sizes.index',compact('data'))->with('error','Không tìm thấy size');
             }
+           
     }
 
     /**
@@ -61,7 +63,6 @@ class SizeController extends Controller
     {
         $SizeInfo = Size::query()->where("size_id", '=', $size->size_id)->get();
         $data = Size::query()->orderByDesc('size_id')->get();
-       
         $sizeCheck = Size::query()->where("size_id", '!=', $size->size_id)->get();
         foreach ($sizeCheck as $value) {
             if ($value->size_name == $request["size_name"]) {
@@ -81,9 +82,34 @@ class SizeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Size $size)
+    public function destroy(Request $request)
     {
-        $size->delete();
-        return redirect()->route('Administration.sizes.list')->with('success','Xóa Size Thành Công');
+        if(isset($request->size_id) && !empty($request->size_id)){
+            foreach($request->size_id as $item){
+                $size =Size::query()->find($item);
+                $size->delete();
+            }
+            return redirect()->route('Administration.sizes.list')->with('success','Xóa size thành công');
+        }
+        else{
+            return redirect()->route('Administration.sizes.list')->with('error','Không tìm thấy size ');
+        }
+    }
+    public function listSizeDelete(){
+        $sizes = Size::onlyTrashed()->get();
+        // dd($sizes);
+        return View('admin.sizes.listDelete',compact('sizes'));
+    }
+    public function restoreSize(Request $request){
+        if(isset($request->size_id) && !empty($request->size_id)){
+            foreach($request->size_id as $item){
+                $size =Size::withTrashed()->find($item);
+                $size->restore();
+            }
+            return redirect()->route('Administration.sizes.list')->with('success','Khôi phục size thành công');
+        }
+        else{
+            return redirect()->route('Administration.sizes.list');
+        }
     }
 }

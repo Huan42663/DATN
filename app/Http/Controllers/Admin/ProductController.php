@@ -29,7 +29,12 @@ class ProductController extends Controller
     public function index()
     {
         $data = Products::query()
-            ->orderBy('product_name', 'asc')->get();
+            ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
+            ->where('products.status',1)
+            ->selectRaw('products.product_id,products.product_name,products.status ,products.product_image,product_slug,MIN(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
+            ->groupBy('products.product_id','products.product_name', 'products.status','products.product_image', 'product_slug')
+            ->orderBy('product_id','desc' )
+            ->get();
         return view('admin.products.index', compact('data'));
     }
 
@@ -40,9 +45,10 @@ class ProductController extends Controller
     {
         $sizes = Size::all();
         $colors = Color::all();
-        $categories = Category::join('category_product', 'categories.category_id', '=', 'category_product.category_id')->get();
+        $categories = Category::query()->where('category_parent_id',null)->get();
+        $cate_children = Category::query()->get();
 
-        return view('admin.products.create', compact('sizes', 'colors', 'categories'));
+        return view('admin.products.create', compact('sizes', 'colors', 'categories','cate_children'));
     }
 
     public function createVariant()
@@ -101,43 +107,210 @@ class ProductController extends Controller
         if (isset($request['action'])) {
             $check = $request['action'];
         }
+            // FULL SIZE AND COLOR================================================================================================================================================================================== 
+            if(!empty($request['sizes']) && $request['sizes'][0] == 0 && !empty($request['colors']) && $request['colors'][0] == 0){
+                foreach ($sizes as $size) {
+                    foreach ($colors as $color) {
+                        $data[] = [
+                            'stt' => $i,
+                            'action' => $check,
+                            'product_id' => $_SESSION['product_id'],
+                            'size_id' => $size,
+                            'color_id' => $color,
+                            'price' => $request['price'],
+                            'sale_price' => $request['sale_price'],
+                            'quantity' => $request['quantity'],
+                            'weight' => $request['weight']
+                        ];
+                        $i++;
+                    }
+                }
+            }
 
-        if (isset($request['sizes'])  && ($request['colors']) && $request['sizes'][0] != 0 && $request['colors'][0] != 0) {
-            foreach ($request['sizes'] as $size) {
+            // FULL SIZE AND NOT FULL COLOR
+            else if(!empty($request['sizes']) && $request['sizes'][0] == 0){
+                // MANY CHOOSE COLOR
+                if(!empty($request['colors']) && $request['colors'][0] != 0){
+                    foreach ($sizes as $size) {
+                        foreach ($request['colors'] as $color) {
+                            $data[] = [
+                                'stt' => $i,
+                                'action' => $check, 
+                                'product_id' => $_SESSION['product_id'],
+                                'size_id' => $size,
+                                'color_id' => $color,
+                                'price' => $request['price'],
+                                'sale_price' => $request['sale_price'],
+                                'quantity' => $request['quantity'],
+                                'weight' => $request['weight']
+                            ];
+                            $i++;
+                        }
+                    }
+                }
+                // NO CHOOSE COLOR
+                else if(empty($request['colors'])){
+                    foreach ($sizes as $size) {
+                            $data[] = [
+                                'stt' => $i,
+                                'action' => $check, 
+                                'product_id' => $_SESSION['product_id'],
+                                'size_id' => $size,
+                                'color_id' => '',
+                                'price' => $request['price'],
+                                'sale_price' => $request['sale_price'],
+                                'quantity' => $request['quantity'],
+                                'weight' => $request['weight']
+                            ];
+                            $i++;
+                    }
+                }
+                
+            }
+
+            // FULL COLOR AND NOT FULL SIZE
+            else if(!empty($request['colors']) && $request['colors'][0] == 0){
+                // MANY CHOOSE SIZE
+                if(!empty($request['sizes']) && $request['sizes'][0] != 0){
+                    foreach ($request['sizes'] as $size) {
+                        foreach ($colors as $color) {
+                            $data[] = [
+                                'stt' => $i,
+                                'action' => $check, 
+                                'product_id' => $_SESSION['product_id'],
+                                'size_id' => $size,
+                                'color_id' => $color,
+                                'price' => $request['price'],
+                                'sale_price' => $request['sale_price'],
+                                'quantity' => $request['quantity'],
+                                'weight' => $request['weight']
+                            ];
+                            $i++;
+                        }
+                    }
+                }
+                // NO CHOOSE SIZE
+                else if(empty($request['sizes'])){
+                    foreach ($colors as $color) {
+                        $data[] = [
+                            'stt' => $i,
+                            'action' => $check, 
+                            'product_id' => $_SESSION['product_id'],
+                            'size_id' => '',
+                            'color_id' => $color,
+                            'price' => $request['price'],
+                            'sale_price' => $request['sale_price'],
+                            'quantity' => $request['quantity'],
+                            'weight' => $request['weight']
+                        ];
+                        $i++;
+                    }
+                }
+            }
+
+            // END FULL  =================================================================================================================
+
+            // CHOOSE MANY OR NOT SIZE AND COLOR ========================================================================================= 
+
+            // CHOOSE MANY SIZE AND COLOR
+            else if(!empty($request['sizes']) && $request['sizes'][0] != 0 && !empty($request['colors']) && $request['colors'][0] != 0){
+                foreach ($request['sizes'] as $size) {
+                    foreach ($request['colors'] as $color) {
+                        $data[] = [
+                            'stt' => $i,
+                            'action' => $check, 
+                            'product_id' => $_SESSION['product_id'],
+                            'size_id' => $size,
+                            'color_id' => $color,
+                            'price' => $request['price'],
+                            'sale_price' => $request['sale_price'],
+                            'quantity' => $request['quantity'],
+                            'weight' => $request['weight']
+                        ];
+                        $i++;
+                    }
+                }
+            }
+
+            // CHOOSE MANY SIZE AND CHOOSE NOT COLOR
+            else if(!empty($request['sizes']) && $request['sizes'][0] != 0 && empty($request['colors'])){
+                foreach ($request['sizes'] as $size) {
+                    $data[] = [
+                        'stt' => $i,
+                        'action' => $check, 
+                        'product_id' => $_SESSION['product_id'],
+                        'size_id' => $size,
+                        'color_id' => '',
+                        'price' => $request['price'],
+                        'sale_price' => $request['sale_price'],
+                        'quantity' => $request['quantity'],
+                        'weight' => $request['weight']
+                    ];
+                    $i++;
+                }
+            }
+
+            // CHOOSE MANY COLOR AND CHOOSE NOT SIZE
+            else if(!empty($request['colors']) && $request['colors'][0] != 0 && empty($request['sizes'])){
                 foreach ($request['colors'] as $color) {
-                    $data[] = ['stt' => $i, 'action' => $check, 'product_id' => $_SESSION['product_id'], "size_id" => $size, "color_id" => $color, 'price' => $request['price'], 'sale_price' => $request['sale_price'], 'quantity' => $request['quantity'], 'weight' => $request['weight']];
+                    $data[] = [
+                        'stt' => $i,
+                        'action' => $check, 
+                        'product_id' => $_SESSION['product_id'],
+                        'size_id' => '',
+                        'color_id' => $color,
+                        'price' => $request['price'],
+                        'sale_price' => $request['sale_price'],
+                        'quantity' => $request['quantity'],
+                        'weight' => $request['weight']
+                    ];
                     $i++;
                 }
-            }
-        } else if (isset($request['sizes']) && !isset($request['colors']) && $request['sizes'][0] != 0 && $request['colors'][0] != 0) {
-            foreach ($request['sizes'] as $size) {
-                $data[] = ['stt' => $i, 'action' => $check, 'product_id' => $_SESSION['product_id'], "size_id" => $size, "color_id" => "", 'price' => $request['price'], 'sale_price' => $request['sale_price'], 'quantity' => $request['quantity'], 'weight' => $request['weight']];
-                $i++;
-            }
-        } else if (!isset($request['sizes']) && isset($request['colors']) && $request['sizes'][0] != 0 && $request['colors'][0] != 0) {
-            foreach ($request['colors'] as $color) {
-                $data[] = ['stt' => $i, 'action' => $check, 'product_id' => $_SESSION['product_id'], "size_id" => "", "color_id" => $color, 'price' => $request['price'], 'sale_price' => $request['sale_price'], 'quantity' => $request['quantity'], 'weight' => $request['weight']];
-                $i++;
-            }
-        } else if (isset($request['sizes']) && isset($request['colors']) && $request['sizes'][0] == 0 && $request['colors'][0] == 0) {
+            } 
 
-            foreach ($sizes as $size) {
-                foreach ($colors as $color) {
-                    $data[] = ['stt' => $i, 'action' => $check, 'product_id' => $_SESSION['product_id'], "size_id" => $size->size_id, "color_id" => $color->color_id, 'price' => $request['price'], 'sale_price' => $request['sale_price'], 'quantity' => $request['quantity'], 'weight' => $request['weight']];
-                    $i++;
-                }
-            }
-        } else if (isset($request['sizes']) && isset($request['colors']) && $request['sizes'][0] == 0 && $request['colors'][0] != 0) {
-            foreach ($sizes as $size) {
-                $data[] = ['stt' => $i, 'action' => $check, 'product_id' => $_SESSION['product_id'], "size_id" => $size->size_id, "color_id" => "", 'price' => $request['price'], 'sale_price' => $request['sale_price'], 'quantity' => $request['quantity'], 'weight' => $request['weight']];
-                $i++;
-            }
-        } else if (isset($request['sizes']) && isset($request['colors']) && $request['sizes'][0] != 0 && $request['colors'][0] == 0) {
-            foreach ($colors as $color) {
-                $data[] = ['stt' => $i, 'action' => $check, 'product_id' => $_SESSION['product_id'], "size_id" => "", "color_id" => $color->color_id, 'price' => $request['price'], 'sale_price' => $request['sale_price'], 'quantity' => $request['quantity'], 'weight' => $request['weight']];
-                $i++;
-            }
-        }
+            // END CHOOSE MANY OR NOT SIZE AND COLOR ========================================================================================= 
+
+
+
+
+            
+
+        // if (isset($request['sizes'])  && ($request['colors']) && $request['sizes'][0] != 0 && $request['colors'][0] != 0) {
+        //     foreach ($request['sizes'] as $size) {
+        //         foreach ($request['colors'] as $color) {
+        //             $data[] = ['stt' => $i, 'action' => $check, 'product_id' => $_SESSION['product_id'], "size_id" => $size, "color_id" => $color, 'price' => $request['price'], 'sale_price' => $request['sale_price'], 'quantity' => $request['quantity'], 'weight' => $request['weight']];
+        //             $i++;
+        //         }
+        //     }
+        // } else if (isset($request['sizes']) && !isset($request['colors']) && $request['sizes'][0] != 0 && $request['colors'][0] != 0) {
+        //     foreach ($request['sizes'] as $size) {
+        //         $data[] = ['stt' => $i, 'action' => $check, 'product_id' => $_SESSION['product_id'], "size_id" => $size, "color_id" => "", 'price' => $request['price'], 'sale_price' => $request['sale_price'], 'quantity' => $request['quantity'], 'weight' => $request['weight']];
+        //         $i++;
+        //     }
+        // } else if (!isset($request['sizes']) && isset($request['colors']) && $request['sizes'][0] != 0 && $request['colors'][0] != 0) {
+        //     foreach ($request['colors'] as $color) {
+        //         $data[] = ['stt' => $i, 'action' => $check, 'product_id' => $_SESSION['product_id'], "size_id" => "", "color_id" => $color, 'price' => $request['price'], 'sale_price' => $request['sale_price'], 'quantity' => $request['quantity'], 'weight' => $request['weight']];
+        //         $i++;
+        //     }
+        // } else if (isset($request['sizes']) && isset($request['colors']) && $request['sizes'][0] == 0 && $request['colors'][0] == 0) {
+
+        //     foreach ($sizes as $size) {
+        //         foreach ($colors as $color) {
+        //             $data[] = ['stt' => $i, 'action' => $check, 'product_id' => $_SESSION['product_id'], "size_id" => $size->size_id, "color_id" => $color->color_id, 'price' => $request['price'], 'sale_price' => $request['sale_price'], 'quantity' => $request['quantity'], 'weight' => $request['weight']];
+        //             $i++;
+        //         }
+        //     }
+        // } else if (isset($request['sizes']) && isset($request['colors']) && $request['sizes'][0] == 0 && $request['colors'][0] != 0) {
+        //     foreach ($sizes as $size) {
+        //         $data[] = ['stt' => $i, 'action' => $check, 'product_id' => $_SESSION['product_id'], "size_id" => $size->size_id, "color_id" => "", 'price' => $request['price'], 'sale_price' => $request['sale_price'], 'quantity' => $request['quantity'], 'weight' => $request['weight']];
+        //         $i++;
+        //     }
+        // } else if (isset($request['sizes']) && isset($request['colors']) && $request['sizes'][0] != 0 && $request['colors'][0] == 0) {
+        //     foreach ($colors as $color) {
+        //         $data[] = ['stt' => $i, 'action' => $check, 'product_id' => $_SESSION['product_id'], "size_id" => "", "color_id" => $color->color_id, 'price' => $request['price'], 'sale_price' => $request['sale_price'], 'quantity' => $request['quantity'], 'weight' => $request['weight']];
+        //         $i++;
+        //     }
+        // }
         $_SESSION['data'] = $data;
         // dd( $_SESSION['data']);
         return view('admin.products.create-variants', compact('sizes', 'colors'));
@@ -207,15 +380,43 @@ class ProductController extends Controller
             ->with('message', 'Thêm biến thể thành công!');
     }
 
-
     public function deleteVariant(Request $request)
     {
-        // dd($request->all());
-        foreach ($request['variant_id'] as $item) {
-            $variant = ProductVariant::find($item);
-            $variant->delete();
+        if(isset($request->delete) && isset($request->variant_id)){
+            foreach ($request['variant_id'] as $item) {
+                $variant = ProductVariant::find($item);
+                $variant->delete();
+            }
+            return redirect()->back()->with('message', 'Xóa biến thể thành công');
         }
-        return redirect()->back()->with('message', 'Xóa biến thể thành công');
+        else{
+            for($i=0;$i<count($request->variant_id_update);$i++){
+                $data = [
+                    'size_id' => $request->size_id[$i],
+                    'color_id' => $request->color_id[$i],
+                    'price' => $request->price[$i],
+                    'sale_price' => $request->sale_price[$i],
+                    'quantity' => $request->quantity[$i],
+                ];
+                $check = ProductVariant::find($request->variant_id_update[$i]);
+                $check1 = ProductVariant::join('sizes','product_variant.size_id','=','sizes.size_id')
+                ->join('colors','product_variant.color_id','=','colors.color_id')
+                ->where('product_variant.size_id',$request->size_id[$i])->where('product_variant.color_id',$request->color_id[$i])
+                ->where('product_variant.product_id',$request->product_id)->get();
+                foreach($check1 as $checkItem){
+                    if($check->product_varian_id != $checkItem->product_variant_id){
+                        $size = $checkItem->size_name;
+                        $color = $checkItem->color_name;
+                        return redirect()->back()->with('error', "Bạn đã cập nhật 1 biến thể khác vào 1 biến thể đã tồn tại có size là $size và màu là $color đã tồn tại vui lòng kiểm tra lại!");
+                    }
+                }
+                $check->update($data);
+            }
+            return redirect()->back()->with('message', 'Cập nhật biến thể thành công');
+            
+        }
+        
+       
     }
 
 
@@ -429,6 +630,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         // Tạo slug cho sản phẩm
         $productSlug = Str::slug($request->product_name);
 
@@ -478,7 +680,6 @@ class ProductController extends Controller
                 'weight.max' => 'Khối lượng không được lớn hơn :max.',
                 'product_image.required' => 'Hình ảnh sản phẩm không được để trống',
                 'description.required' => 'Mô tả sản phẩm không được để trống',
-                'description.required' => 'Mô tả sản phẩm không được để trống',
                 'description.string' => 'Mô tả sản phẩm phải là một chuỗi văn bản hợp lệ',
                 'description.min' => 'Mô tả sản phẩm phải có ít nhất 10 ký tự',
                 'description.max' => 'Mô tả sản phẩm không được vượt quá 5000 ký tự',
@@ -506,13 +707,15 @@ class ProductController extends Controller
 
 
         if (asset($request['category_id'])) {
-            $category = CategoryProduct::create(
-                $request->only([
-                    'category_id',
-                ]) + [
-                    'product_id' => $product->product_id,
-                ]
-            );
+            foreach($request['category_id'] as $item) {
+                CategoryProduct::create(
+                    $request->only([
+                        'category_id'=>$item,
+                    ]) + [
+                        'product_id' => $product->product_id,
+                    ]
+                );
+            }
         }
 
 
@@ -535,11 +738,22 @@ class ProductController extends Controller
         $i = 0;
 
         if (empty($request['sizes']) && empty($request['colors'])) {
+            $dataVariant = [
+                'product_id'=>$product->product_id,
+                'price'=>$request->price, 
+                'sale_price' => $request['sale_price'],
+                'quantity' => $request['quantity'],
+                'weight' => $request['weight']
+            ];
+            dd($dataVariant);
+            ProductVariant::create($dataVariant);
             return redirect()->route('Administration.products.create')
                 ->with('message', 'Sản phẩm đã được thêm thành công nhưng chưa có biến thể');
         } else {
-            //  FULL SIZE VÀ COLOR
-            if ((!empty($request['sizes']) && $request['sizes'][0] == 0) && (!empty($request['colors']) && $request['colors'][0] == 0)) {
+
+            // FULL SIZE AND COLOR================================================================================================================================================================================== 
+            
+            if(!empty($request['sizes']) && $request['sizes'][0] == 0 && !empty($request['colors']) && $request['colors'][0] == 0){
                 foreach ($sizes as $size) {
                     foreach ($colors as $color) {
                         $data[] = [
@@ -555,48 +769,14 @@ class ProductController extends Controller
                         $i++;
                     }
                 }
-            } else if (!empty($request['sizes']) && $request['sizes'][0] == 0) {
-                // FULL SIZE, COLOR TỰ CHỌN
-                if (!empty($request['colors'])) {
+            }
+
+            // FULL SIZE AND NOT FULL COLOR
+            else if(!empty($request['sizes']) && $request['sizes'][0] == 0){
+                // MANY CHOOSE COLOR
+                if(!empty($request['colors']) && $request['colors'][0] != 0){
                     foreach ($sizes as $size) {
                         foreach ($request['colors'] as $color) {
-                            $data[] = [
-                                'stt' => $i,
-                                'product_id' => $product->product_id,
-                                "size_id" => $size,
-                                "color_id" => $color,
-                                'price' => $request['price'],
-                                'sale_price' => $request['sale_price'],
-                                'quantity' => $request['quantity'],
-                                'weight' => $request['weight']
-                            ];
-                            $i++;
-                        }
-                    }
-                }
-                // FULL SIZE COLOR NULL
-                else {
-                    foreach ($sizes as $size) {
-                        $data[] = [
-                            'stt' => $i,
-                            'product_id' => $product->product_id,
-                            'size_id' => $size,
-                            'color_id' => '',
-                            'price' => $request['price'],
-                            'sale_price' => $request['sale_price'],
-                            'quantity' => $request['quantity'],
-                            'weight' => $request['weight']
-                        ];
-                        $i++;
-                    }
-                }
-            }
-            // FULL COLOR
-            else if (!empty($request['colors']) && $request['colors'][0] == 0) {
-                if (!empty($request['sizes'])) {
-                    // FULL COLOR SIZE TỰ CHỌN
-                    foreach ($colors as $color) {
-                        foreach ($request['sizes'] as $size) {
                             $data[] = [
                                 'stt' => $i,
                                 'product_id' => $product->product_id,
@@ -610,8 +790,48 @@ class ProductController extends Controller
                             $i++;
                         }
                     }
-                } else {
-                    // FULL MÀU SIZE NULL
+                }
+                // NO CHOOSE COLOR
+                else if(empty($request['colors'])){
+                    foreach ($sizes as $size) {
+                            $data[] = [
+                                'stt' => $i,
+                                'product_id' => $product->product_id,
+                                'size_id' => $size,
+                                'color_id' => '',
+                                'price' => $request['price'],
+                                'sale_price' => $request['sale_price'],
+                                'quantity' => $request['quantity'],
+                                'weight' => $request['weight']
+                            ];
+                            $i++;
+                    }
+                }
+                
+            }
+
+            // FULL COLOR AND NOT FULL SIZE
+            else if(!empty($request['colors']) && $request['colors'][0] == 0){
+                // MANY CHOOSE SIZE
+                if(!empty($request['sizes']) && $request['sizes'][0] != 0){
+                    foreach ($request['sizes'] as $size) {
+                        foreach ($colors as $color) {
+                            $data[] = [
+                                'stt' => $i,
+                                'product_id' => $product->product_id,
+                                'size_id' => $size,
+                                'color_id' => $color,
+                                'price' => $request['price'],
+                                'sale_price' => $request['sale_price'],
+                                'quantity' => $request['quantity'],
+                                'weight' => $request['weight']
+                            ];
+                            $i++;
+                        }
+                    }
+                }
+                // NO CHOOSE SIZE
+                else if(empty($request['sizes'])){
                     foreach ($colors as $color) {
                         $data[] = [
                             'stt' => $i,
@@ -627,15 +847,19 @@ class ProductController extends Controller
                     }
                 }
             }
-            // CHỌN TỪNG GIÁ TRỊ COLOR VÀ SIZE
-            else {
-                //COLOR NULL 
-                if (empty($request['sizes'])) {
+
+            // END FULL  =================================================================================================================
+
+            // CHOOSE MANY OR NOT SIZE AND COLOR ========================================================================================= 
+
+            // CHOOSE MANY SIZE AND COLOR
+            else if(!empty($request['sizes']) && $request['sizes'][0] != 0 && !empty($request['colors']) && $request['colors'][0] != 0){
+                foreach ($request['sizes'] as $size) {
                     foreach ($request['colors'] as $color) {
                         $data[] = [
                             'stt' => $i,
                             'product_id' => $product->product_id,
-                            'size_id' => '',
+                            'size_id' => $size,
                             'color_id' => $color,
                             'price' => $request['price'],
                             'sale_price' => $request['sale_price'],
@@ -645,48 +869,193 @@ class ProductController extends Controller
                         $i++;
                     }
                 }
-                // SIZE NULL
-                else if (empty($request['colors'])) {
-                    foreach ($request['sizes'] as $size) {
-                        $data[] = [
-                            'stt' => $i,
-                            'product_id' => $product->product_id,
-                            'size_id' => $size,
-                            'color_id' => '',
-                            'price' => $request['price'],
-                            'sale_price' => $request['sale_price'],
-                            'quantity' => $request['quantity'],
-                            'weight' => $request['weight']
-                        ];
-                        $i++;
-                    }
-                }
-                // SIZE VÀ COLOR KO NULL
-                else {
-                    foreach ($request['sizes'] as $size) {
-                        foreach ($request['colors'] as $color) {
-                            $data[] = [
-                                'stt' => $i,
-                                'product_id' => $product->product_id,
-                                'size_id' => $size,
-                                'color_id' => $color,
-                                'price' => $request['price'],
-                                'sale_price' => $request['sale_price'],
-                                'quantity' => $request['quantity'],
-                                'weight' => $request['weight']
-                            ];
-                            $i++;
-                        }
-                    }
+            }
+
+            // CHOOSE MANY SIZE AND CHOOSE NOT COLOR
+            else if(!empty($request['sizes']) && $request['sizes'][0] != 0 && empty($request['colors'])){
+                foreach ($request['sizes'] as $size) {
+                    $data[] = [
+                        'stt' => $i,
+                        'product_id' => $product->product_id,
+                        'size_id' => $size,
+                        'color_id' => '',
+                        'price' => $request['price'],
+                        'sale_price' => $request['sale_price'],
+                        'quantity' => $request['quantity'],
+                        'weight' => $request['weight']
+                    ];
+                    $i++;
                 }
             }
-        }
 
+            // CHOOSE MANY COLOR AND CHOOSE NOT SIZE
+            else if(!empty($request['colors']) && $request['colors'][0] != 0 && empty($request['sizes'])){
+                foreach ($request['colors'] as $color) {
+                    $data[] = [
+                        'stt' => $i,
+                        'product_id' => $product->product_id,
+                        'size_id' => '',
+                        'color_id' => $color,
+                        'price' => $request['price'],
+                        'sale_price' => $request['sale_price'],
+                        'quantity' => $request['quantity'],
+                        'weight' => $request['weight']
+                    ];
+                    $i++;
+                }
+            } 
+
+            // END CHOOSE MANY OR NOT SIZE AND COLOR ========================================================================================= 
+
+
+
+
+            // //  FULL SIZE VÀ COLOR
+            // if (!empty($request['sizes']) && $request['sizes'][0] == 0 && !empty($request['colors']) && $request['colors'][0] == 0) {
+            //     foreach ($sizes as $size) {
+            //         foreach ($colors as $color) {
+            //             $data[] = [
+            //                 'stt' => $i,
+            //                 'product_id' => $product->product_id,
+            //                 'size_id' => $size,
+            //                 'color_id' => $color,
+            //                 'price' => $request['price'],
+            //                 'sale_price' => $request['sale_price'],
+            //                 'quantity' => $request['quantity'],
+            //                 'weight' => $request['weight']
+            //             ];
+            //             $i++;
+            //         }
+            //     }
+            // } else if (!empty($request['sizes']) && $request['sizes'][0] == 0) {
+            //     // FULL SIZE, COLOR TỰ CHỌN
+            //     if (!empty($request['colors'])  && $request['colors'][0] != 0) {
+            //         foreach ($sizes as $size) {
+            //             foreach ($request['colors'] as $color) {
+            //                 $data[] = [
+            //                     'stt' => $i,
+            //                     'product_id' => $product->product_id,
+            //                     "size_id" => $size,
+            //                     "color_id" => $color,
+            //                     'price' => $request['price'],
+            //                     'sale_price' => $request['sale_price'],
+            //                     'quantity' => $request['quantity'],
+            //                     'weight' => $request['weight']
+            //                 ];
+            //                 $i++;
+            //             }
+            //         }
+            //     }
+            //     // FULL SIZE COLOR NULL
+            //     else {
+            //         foreach ($sizes as $size) {
+            //             $data[] = [
+            //                 'stt' => $i,
+            //                 'product_id' => $product->product_id,
+            //                 'size_id' => $size,
+            //                 'color_id' => '',
+            //                 'price' => $request['price'],
+            //                 'sale_price' => $request['sale_price'],
+            //                 'quantity' => $request['quantity'],
+            //                 'weight' => $request['weight']
+            //             ];
+            //             $i++;
+            //         }
+            //     }
+            // }
+            // // FULL COLOR
+            // else if (!empty($request['colors']) && $request['colors'][0] == 0) {
+            //     if (!empty($request['sizes'] && $request['sizes'][0] != 0)) {
+            //         // FULL COLOR SIZE TỰ CHỌN
+            //         foreach ($colors as $color) {
+            //             foreach ($request['sizes'] as $size) {
+            //                 $data[] = [
+            //                     'stt' => $i,
+            //                     'product_id' => $product->product_id,
+            //                     'size_id' => $size,
+            //                     'color_id' => $color,
+            //                     'price' => $request['price'],
+            //                     'sale_price' => $request['sale_price'],
+            //                     'quantity' => $request['quantity'],
+            //                     'weight' => $request['weight']
+            //                 ];
+            //                 $i++;
+            //             }
+            //         }
+            //     } else {
+            //         // FULL MÀU SIZE NULL
+            //         foreach ($colors as $color) {
+            //             $data[] = [
+            //                 'stt' => $i,
+            //                 'product_id' => $product->product_id,
+            //                 'size_id' => '',
+            //                 'color_id' => $color,
+            //                 'price' => $request['price'],
+            //                 'sale_price' => $request['sale_price'],
+            //                 'quantity' => $request['quantity'],
+            //                 'weight' => $request['weight']
+            //             ];
+            //             $i++;
+            //         }
+            //     }
+            // }
+            // // CHỌN TỪNG GIÁ TRỊ COLOR VÀ SIZE
+            // else {
+            //     //COLOR NULL 
+            //     if (empty($request['sizes']) && !empty($request['colors'])) {
+            //         foreach ($request['colors'] as $color) {
+            //             $data[] = [
+            //                 'stt' => $i,
+            //                 'product_id' => $product->product_id,
+            //                 'size_id' => '',
+            //                 'color_id' => $color,
+            //                 'price' => $request['price'],
+            //                 'sale_price' => $request['sale_price'],
+            //                 'quantity' => $request['quantity'],
+            //                 'weight' => $request['weight']
+            //             ];
+            //             $i++;
+            //         }
+            //     }
+            //     // SIZE NULL
+            //     else if (empty($request['colors']) && !empty($request['sizes'])) {
+            //         foreach ($request['sizes'] as $size) {
+            //             $data[] = [
+            //                 'stt' => $i,
+            //                 'product_id' => $product->product_id,
+            //                 'size_id' => $size,
+            //                 'color_id' => '',
+            //                 'price' => $request['price'],
+            //                 'sale_price' => $request['sale_price'],
+            //                 'quantity' => $request['quantity'],
+            //                 'weight' => $request['weight']
+            //             ];
+            //             $i++;
+            //         }
+            //     }
+            //     // SIZE VÀ COLOR KO NULL
+            //     else {
+            //         foreach ($request['sizes'] as $size) {
+            //             foreach ($request['colors'] as $color) {
+            //                 $data[] = [
+            //                     'stt' => $i,
+            //                     'product_id' => $product->product_id,
+            //                     'size_id' => $size,
+            //                     'color_id' => $color,
+            //                     'price' => $request['price'],
+            //                     'sale_price' => $request['sale_price'],
+            //                     'quantity' => $request['quantity'],
+            //                     'weight' => $request['weight']
+            //                 ];
+            //                 $i++;
+            //             }
+            //         }
+            //     }
+            // }
+        }
         $_SESSION['data'] = $data;
         return redirect()->route('Administration.products.create-variant');
     }
-
-
 
     /**
      * Display the specified resource.
@@ -717,12 +1086,16 @@ class ProductController extends Controller
             ->orderBy('sizes.size_name', 'asc')
             // ->whereNull('product_variant.deleted_at')
             ->get();
+            // dd($data2);
         $data3 = ImageColor::where('product_id',  $data1[0]->product_id)->get();
+
+        $data4 = Size::query()->get();
+        $data5 = Color::query()->get();
         // dd($data2);
 
         $_SESSION['product_id'] = $data1[0]->product_id;
         if ($data1) {
-            return view('admin.products.show', compact('data1', 'data2', 'data3'));
+            return view('admin.products.show', compact('data1', 'data2', 'data3', 'data4', 'data5'));
         } else {
             return redirect()->back()->with('message', 'Không tìm thấy sản phẩm');
         }

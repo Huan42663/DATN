@@ -60,7 +60,7 @@
             @endforeach
         @endif
     </div>
-    <div class="text-center" style="margin-bottom:10px"><a href="{{route('events.index')}}"> Xem Thêm Event -> </a></div>
+    {{-- <div class="text-center" style="margin-bottom:10px"><a href="{{route('events.index')}}"> Xem Thêm Event -> </a></div> --}}
     
 
     {{-- @include('client.components.collection-block')

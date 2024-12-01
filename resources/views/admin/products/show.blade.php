@@ -19,16 +19,16 @@
 @section('content')
     <div class="main-content">
         <div class="row">
-            <div class="col-xxl-4 col-xl-6">
+            <div class="col-xxl-4 col-xl-4">
                 <div class="card stretch stretch-full">
                     <div class="card-body">
                         @foreach ($data1 as $product)
-                            <div class="mb-4 text-center">
+                            <div class="mb-4">
                                 <div class="wd-150 ht-150 mx-auto mb-3 position-relative">
 
-                                    <div class=" wd-150 ht-150 border border-5 border-gray-3">
-                                        <img width="100%" src="{{ asset('storage/' . $product->product_image) }}"
-                                            alt="Product Image" class="img-fluid">
+                                    <div class=" wd-150 ht-150 border border-5 border-gray-3" >
+                                        <img src="{{ asset('storage/' . $product->product_image) }}"
+                                            alt="Product Image" class="img-fluid" style="width: 100%;height: 100%;object-fit: cover;object-position: center; ">
                                     </div>
                                     <div class="wd-10 ht-10 text-success rounded-circle position-absolute translate-middle"
                                         style="top: 76%; right: 10px">
@@ -36,10 +36,15 @@
                                 </div>
                                 <div class="mb-4">
                                     <input placeholder="product name" style="border:none"
-                                        class="text-center form-control fs-21 fw-bold d-block"
+                                        class="text-center form-control fs-21 fw-bold d-block text-"
                                         value="{{ $product->product_name }}" disabled>
                                 </div>
-                                <div class="fs-12 fw-normal text-muted text-center d-flex flex-wrap gap-3 mb-4">
+                                <div class="d-flex gap-2 text-center pt-1">
+                                    <a href="{{ route('Administration.products.edit', $product->product_slug) }}">
+                                        <i class="feather-edit me-2"> Edit </i>
+                                    </a>
+                                </div>
+                                <div class="fs-12 fw-normal text-muted d-flex flex-wrap gap-3 mb-4">
                                     <div
                                         class="flex-fill py-3 px-4 rounded-1 d-none d-sm-block border border-dashed border-gray-5">
                                         <h6 class="fs-15 fw-bolder">Description:</h6>
@@ -48,16 +53,10 @@
                                 </div>
                             </div>
                         @endforeach
-
-                        <div class="d-flex gap-2 text-center pt-4">
-                            <a href="{{ route('Administration.products.edit', $product->product_slug) }}">
-                                <i class="feather-edit me-2"> Edit </i>
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xxl-8 col-xl-6">
+            <div class="col-xxl-8 col-xl-8">
                 <div class="card border-top-0">
                     <div class="tab-content">
 
@@ -76,12 +75,18 @@
                                     </button>
                                 </a>
                                 @if (session('message'))
-                                    <div class="alert alert-success">
+                                    <div class="alert alert-success mt-2">
                                         {{ session('message') }}
+                                    </div>
+                                @endif
+                                @if (session('error'))
+                                    <div class="alert alert-danger mt-2">
+                                        {{ session('error') }}
                                     </div>
                                 @endif
                                 <form action="{{ route('Administration.products.deleteVariant') }}" method="post">
                                     @csrf
+                                    <input type="hidden" name="product_id" id="" value="{{$data1[0]->product_id}}">
                                     <table id="example-1" class="table table-hover mb-0">
                                         <thead>
                                             <tr>
@@ -98,33 +103,48 @@
                                                 <tr>
                                                     <td>
                                                         <input type="checkbox" name="variant_id[]"
-                                                            value="{{ $variant->product_variant_id }}">
+                                                            value="{{ $variant->product_variant_id }}" class="mt-2">
+                                                        <input type="hidden" name="variant_id_update[]"
+                                                            value="{{ $variant->product_variant_id }}" class="mt-2">
+                                                        
                                                     </td>
                                                     <td>
 
                                                         <div class="hstack gap-3">
-                                                            <div>
+                                                            <select name="size_id[]" id="" class="form-control">
+                                                                @foreach ($data4 as $item )
+                                                                    <option value="{{$item->size_id}}" @selected($item->size_name==$variant->size_name)>{{$item->size_name}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            {{-- <div>
                                                                 <a href="javascript:void(0);"
                                                                     class="d-block">{{ $variant->size_name }}</a>
-                                                                {{-- <span class="fs-12 text-muted">Electronics </span> --}}
-                                                            </div>
+                                                            </div> --}}
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <a href="javascript:void(0);"
-                                                            class="d-block mb-1">{{ $variant->color_name }}</a>
+                                                        <select name="color_id[]" id="" class="form-control">
+                                                            @foreach ($data5 as $item )
+                                                                <option value="{{$item->color_id}}" @selected($item->color_name==$variant->color_name)>{{$item->color_name}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        {{-- <a href="javascript:void(0);"
+                                                            class="d-block mb-1">{{ $variant->color_name }}</a> --}}
                                                         {{-- <span class="fs-12 text-muted d-block">Code: PH</span> --}}
                                                     </td>
                                                     <td>
-                                                        <a href="javascript:void(0);"
-                                                            class="d-block mb-1">{{ $variant->price }}</a>
+                                                        <input type="number" name="price[]" min="1" value="{{ $variant->price }}" class="form-control">
+                                                        {{-- <a href="javascript:void(0);"
+                                                            class="d-block mb-1">{{ $variant->price }}</a> --}}
                                                         {{-- <span class="fs-12 text-muted d-block">Code: Paid</span> --}}
                                                     </td>
                                                     <td>
-                                                        {{ $variant->sale_price }}
+                                                        <input type="number"  name="sale_price[]" min="0" value="{{$variant->sale_price }}" class="form-control">
+                                                      
                                                     </td>
                                                     <td>
-                                                        {{ $variant->quantity }}
+                                                        <input type="number"  name="quantity[]" min="1" value="{{$variant->quantity }}" class="form-control">
+                                                        
                                                     </td>
                                                     {{-- <td class="text-end">
                                                         <div class="hstack gap-2 justify-content-end">
@@ -141,10 +161,16 @@
 
                                         </tbody>
                                     </table>
-                                    <button class="btn btn-primary">
-                                        <i class="feather-minus me-2"></i>
-                                        <span>DELETE</span>
-                                    </button>
+                                    <div class="d-flex">
+                                        <button class="btn btn-danger me-2" name="delete" value="delete">
+                                            <i class="feather-minus me-2"></i>
+                                            <span>Xóa Biến Thể</span>
+                                        </button>
+                                        <button class="btn btn-success" name="update" value="update">
+                                            <i class="feather-minus me-2"></i>
+                                            <span>Sửa Biến Thể</span>
+                                        </button>
+                                    </div>
                                 </form>
 
                             </div>
@@ -163,12 +189,10 @@
                                         <input type="file" name="imageColor[]" class="form-control" multiple>
                                         <input type="hidden" name="product_id" value="{{ $data1[0]->product_id }}"
                                             id="">
-                                        <button class="mt-1 btn btn-primary group-text">
-                                            <i class="feather-plus me-2"></i>
-                                            <a href="">
-                                                <span>ADD New</span>
-                                            </a>
-                                        </button>
+                                        <button type="submit" class="btn btn-primary text-light mt-1">
+                                        <i class="feather-minus me-2"></i>
+                                        <span>ADD NEW</span>
+                                    </button>
                                     </div>
                                 </form>
                                 <form action="{{ route('Administration.products.destroyImage') }}" method="post">

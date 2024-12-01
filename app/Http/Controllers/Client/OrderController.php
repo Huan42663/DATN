@@ -10,6 +10,10 @@ use Illuminate\Http\Response;
 use App\Mail\OrderConfirmationMail;
 use App\Models\Products;
 use App\Models\User;
+use Carbon\Carbon;
+use App\Models\Voucher;
+use App\Models\OrderDetail;
+use App\Models\CartDetail;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -42,49 +46,121 @@ class OrderController extends Controller
             ->first();
         return view('client.orders.show', compact('order'));
     }
-
-
+    public function orderCart(Request $request){
+        $data = explode(', ', $request->product[0]);
+        $voucher = Voucher::where('date_end','>=',Carbon::now())->where('date_start','<=',Carbon::now())->where('quantity','>',0)->get();
+        $cart = new CartController();
+        $data1 = $cart->showCart(Auth()->user()->user_id);
+        // dd($data1["Cart"]);
+        return View('client.orders.createOrder',compact('data','data1','voucher'));
+    }
 
     public function store(Request $request)
     {
-        // Validate dữ liệu từ request
-        $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,user_id',
-            'fullname' => 'required|string|max:50',
-            'email' => 'required|email|max:255|unique:orders,email',
-            'phone' => 'required|string|max:11|unique:orders,phone',
-            'total' => 'required|numeric',
-            'total_discount' => 'nullable|numeric',
-            'method_payment' => 'required|in:COD,banking',
-            'order_code' => 'required|string|max:50',
-            'note' => 'nullable|string|max:255',
-            'address' => 'required|string|max:255',
-            'province' => 'required|string|max:50',
-            'district' => 'required|string|max:50',
-            'ward' => 'required|string|max:50',
-            'street' => 'required|string|max:50',
-            'hamlet' => 'nullable|string|max:50',
+       
+        if(isset($request->voucher)){
+            $data = Voucher::where('voucher_code',$request->voucher_code)->where('date_end','>=',Carbon::now())->where('date_start','<=',Carbon::now())->get();
+            $_SESSION['dataInfo'] = $request->except('_token','voucher_code','voucher');
+            if(count($data) >0){
+                if($data[0]->quantity > 0){
+                    $_SESSION['voucher'] = $data;
+                }
+                return redirect()->back();
+            }else{
+                unset($_SESSION['voucher']);
+                return redirect()->back()->with('error','Mã khuyến mãi này không tồn tại hoặc đã hết số lượng dùng');
+            }
+        }
+        else{
+            unset($_SESSION['dataInfo']);
+            $request->validate([
+                    'fullname' => 'required|max:255',
+                    'email' => 'required|email|max:255',
+                    'method_payment' => 'required',
+                    'note' => 'max:255',
+                    'address' => 'required|string|max:255',
+                    'province' => 'required',
+                    'district' => 'required',
+                    'ward' => 'required',
+                    'street' => 'required|max:50',
+            ],
+                 [
+                    'fullname.required' => 'Họ và tên không được để trống',
+                    'method_payment.required' => 'Vui lòng chọn phương thức thanh toán',
+                    'fullname.max' => 'Họ và tên không được quá 255 kí tự',
+                    'email.required' => 'Email không được để trống',
+                    'email.email' => 'Email không đúng định dạng',
+                    'email.max' => 'Email không được quá 255 kí tự',
+                    'note.max' => 'Note không được quá 255 kí tự',
+                    'address.required' => 'Địa chỉ không được để trống',
+                    'address.max' => 'Địa chỉ không được quá 255 kí tự',
+                    'province.required' => 'Tỉnh/Thành Phố không được để trống',
+                    'district.required' => 'Quận/Huyện không được để trống',
+                    'ward.required' => 'Phường\Xã không được để trống',
+                    'street.required' => 'Đường không được để trống',
+                    'street.max' => 'Đường  không được quá 50 kí tự',
+                ]
+        
+        );
 
-        ]);
-        $emailExists = Order::where('email', $request->email)->exists();
+        $data1 = [
+            'fullname'=>$request->fullname,
+            'email'=>$request->email,
+            'phone'=>$request->phone,
+            'total'=>$request->total,
+            'total_discount'=>$request->total_discount,
+            'method_payment'=>$request->method_payment,
+            'user_id'=>Auth()->user()->user_id,
+            'note'=>$request->note,
+            'address'=>$request->address,
+            'province'=>$request->province,
+            'district'=>$request->district,
+            'ward'=>$request->ward,
+            'street'=>$request->street,
+            'hamlet'=>"",
+            'status'=>"unconfirm"
+        ];
 
-        if ($emailExists) {
-            return response()->json([
-                'message' => 'Email đã tồn tại trong hệ thống đơn hàng!',
-            ], 422);
+        if($request->method_payment != "banking"){
+            $order = Order::create($data1);
+            $order_code = "jsstore#24".rand(1000000,9999999).$order->order_id;
+            $data1['order_code'] = $order_code;
+            $order->update($data1);
+        }
+        $cart = new CartController();
+        $data = $cart->showCart(Auth()->user()->user_id);
+        $i=0;
+        foreach($data['Cart'] as $item){
+            foreach($request->cart_detail_id as $item1){
+                if($item->cart_detail_id == $item1){
+                    $data2 = 
+                    [
+                        'order_id' =>$order->order_id,
+                        'product_id'=>$item->product_id,
+                        'size' =>$item->size,
+                        'color' =>$item->color,
+                        'price' =>$item->price,
+                        'sale_price' =>$item->sale_price,
+                        'quantity' =>$item->quantity
+                    ];
+                    OrderDetail::create($data2);
+                    CartDetail::where('cart_detail_id',$item->cart_detail_id)->delete();
+                }
+            }
+        }
+           return redirect()->route('Client.Home');
         }
 
-        // Tạo đơn hàng
-        $order = Order::create($validatedData);
+        // $order = Order::create($validatedData);
 
-        // Gửi email xác nhận đơn hàng
-        Mail::to($order->email)->send(new OrderConfirmationMail($order));
+        // // Gửi email xác nhận đơn hàng
+        // Mail::to($order->email)->send(new OrderConfirmationMail($order));
 
-        // Trả về phản hồi cho API
-        return response()->json([
-            'message' => 'Đơn hàng đã được thêm và email xác nhận đã được gửi!',
-            'order' => $order
-        ], 201);
+        // // Trả về phản hồi cho API
+        // return response()->json([
+        //     'message' => 'Đơn hàng đã được thêm và email xác nhận đã được gửi!',
+        //     'order' => $order
+        // ], 201);
     }
 
     // Xử lý đơn hàng
@@ -118,5 +194,4 @@ class OrderController extends Controller
         }
         return redirect()->route('Client.orders.list');
     }
-   
 }

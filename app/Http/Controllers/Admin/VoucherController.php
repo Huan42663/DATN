@@ -124,10 +124,10 @@ class VoucherController extends Controller
                     return redirect()->back()->with("error","Mã voucher đã có");
                 }
             }
-            if ($request['date_start'] < Carbon::now()) {
+            if ($request['date_start'] != $voucher1[0]->date_start && $request['date_start'] >=  Carbon::now()) {
                 return redirect()->back()->with("error","Ngày bắt đầu phải lớn hơn hoặc bằng hiện tại");
             }
-            if ($request['date_end'] < $request['date_start']) {
+            if ($request['date_end'] <= $request['date_start']) {
                 return redirect()->back()->with("error","Ngày kết thúc phải lớn hơn ngày bắt đầu");
             }
 
@@ -163,20 +163,22 @@ class VoucherController extends Controller
             }
 
                 $voucher->update($request->all());
-                return redirect()->back()->with("success","Sửa voucher thành công");
+                return redirect()->route('Administration.vouchers.show',$request->voucher_code)->with("success","Sửa voucher thành công");
             }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Voucher $voucher)
+    public function destroy(Request $request)
     {
-        $voucher1 = Voucher::query()->where("voucher_id", '=', $voucher->voucher_id)->get();
-        if(!$voucher1){
-            return redirect()->back()->with("error","Không tìm thấy voucher");
-        }else{
-            Voucher::query()->where("voucher_id", '=', $voucher->voucher_id)->delete();
-            return redirect()->back()->with("success","Xóa voucher thành công");
+        if(isset($request->voucher_id) && !empty($request->voucher_id)){
+            foreach($request->voucher_id as $item){
+                Voucher::query()->where('voucher_code',$item)->delete();
+            }
+            return redirect()->back()->with('success','Xóa voucher thành công');
+        }
+        else{
+            return redirect()->back()->with('error','Không tìm thấy voucher ');
         }
     }
 }

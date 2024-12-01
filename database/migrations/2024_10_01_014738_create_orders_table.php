@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id('order_id');
             $table->foreignId('user_id')->constrained('users', 'user_id');
             $table->string('fullname', 50);
-            $table->string('email', 255)->unique();
-            $table->string('phone', 11)->unique();
+            $table->string('email', 255);
+            $table->string('phone', 11);
             $table->decimal('total', 10.0);
             $table->decimal('total_discount', 10.0)->nullable();
             $table->enum('method_payment', ['COD', 'banking']);

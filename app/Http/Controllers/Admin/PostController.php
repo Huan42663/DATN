@@ -78,10 +78,12 @@ class PostController extends Controller
     {
         $post = Post::query()->with('PostImage')->where('slug',$slug)->get();
         $categoryPost = CategoryPost::get();
+       
         if(!$post){
             return redirect()->route('Administration.posts.list')->with("error","Không tìm thấy bài viết ");
         }else
         {    
+            // dd($post);
             return View('admin.posts.update',compact('post','categoryPost'));
         }
     }
@@ -158,14 +160,16 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(Request $request)
     {
-        $Check = Post::query()->where('post_id',$post)->get();
-        if(!$Check){
-            return redirect()->back()->with("error","Không tìm thấy bài viết");
-        }else{
-            $post->delete();
-            return redirect()->back()->with("success","Xóa bài viết thành công");
+        if(isset($request->post_id) && !empty($request->post_id)){
+            foreach($request->post_id as $item){
+                Post::query()->where('post_id',$item)->delete();
+            }
+            return redirect()->back()->with('success','Xóa bài viết thành công');
+        }
+        else{
+            return redirect()->back()->with('error','Không tìm thấy bài viết ');
         }
     }
     public function destroyImage(Post $post){
@@ -176,5 +180,7 @@ class PostController extends Controller
             }
             $value->delete();
         }
+        return redirect()->route('Administration.posts.show',$post->slug)->with("success","Xóa Ảnh Bài Viết Thành Công");
+
     }
 }

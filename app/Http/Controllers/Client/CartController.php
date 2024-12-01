@@ -16,9 +16,10 @@ class CartController extends Controller
 {
     public function index(Request $request){
         $cart = "";
-        if(isset(Auth::user()->id)){
-            $cart = $this->showCart(Auth::user()->id);
-        }
+        // if(isset(Auth::user()->id)){
+        //     $cart = $this->showCart(Auth::user()->id);
+        // }
+        $cart = $this->showCart(1);
         return View('client.cart',compact('cart'));
     }
     public function store(Request $request){
@@ -97,10 +98,10 @@ class CartController extends Controller
         ->leftJoin("products","product_variant.product_id","=","products.product_id")
         ->leftJoin("sizes","product_variant.size_id","=","sizes.size_id")
         ->leftJoin("colors","product_variant.color_id","=","colors.color_id")
-        ->leftJoin("variant_image_color","product_variant.product_variant_id","=","variant_image_color.product_variant_id")
-        ->leftJoin("image_color","variant_image_color.image_color_id","=","image_color.image_color_id")
+        // ->leftJoin("variant_image_color","product_variant.product_variant_id","=","variant_image_color.product_variant_id")
+        // ->leftJoin("image_color","variant_image_color.image_color_id","=","image_color.image_color_id")
         ->selectRaw(
-        'cart_detail.cart_detail_id,products.product_name,products.product_slug,image_color.image_color_name AS image_color,products.product_image,
+        'cart_detail.cart_detail_id,products.product_id,products.product_name,products.product_slug,products.product_image,
                      sizes.size_name as size ,colors.color_name as color,cart_detail.quantity,product_variant.price,product_variant.quantity as Instock,
                      CASE WHEN product_variant.sale_price > 0 THEN product_variant.sale_price
                      END AS sale_price,
