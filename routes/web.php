@@ -50,25 +50,24 @@ Route::prefix('/Administration')->group(function () {
 
     // ROUTE SIZE
     Route::prefix('sizes')->group(function () {
-        Route::get('/', [SizeController::class, 'index'])->name('Administration.sizes.list'); 
-        Route::post('/', [SizeController::class, 'store'])->name('Administration.sizes.store'); 
-        Route::get('/{size_id}', [SizeController::class, 'show'])->name('Administration.sizes.show'); 
+        Route::get('/', [SizeController::class, 'index'])->name('Administration.sizes.list');
+        Route::post('/', [SizeController::class, 'store'])->name('Administration.sizes.store');
+        Route::get('/{size_id}', [SizeController::class, 'show'])->name('Administration.sizes.show');
         Route::put('/{size}', [SizeController::class, 'update'])->name('Administration.sizes.update');
         Route::delete('/', [SizeController::class, 'destroy'])->name('Administration.sizes.destroy');
-        Route::get('/list-delete',[SizeController::class,'listSizeDelete'])->name('Administration.sizes.delete');
-        Route::post('/list-delete', [SizeController::class, 'restoreSize'])->name('Administration.sizes.updateDelete'); 
-
+        Route::get('/list-delete', [SizeController::class, 'listSizeDelete'])->name('Administration.sizes.delete');
+        Route::post('/list-delete', [SizeController::class, 'restoreSize'])->name('Administration.sizes.updateDelete');
     });
 
     // ROUTE COLOR
     Route::prefix('colors')->group(function () {
-        Route::get('/', [ColorController::class, 'index'])->name('Administration.colors.list'); 
-        Route::post('/', [ColorController::class, 'store'])->name('Administration.colors.store'); 
-        Route::get('/{color_id}', [ColorController::class, 'show'])->name('Administration.colors.show'); 
+        Route::get('/', [ColorController::class, 'index'])->name('Administration.colors.list');
+        Route::post('/', [ColorController::class, 'store'])->name('Administration.colors.store');
+        Route::get('/{color_id}', [ColorController::class, 'show'])->name('Administration.colors.show');
         Route::put('/{color}', [ColorController::class, 'update'])->name('Administration.colors.update');
         Route::delete('/', [ColorController::class, 'destroy'])->name('Administration.colors.destroy');
-        Route::get('/list-delete', [ColorController::class, 'listColorDelete'])->name('Administration.colors.listDelete'); 
-        Route::post('/list-delete', [ColorController::class, 'restoreColor'])->name('Administration.colors.updateDelete'); 
+        Route::get('/list-delete', [ColorController::class, 'listColorDelete'])->name('Administration.colors.listDelete');
+        Route::post('/list-delete', [ColorController::class, 'restoreColor'])->name('Administration.colors.updateDelete');
     });
 
     // ROUTE POST
@@ -155,7 +154,9 @@ Route::prefix('/Administration')->group(function () {
         Route::put('/show-remove/{event}', [EventController::class, 'remove'])->name('Administration.events.show-remove');
         Route::get('/edit/{event}', [EventController::class, 'edit'])->name('Administration.events.edit');
         Route::put('/update/{event}', [EventController::class, 'update'])->name('Administration.events.update');
-        Route::delete('/destroy/{event}', [EventController::class, 'destroy'])->name('Administration.events.destroy');
+        Route::put('/destroy/{event}', [EventController::class, 'destroy'])->name('Administration.events.destroy');
+        Route::get('/list-delete', [EventController::class, 'listEventDelete'])->name('Administration.events.listDelete');
+        Route::put('/list-delete', [EventController::class, 'restoreEvent'])->name('Administration.events.restore');
     });
 
     // ROUTE USER

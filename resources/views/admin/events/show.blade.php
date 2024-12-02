@@ -84,7 +84,7 @@
                                                         <td><input name="products[]" value="{{ $product->product_id }}"
                                                                 type="checkbox"></td>
                                                         <td scope="row">{{ $product->product_name }}</td>
-                                                        <td><img src="{{ asset('storage/' . $product->product_image) }}"
+                                                        <td><img width="100px" src="{{ asset('storage/' . $product->product_image) }}"
                                                                 alt=""></td>
                                                     </tr>
                                                 @endforeach
@@ -127,7 +127,7 @@
                                                                 type="checkbox">
                                                         </td>
                                                         <td scope="row">{{ $product->product_name }}</td>
-                                                        <td><img src="{{ asset('storage/' . $product->product_image) }}"
+                                                        <td><img width="100px" src="{{ asset('storage/' . $product->product_image) }}"
                                                                 alt=""></td>
                                                     </tr>
                                                 @endforeach

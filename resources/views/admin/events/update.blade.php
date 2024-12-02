@@ -96,7 +96,7 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="text" name="discount" value="{{ $event->discount }}"
+                                            <input type="text" id="inp-discount" name="discount" value="{{ $event->discount }}"
                                                 class="form-control">
                                         </div>
                                         @error('discount')
@@ -143,6 +143,7 @@
     </div>
     <script>
         a = document.querySelector('[id = "discount"]');
+        c = document.querySelector('[id = "inp-discount"]');
         selectElement = document.getElementById('type_event');
         const b = selectElement.value;
         if (b == 1) {
@@ -156,6 +157,7 @@
                 a.style.display = 'flex';
             } else if (b == 0) {
                 a.style.display = 'none';
+                c.value = null;
             }
         });
     </script>
