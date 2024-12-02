@@ -199,8 +199,11 @@ Route::prefix('/')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->name('register');
 
     // ROUTE POST
-    Route::get('posts/{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');
-    Route::get('posts/detail-{slug}', [ClientPostController::class, 'index'])->name('Client.posts.detail');
+    Route::get('/posts', [ClientPostController::class, 'index'])->name('Client.posts.category');
+    // Route::get('client/posts/category/{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');
+
+    Route::get('posts/{slug}', [ClientPostController::class, 'detail'])->name('Client.posts.detail');
+
 
     // ROUTE ORDER
     Route::get('orders', [ClientOrderController::class, 'index'])->middleware('auth')->name('Client.orders.list');
