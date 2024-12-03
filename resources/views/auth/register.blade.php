@@ -1,4 +1,4 @@
-@extends('client.masterRegister')
+@extends('client.master')
 
 @section('title', 'Register')
 
