@@ -17,11 +17,11 @@
 
                     <div class="fullName">
                         <input class="border-line px-4 pt-3 pb-3 w-full rounded-lg" id="fullName" type="text"
-                            name="fullName" placeholder="Full Name *" required="">
+                            name="fullName" value="{{ old('fullName') }}" placeholder="Full Name *" required="">
                     </div>
                     <div class="confirm-pass mt-5">
                         <input class="border-line px-4 pt-3 pb-3 w-full rounded-lg" id="email" type="email"
-                            name="email" placeholder="Email *" required="">
+                            name="email" value="{{ old('email') }}" placeholder="Email *" required="">
                     </div>
                     <div class="pass mt-5">
                         <input class="border-line px-4 pt-3 pb-3 w-full rounded-lg" id="password" type="password"
