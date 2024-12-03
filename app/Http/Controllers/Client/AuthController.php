@@ -102,15 +102,7 @@ class AuthController extends Controller
                 'phone' => $request->phone,
                 'role' => 'guest', // Role mặc định
             ]);
-
-            // if ($user) {
-            //     Log::info('User created:', ['id' => $user->id, 'email' => $user->email]);
-            //     dd($user->id); // Hiển thị user_id
-            // } else {
-            //     Log::error('User creation failed.');
-            //     return redirect()->back()->with('error', 'Failed to create account.');
-            // }
-
+            
             // Tạo giỏ hàng
             Cart::create([
                 'user_id' => $user->user_id,

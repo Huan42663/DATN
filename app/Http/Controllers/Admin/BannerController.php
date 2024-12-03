@@ -26,6 +26,7 @@ class BannerController extends Controller
                 'product_name',
                 'event_name'
             )
+            ->orderBy('banners.banner_id', 'DESC')
             ->get();
 
         // Trả về view và truyền dữ liệu vào
