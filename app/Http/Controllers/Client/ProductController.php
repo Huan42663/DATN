@@ -126,36 +126,38 @@ class ProductController extends Controller
                 $related_products[$i] = $resuilt;
             }
 
-            // lấy ra danh sách đánh giá
-            $rates = Products::query()
-                ->where('product_slug', $slug)
-                ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
-                ->join('rates', 'product_variant.product_variant_id', '=', 'rates.product_variant_id')
-                ->join('users', 'rates.user_id', '=', 'users.user_id')
-                ->select(
-                    'star',
-                    'content',
-                    'fullName'
-                )
-                ->get();
+            // // lấy ra danh sách đánh giá
+            // $rates = Products::query()
+            //     ->where('product_slug', $slug)
+            //     ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
+            //     ->join('rates', 'product_variant.product_variant_id', '=', 'rates.product_variant_id')
+            //     ->join('users', 'rates.user_id', '=', 'users.user_id')
+            //     ->select(
+            //         'star',
+            //         'content',
+            //         'fullName'
+            //     )
+            //     ->get();
 
-            // lấy ra danh sách ảnh của đánh giá
-            $rate_images = Products::query()
-                ->where('product_slug', $slug)
-                ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
-                ->join('rates', 'product_variant.product_variant_id', '=', 'rates.product_variant_id')
-                ->join('rate_image', 'rates.rate_id', '=', 'rate_image.rate_id')
-                ->select(
-                    'image_name'
-                )
-                ->get();
+            // // lấy ra danh sách ảnh của đánh giá
+            // $rate_images = Products::query()
+            //     ->where('product_slug', $slug)
+            //     ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
+            //     ->join('rates', 'product_variant.product_variant_id', '=', 'rates.product_variant_id')
+            //     ->join('rate_image', 'rates.rate_id', '=', 'rate_image.rate_id')
+            //     ->select(
+            //         'image_name'
+            //     )
+            //     ->get();
+                
+                // dd($related_products);
             return view('client.product-detail', compact(
                 'product',
                 'product_variant',
                 'related_products',
                 'product_images',
-                'rates',
-                'rate_images'
+                // 'rates',
+                // 'rate_images'
             ));
 
             //  trả về dữ liệu dưới dạng json
