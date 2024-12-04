@@ -38,9 +38,9 @@ class OrderController extends Controller
                 
              $detail   =   Order::join('order_detail', 'orders.order_id', '=', 'order_detail.order_id')
                             ->join('products', 'order_detail.product_id', "=", 'products.product_id')
-                            ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
-                            ->join('sizes', 'product_variant.size_id', "=", 'sizes.size_id')
-                            ->join('colors', 'product_variant.color_id', "=", 'colors.color_id')
+                            // ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
+                            // ->join('sizes', 'product_variant.size_id', "=", 'sizes.size_id')
+                            // ->join('colors', 'product_variant.color_id', "=", 'colors.color_id')
                             ->select(
                                 'order_detail.price',
                                 'order_detail.sale_price',
@@ -54,6 +54,7 @@ class OrderController extends Controller
                             ->where('orders.order_code', '=', $order_code)
                             ->get();
                           
+                            // dd($detail);
         return View('admin.orders.show',compact('infoOrder','detail','bill'));
         
     }

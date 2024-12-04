@@ -96,7 +96,6 @@ class SizeController extends Controller
     }
     public function listSizeDelete(){
         $sizes = Size::onlyTrashed()->get();
-        dd($sizes);
         return View('admin.sizes.listDelete',compact('sizes'));
     }
     public function restoreSize(Request $request){

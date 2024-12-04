@@ -80,7 +80,7 @@
                             <!-- Dòng giá trị sản phẩm -->
                             <span style="text-align: center;">{{ $index + 1 }}</span> 
                             <span
-                                style="text-align: left; padding-left: 10px;">{{ $detail->product->product_name ?? 'Không tồn tại' }}</span>
+                                style="text-align: left; padding-left: 10px;">{{ $detail->product_name ?? 'Không tồn tại' }}</span>
                             <span style="text-align: center;">{{ number_format($detail->price, 0, ',', '.') }} đ</span>
                             <span style="text-align: center;">{{ $detail->size ?? 'Không có' }}</span>
                             <span style="text-align: center;">{{ $detail->color ?? 'Không có' }}</span>
@@ -93,7 +93,7 @@
                 <div
                     style="border: 1px solid #e0e0e0; padding: 15px; margin-top: 20px; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
                     <strong style="color: #333;">Tổng Tiền:</strong>
-                    <span style="color: #f44336;">{{ number_format($order->total, 0, ',', '.') }} đ</span>
+                    <span style="color: #f44336;">{{ number_format($order->total_discount, 0, ',', '.') }} đ</span>
                 </div>
 
                 <!-- Nút hành động -->

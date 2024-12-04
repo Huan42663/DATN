@@ -43,7 +43,7 @@ class OrderController extends Controller
         // if (!auth()->check()) {
         //     return redirect()->route('Client.account.showLoginForm')->with('error', 'Bạn cần đăng nhập để xem đơn hàng.');
         // }
-        $userId = 1;
+        $userId = auth()->user()->user_id;
         $orders = Order::where('user_id', $userId)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -64,8 +64,8 @@ class OrderController extends Controller
         $data = explode(', ', $request->product[0]);
         $voucher = Voucher::where('date_end','>=',Carbon::now())->where('date_start','<=',Carbon::now())->where('quantity','>',0)->get();
         $cart = new CartController();
-        // $data1 = $cart->showCart(Auth()->user()->user_id);
-        $data1 = $cart->showCart(1);
+        $data1 = $cart->showCart(Auth()->user()->user_id);
+        // $data1 = $cart->showCart(1);
         foreach ($data as  $value) {
             $product = CartDetail::where('cart_detail_id',$value)->get();
             if(!count($product)>0){
@@ -142,7 +142,7 @@ class OrderController extends Controller
         if(!preg_match($pattern, $request->phone)){
             return redirect()->back()->with('phone','Số điện thoại không đúng định dạng');
         }
-        dd($request->all());
+        // dd($request->all());
 
         $data1 = [
             'fullname'=>$request->fullname,
@@ -151,8 +151,8 @@ class OrderController extends Controller
             'total'=>$request->total,
             'total_discount'=>$request->total_discount,
             'method_payment'=>$request->method_payment,
-            'user_id'=>1,
-            // 'user_id'=>Auth()->user()->user_id,
+            // 'user_id'=>1,
+            'user_id'=>Auth()->user()->user_id,
             'note'=>$request->note,
             'address'=>$request->address,
             'province'=>$request->province,
@@ -170,8 +170,8 @@ class OrderController extends Controller
             $order->update($data1);
         }
         $cart = new CartController();
-        $data = $cart->showCart(1);
-        // $data = $cart->showCart(Auth()->user()->user_id);
+        // $data = $cart->showCart(1);
+        $data = $cart->showCart(Auth()->user()->user_id);
         $i=0;
         foreach($data['Cart'] as $item){
             foreach($request->cart_detail_id as $item1){

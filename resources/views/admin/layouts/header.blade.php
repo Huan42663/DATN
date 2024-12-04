@@ -109,17 +109,18 @@
                         </div>
                         @endif
                     </div>
-                    @if(Auth()->user())
+                    @if(Auth::check())
                     <div class="dropdown nxl-h-item">
                         <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button"
                             data-bs-auto-close="outside">
-                                <p>{{Auth()->user()->fullname}}</p>
+                                <p>{{Auth()->user()->fullName}}</p>
+
                         </a>
                         <div class="dropdown-menu dropdown-menu-end nxl-h-dropdown nxl-user-dropdown">
                             <div class="dropdown-header">
                                 <div class="d-flex align-items-center">
                                     <div>
-                                        <h6 class="text-dark mb-0">{{Auth()->user()->fullname}}<span
+                                        <h6 class="text-dark mb-0">{{Auth()->user()->fullName}}<span
                                                 class="badge bg-soft-success text-success ms-1">{{Auth()->user()->role}}</span></h6>
                                         <span class="fs-12 fw-medium text-muted">{{Auth()->user()->email}}</span>
                                     </div>
