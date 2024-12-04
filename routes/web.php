@@ -124,6 +124,10 @@ Route::prefix('/Administration')->group(function () {
         Route::get('/{category}/edit', [CategoryProductController::class, 'edit'])->name('Administration.categoryProduct.edit');
         Route::put('/{category}/update', [CategoryProductController::class, 'update'])->name('Administration.categoryProduct.update');
         Route::delete('/{category}', [CategoryProductController::class, 'destroy'])->name('Administration.categoryProduct.destroy');
+        Route::post('/list-delete', [CategoryProductController::class, 'restoreCategoryProduct'])
+            ->name('Administration.categoryProduct.updateDelete');
+        Route::get('/product/list-delete', [CategoryProductController::class, 'listCategoryProductDelete'])
+            ->name('Administration.categoryProduct.listDelete');
     });
 
     // ROUTE  CATEGORY POST
@@ -135,6 +139,10 @@ Route::prefix('/Administration')->group(function () {
         Route::get('/{category}/edit', [CategoryPostController::class, 'edit'])->name('Administration.categoryPost.edit');
         Route::put('/{category}', [CategoryPostController::class, 'update'])->name('Administration.categoryPost.update');
         Route::delete('/{category}', [CategoryPostController::class, 'destroy'])->name('Administration.categoryPost.destroy');
+        Route::post('/list-delete', [CategoryPostController::class, 'restoreCategoryPost'])
+            ->name('Administration.categoryPost.updateDelete');
+        Route::get('/post/list-delete', [CategoryPostController::class, 'listCategoryPostDelete'])
+            ->name('Administration.categoryPost.listDelete');
     });
 
     // ROUTE BANNER
@@ -214,7 +222,8 @@ Route::prefix('/')->group(function () {
     Route::post('order/{order_code}/{order_id}/confirmDelivered', [CLientOrderController::class, 'confirmDelivered'])->middleware('auth')->name('Client.orders.confirmDelivered');
 
     //ROUTER CATEGORY
-    Route::get('categories', [CategoryController::class, 'index'])->middleware('auth')->name('Client.categories.list');
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/{slug}', [CategoryController::class, 'show'])->name('categories.show');
 
 
 
