@@ -32,7 +32,7 @@
                             @if (isset($_SESSION['data'][0]['action']) != '')
                                 <form action="{{ route('Administration.products.createVariant2') }}" method="POST"
                                     enctype="multipart/form-data">
-                            @else
+                                @else
                                     <form action="{{ route('Administration.products.createVariant1') }}" method="POST"
                                         enctype="multipart/form-data">
                             @endif
@@ -76,15 +76,25 @@
 
                                         <td>
                                             <input type="text" class="form-control" name="price"
-                                                value="{{ $item['price'] }}" id="">
+                                                value="{{ $item['price'] }}" id=""><br>
+                                            @error('price')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </td>
                                         <td>
                                             <input type="text" class="form-control"
-                                                value="{{ $item['sale_price'] }}" name="sale_price" id="">
+                                                value="{{ $item['sale_price'] }}" name="sale_price"
+                                                id=""><br>
+                                            @error('sale_price')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </td>
                                         <td>
                                             <input type="text" class="form-control"
-                                                value="{{ $item['quantity'] }}" name="quantity" id="">
+                                                value="{{ $item['quantity'] }}" name="quantity" id=""><br>
+                                            @error('quantity')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </td>
                                     </tr>
                                 @endforeach
@@ -106,4 +116,67 @@
 </div>
 </div>
 <script></script>
+<style>
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Arial', sans-serif;
+    margin-top: 10px;
+}
+
+table th {
+    background-color: #f8f9fa;
+    color: #333;
+    text-align: center;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    border-bottom: 2px solid #ddd;
+}
+
+table td {
+    text-align: center;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #555;
+    border: none;
+    transition: border 0.3s ease;
+    vertical-align: middle;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+table td:hover {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+table th,
+table td {
+    padding: 12px;
+    border-left: 1px solid #eee;
+}
+
+table th:last-child,
+table td:last-child {
+    border-right: none;
+}
+
+table tr:last-child td {
+    border-bottom: none;
+}
+
+table tr {
+    height: 60px;
+}
+
+table td span {
+    display: inline-block;
+    vertical-align: middle;
+}
+</style>
+
 @endsection

@@ -127,7 +127,7 @@
 </head>
 
 <body class="__className_082e4d">
-    @include('client.layouts.headerOrder')
+    @include('client.layouts.header')
     @include('client.components.order')
     @yield('content')
 

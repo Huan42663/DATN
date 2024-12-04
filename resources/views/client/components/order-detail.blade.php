@@ -5,7 +5,7 @@
                 <div class="text-content">
                     <div class="heading2 text-center">Chi tiết đơn hàng</div>
                     <div class="link flex items-center justify-center gap-1 caption1 mt-3">
-                        <a href="#">Homepage</a>
+                        <a href="{{ route('Client.Home') }}">Homepage</a>
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                             viewBox="0 0 256 256" class="text-secondary2">
                             <path

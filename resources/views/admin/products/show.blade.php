@@ -26,9 +26,10 @@
                             <div class="mb-4">
                                 <div class="wd-150 ht-150 mx-auto mb-3 position-relative">
 
-                                    <div class=" wd-150 ht-150 border border-5 border-gray-3" >
-                                        <img src="{{ asset('storage/' . $product->product_image) }}"
-                                            alt="Product Image" class="img-fluid" style="width: 100%;height: 100%;object-fit: cover;object-position: center; ">
+                                    <div class=" wd-150 ht-150 border border-5 border-gray-3">
+                                        <img src="{{ asset('storage/' . $product->product_image) }}" alt="Product Image"
+                                            class="img-fluid"
+                                            style="width: 100%;height: 100%;object-fit: cover;object-position: center; ">
                                     </div>
                                     <div class="wd-10 ht-10 text-success rounded-circle position-absolute translate-middle"
                                         style="top: 76%; right: 10px">
@@ -48,7 +49,7 @@
                                     <div
                                         class="flex-fill py-3 px-4 rounded-1 d-none d-sm-block border border-dashed border-gray-5">
                                         <h6 class="fs-15 fw-bolder">Description:</h6>
-                                        <p> {{ $product->description }}</p>
+                                        <p> {!! $product->description !!}</p>
                                     </div>
                                 </div>
                             </div>
@@ -86,7 +87,8 @@
                                 @endif
                                 <form action="{{ route('Administration.products.deleteVariant') }}" method="post">
                                     @csrf
-                                    <input type="hidden" name="product_id" id="" value="{{$data1[0]->product_id}}">
+                                    <input type="hidden" name="product_id" id=""
+                                        value="{{ $data1[0]->product_id }}">
                                     <table id="example-1" class="table table-hover mb-0">
                                         <thead>
                                             <tr>
@@ -99,63 +101,58 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($data2 as $variant)
+                                            @foreach ($data2 as $key => $variant)
                                                 <tr>
                                                     <td>
                                                         <input type="checkbox" name="variant_id[]"
                                                             value="{{ $variant->product_variant_id }}" class="mt-2">
                                                         <input type="hidden" name="variant_id_update[]"
                                                             value="{{ $variant->product_variant_id }}" class="mt-2">
-                                                        
+
                                                     </td>
                                                     <td>
 
                                                         <div class="hstack gap-3">
                                                             <select name="size_id[]" id="" class="form-control">
-                                                                @foreach ($data4 as $item )
-                                                                    <option value="{{$item->size_id}}" @selected($item->size_name==$variant->size_name)>{{$item->size_name}}</option>
+                                                                @foreach ($data4 as $item)
+                                                                    <option value="{{ $item->size_id }}"
+                                                                        @selected($item->size_name == $variant->size_name)>{{ $item->size_name }}
+                                                                    </option>
                                                                 @endforeach
                                                             </select>
-                                                            {{-- <div>
-                                                                <a href="javascript:void(0);"
-                                                                    class="d-block">{{ $variant->size_name }}</a>
-                                                            </div> --}}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <select name="color_id[]" id="" class="form-control">
-                                                            @foreach ($data5 as $item )
-                                                                <option value="{{$item->color_id}}" @selected($item->color_name==$variant->color_name)>{{$item->color_name}}</option>
+                                                            @foreach ($data5 as $item)
+                                                                <option value="{{ $item->color_id }}"
+                                                                    @selected($item->color_name == $variant->color_name)>{{ $item->color_name }}
+                                                                </option>
                                                             @endforeach
                                                         </select>
-                                                        {{-- <a href="javascript:void(0);"
-                                                            class="d-block mb-1">{{ $variant->color_name }}</a> --}}
-                                                        {{-- <span class="fs-12 text-muted d-block">Code: PH</span> --}}
                                                     </td>
                                                     <td>
-                                                        <input type="number" name="price[]" min="1" value="{{ $variant->price }}" class="form-control">
-                                                        {{-- <a href="javascript:void(0);"
-                                                            class="d-block mb-1">{{ $variant->price }}</a> --}}
-                                                        {{-- <span class="fs-12 text-muted d-block">Code: Paid</span> --}}
+                                                        <input type="number" name="price[]" min="1"
+                                                            value="{{ $variant->price }}" class="form-control">
+                                                        <br> @error('price.' . $key)
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                     </td>
                                                     <td>
-                                                        <input type="number"  name="sale_price[]" min="0" value="{{$variant->sale_price }}" class="form-control">
-                                                      
+                                                        <input type="number" name="sale_price[]" min="0"
+                                                            value="{{ $variant->sale_price }}" class="form-control">
+                                                        <br>   @error('sale_price.' . $key)
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                     </td>
                                                     <td>
-                                                        <input type="number"  name="quantity[]" min="1" value="{{$variant->quantity }}" class="form-control">
-                                                        
+                                                        <input type="number" name="quantity[]" min="1"
+                                                            value="{{ $variant->quantity }}" class="form-control">
+                                                            <br>   @error('quantity.' . $key)
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+
                                                     </td>
-                                                    {{-- <td class="text-end">
-                                                        <div class="hstack gap-2 justify-content-end">
-                                                            <a href="javascript:void(0);" class="avatar-text avatar-md">
-                                                                <i class="feather-edit"></i>
-                                                            </a>
-                                                            <a href="javascript:void(0);" class="avatar-text avatar-md">
-                                                                <i class="feather-trash-2"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td> --}}
                                                 </tr>
                                             @endforeach
 
@@ -190,9 +187,9 @@
                                         <input type="hidden" name="product_id" value="{{ $data1[0]->product_id }}"
                                             id="">
                                         <button type="submit" class="btn btn-primary text-light mt-1">
-                                        <i class="feather-minus me-2"></i>
-                                        <span>ADD NEW</span>
-                                    </button>
+                                            <i class="feather-minus me-2"></i>
+                                            <span>ADD NEW</span>
+                                        </button>
                                     </div>
                                 </form>
                                 <form action="{{ route('Administration.products.destroyImage') }}" method="post">
