@@ -17,18 +17,6 @@
 @endsection
 
 @section('content')
-
-@if(session('success'))
-<div class="alert alert-success mt-1" role="alert" >
-   {{session('success')}}
-</div>
-@endif
-@if(session('error'))
-<div class="alert alert-danger mt-1" role="alert" >
-   {{session('error')}}
-</div>
-@endif
-
     <div class="main-content">
         <div class="row">
             <div class="col-lg-12">
@@ -37,27 +25,40 @@
                         <div class="card-body personal-info">
                             <div class="mb-4 d-flex align-items-center justify-content-between">
                                 <h5 class="fw-bold mb-0 me-4">
-                                    <span class="d-block mb-2">Update An Voucher</span>
+                                    <span class="d-block mb-2">Cập Nhật Khuyến Mãi</span>
                                 </h5>
                             </div>
+                            @if(session('success'))
+                                <div class="alert alert-success mt-2" role="alert" >
+                                    {{session('success')}}
+                                </div>
+                            @endif
                             <form action="{{route('Administration.vouchers.update',$data[0])}}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Voucher Code : </label>
+                                        <label for="fullnameInput" class="fw-semibold">Mã Khuyến Mãi : </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="voucher_code" name="voucher_code"
-                                                placeholder="Voucher Code Vd: jsstore123#1" value={{$data[0]->voucher_code}}
-                                                >
-                                        </div>
+                                                placeholder="Voucher Code Vd: jsstore123#1" value={{$data[0]->voucher_code}}>
+                                        </div> @error('voucher_code')
+                                        <span class="text-danger mt-1">
+                                            {{$message}}
+                                            </span>
+                                        @enderror
+                                        @if(session('error'))
+                                            <span class="text-danger mt-1">
+                                            {{session('error')}}
+                                            </span>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Type Voucher: </label>
+                                        <label for="fullnameInput" class="fw-semibold">Kiểu Khuyến Mãi: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -70,48 +71,70 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Value :</label>
+                                        <label for="fullnameInput" class="fw-semibold">Giá Trị :</label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="number" class="form-control" id="value" name="value"
                                                 placeholder="10% or 100.000đ" value={{$data[0]->value}}>
                                         </div>
+                                        @error('value')
+                                            <span class="text-danger">{{$message}}</span>
+                                        @enderror
+                                        @if(session('error2'))
+                                            <span class="text-danger mt-1">
+                                            {{session('error2')}}
+                                            </span>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Quantity :</label>
+                                        <label for="fullnameInput" class="fw-semibold">Số Lượng :</label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="number" class="form-control" id="quantity" name="quantity"
                                                 placeholder="10 - 20 .... 9999" value={{$data[0]->quantity}}>
                                         </div>
+                                        @error('quantity')
+                                            <span class="text-danger">{{$message}}</span>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Date Start: </label>
+                                        <label for="fullnameInput" class="fw-semibold">Ngày Bắt Đầu: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="datetime-local" class="form-control" name="date_start" id="date_start" value={{date('Y-m-d\TH:i', strtotime($data[0]->date_start)) }}>
                                         </div>
+                                        @error('date_start')
+                                            <span class="text-danger">{{$message}}</span>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Date End: </label>
+                                        <label for="fullnameInput" class="fw-semibold">Ngày Kết Thúc: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="datetime-local" class="form-control" name="date_end" id="date_end" value={{date('Y-m-d\TH:i', strtotime($data[0]->date_end)) }}>
                                         </div>
+                                        @if(session('error1'))
+                                            <span class="text-danger mt-1">
+                                            {{session('error1')}}
+                                            </span>
+                                        @endif
+                                        @error('date_end')
+                                            <span class="text-danger">{{$message}}</span>
+                                        @enderror
                                     </div>
                                 </div>
                                <div class="d-flex">
-                                    <button type="submit" class="btn btn-sm btn-light-brand me-2">Update</button>
+                                    <button type="submit" class="btn btn-sm btn-light-brand me-2">Cập Nhật</button>
                                     <a href="{{route('Administration.vouchers.list')}}"><button type="button" class="btn btn-sm btn-primary">Danh sách voucher</button></a>
                                 </div>
                             </form>

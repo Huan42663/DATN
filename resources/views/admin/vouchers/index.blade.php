@@ -32,7 +32,12 @@
 <div class="col-lg-12 mt-3" >
     <div class="card stretch stretch-full">
         <div class="card-body custom-card-action p-0">
-            <a href="{{route('Administration.vouchers.create')}}" style="padding: 20px; "><button class="btn btn-primary" style="margin-left:20px;">Thêm mới</button></a>
+            <div class="mb-3">
+                <a href="{{ route('Administration.vouchers.create') }}" class="btn btn-primary">
+                    <i class="feather-plus me-2"></i>
+                    <span>Thêm Mã Khuyến Mãi Mới</span>
+                </a>
+            </div>
             <form action="{{route('Administration.vouchers.destroy')}}" method="post">
                 @csrf
                 @method('DELETE')
@@ -42,10 +47,10 @@
                             <tr>
                                 <th></th>
                                 <th>STT</th>
-                                <th>VoucherCode</th>
+                                <th>Mã Khuyến Mãi</th>
                                 <th>Kiểu Giảm</th>
                                 <th>Giá Trị</th>
-                                <th>quantity</th>
+                                <th>Số Lượng</th>
                                 <th>Ngày Bắt Đầu</th>
                                 <th>Ngày Kết Thúc</th>
                                 <th class="text-end">Actions</th>

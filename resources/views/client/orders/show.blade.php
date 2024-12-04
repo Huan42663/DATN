@@ -1,4 +1,4 @@
-@extends('client.masterOrderDetail')
+@extends('client.master')
 @section('title', 'Chi tiết đơn hàng')
 
 @section('content')
@@ -58,9 +58,9 @@
                                     <span><strong>Sản phẩm:</strong>
                                         {{ $detail->product->product_name ?? 'Không tồn tại' }}</span>
                                     <span><strong>Size:</strong>
-                                        {{ $detail->product->size->size_name ?? 'Không có' }}</span>
+                                        {{ $detail->size ?? 'Không có' }}</span>
                                     <span><strong>Màu:</strong>
-                                        {{ $detail->product->color->color_name ?? 'Không có' }}</span>
+                                        {{ $detail->color ?? 'Không có' }}</span>
                                 </div>
                             </div>
                             <div
@@ -70,6 +70,7 @@
                                     đ</span>
                                 <span><strong>Số lượng:</strong> {{ $detail->quantity }}</span>
                             </div>
+                            <a href="{{route('Client.rate',[ $detail->product->product_id, $order->order_code])}}">Đánh Giá</a>
                         </li>
                     @endforeach
                 </ul>

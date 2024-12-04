@@ -18,14 +18,7 @@ class HomeController extends Controller
 {
     public function __construct()
     {
-        $Voucher = Voucher::query()->get();
-        $date = Carbon::now();
-        $data['quantity'] = 0; 
-        foreach ($Voucher as $key) {
-           if($key->date_end == $date || $key->date_end < $date){
-               Voucher::query()->where('voucher_id',$key->voucher_id)->update($data);
-           }
-        }
+       
     }
     public function index()
     {

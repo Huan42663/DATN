@@ -60,21 +60,23 @@
             @endforeach
         @endif
     </div>
-    {{-- <div class="text-center" style="margin-bottom:10px"><a href="{{route('events.index')}}"> Xem Thêm Event -> </a></div> --}}
-    
-
-    {{-- @include('client.components.collection-block')
-
-    @include('client.components.tab-features-block') --}}
-
-    {{-- @include('client.components.banner-block')  --}}
-
-    {{-- @include('client.components.container')
-
-    @include('client.components.testimonial-block')
-
-    @include('client.components.brand-block') --}} 
+    @if (session('success'))
+        <input type="hidden" id="OrderSuccess" value="{{session('success')}}">
+    @endif 
     <script>
         const carousel = new bootstrap.Carousel('#carouselExampleIndicators')
+        const order    = document.getElementById('OrderSuccess');
+        if(order){
+            if(order.value != ""){
+                alert(order.value);
+                // $.ajax({
+                //     Swal.fire({
+                //     icon: 'success',
+                //     title: 'Đặt Hàng',
+                //     text: 'Bạn Đã Đặt Hàng Thành Công!'
+                //     })
+                // });
+            }
+        }
     </script>
 @endsection

@@ -18,17 +18,6 @@
 
 @section('content')
 
-@if(session('success'))
-<div class="alert alert-success mt-1" role="alert" >
-   {{session('success')}}
-</div>
-@endif
-@if(session('error'))
-<div class="alert alert-danger mt-1" role="alert" >
-   {{session('error')}}
-</div>
-@endif
-
     <div class="main-content">
         <div class="row">
             <div class="col-lg-12">
@@ -37,9 +26,19 @@
                         <div class="card-body personal-info">
                             <div class="mb-4 d-flex align-items-center justify-content-between">
                                 <h5 class="fw-bold mb-0 me-4">
-                                    <span class="d-block mb-2">Create An Post</span>
+                                    <span class="d-block mb-2">Thêm Bài Viết Mới</span>
                                 </h5>
                             </div>
+                            @if(session('success'))
+                                <div class="alert alert-success mt-1" role="alert" >
+                                {{session('success')}}
+                                </div>
+                                @endif
+                                @if(session('error'))
+                                <div class="alert alert-danger mt-1" role="alert" >
+                                {{session('error')}}
+                                </div>
+                                @endif
                             <form action="{{route('Administration.posts.store')}}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row mb-4 align-items-center">
@@ -58,7 +57,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Category Post </label>
+                                        <label for="fullnameInput" class="fw-semibold">Danh Mục</label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -75,7 +74,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Image </label>
+                                        <label for="fullnameInput" class="fw-semibold">Ảnh </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -85,7 +84,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Short Description </label>
+                                        <label for="fullnameInput" class="fw-semibold">Mô Tả Ngắn</label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group"">
@@ -95,7 +94,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Content </label>
+                                        <label for="fullnameInput" class="fw-semibold">Nội Dung </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="">

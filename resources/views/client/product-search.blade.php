@@ -26,7 +26,7 @@
             @else
                 <h3 class="fw-medium">Không tìm thấy sản phẩm </h3>
             @endif
-            
+            {{$products->links()}}
         </div>
     </div>
     

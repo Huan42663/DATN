@@ -50,9 +50,9 @@ Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function 
 
     // ROUTE SIZE
     Route::prefix('sizes')->group(function () {
-        Route::get('/', [SizeController::class, 'index'])->name('Administration.sizes.list');
-        Route::post('/', [SizeController::class, 'store'])->name('Administration.sizes.store');
-        Route::get('/{size_id}', [SizeController::class, 'show'])->name('Administration.sizes.show');
+        Route::get('/', [SizeController::class, 'index'])->name('Administration.sizes.list'); 
+        Route::post('/', [SizeController::class, 'store'])->name('Administration.sizes.store'); 
+        Route::get('/show-{size_id}', [SizeController::class, 'show'])->name('Administration.sizes.show'); 
         Route::put('/{size}', [SizeController::class, 'update'])->name('Administration.sizes.update');
         Route::delete('/', [SizeController::class, 'destroy'])->name('Administration.sizes.destroy');
         Route::get('/list-delete', [SizeController::class, 'listSizeDelete'])->name('Administration.sizes.delete');
@@ -61,9 +61,9 @@ Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function 
 
     // ROUTE COLOR
     Route::prefix('colors')->group(function () {
-        Route::get('/', [ColorController::class, 'index'])->name('Administration.colors.list');
-        Route::post('/', [ColorController::class, 'store'])->name('Administration.colors.store');
-        Route::get('/{color_id}', [ColorController::class, 'show'])->name('Administration.colors.show');
+        Route::get('/', [ColorController::class, 'index'])->name('Administration.colors.list'); 
+        Route::post('/', [ColorController::class, 'store'])->name('Administration.colors.store'); 
+        Route::get('/show-{color_id}', [ColorController::class, 'show'])->name('Administration.colors.show'); 
         Route::put('/{color}', [ColorController::class, 'update'])->name('Administration.colors.update');
         Route::delete('/', [ColorController::class, 'destroy'])->name('Administration.colors.destroy');
         Route::get('/list-delete', [ColorController::class, 'listColorDelete'])->name('Administration.colors.listDelete');
@@ -216,6 +216,10 @@ Route::prefix('/')->group(function () {
     Route::post('order/{order_code}/{order_id}', [CLientOrderController::class, 'cancel'])->middleware('auth')->name('Client.orders.cancel');
     Route::post('order/{order_code}/{order_id}/confirmDelivered', [CLientOrderController::class, 'confirmDelivered'])->middleware('auth')->name('Client.orders.confirmDelivered');
 
+
+    // ROUTE RATE
+    Route::get('rate/{product_id}/{order_code}',[ClientOrderController::class, 'rates'])->name('Client.rate');
+    Route::post('order/rate',[ClientOrderController::class, 'CreateRate'])->name('Client.orders.createRate');
 
 
     // ROUTE EVENT

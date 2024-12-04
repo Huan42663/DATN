@@ -23,21 +23,30 @@
                                     <input type="text" class="form-control" id="exampleFormControlInput1"  name="fullname" 
                                     @if(isset($_SESSION['dataInfo']))
                                         value="{{$_SESSION['dataInfo']['fullname']}}"
-                                    @else
+                                    @elseif(!empty(old('fullname')))
                                         value="{{old('fullname')}}"
+                                    @else
+                                        {{-- value="{{Auth::user()->fullname}}" --}}
+                                        value=""
                                     @endif
                                     >
                                     @error('fullname')
                                         <span class="text-danger">{{$message}}</span>
                                     @enderror
+                                    @if (session('fullname'))
+                                        <span class="text-danger">{{session('fullname')}}</span>
+                                    @endif
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleFormControlInput1" class="form-label">Email </label>
                                     <input type="email" class="form-control" id="exampleFormControlInput1" name="email" placeholder="name@example.com"
                                     @if(isset($_SESSION['dataInfo']))
                                         value="{{$_SESSION['dataInfo']['email']}}"
-                                    @else
+                                    @elseif(!empty(old('email')))
                                         value="{{old('email')}}"
+                                    @else
+                                        {{-- value="{{Auth::user()->email}}" --}}
+                                        value=""
                                     @endif
                                     >
                                      @error('email')
@@ -49,13 +58,19 @@
                                     <input type="text" class="form-control" id="exampleFormControlInput1" name="phone" 
                                     @if(isset($_SESSION['dataInfo']))
                                         value="{{$_SESSION['dataInfo']['phone']}}"
-                                    @else
+                                    @elseif(!empty(old('phone')))
                                         value="{{old('phone')}}"
+                                    @else
+                                        {{-- value="{{Auth::user()->phone}}" --}}
+                                        value=""
                                     @endif
                                     >
                                      @error('phone')
                                         <span class="text-danger">{{$message}}</span>
                                     @enderror
+                                    @if (session('phone'))
+                                        <span class="text-danger">{{session('phone')}}</span>
+                                    @endif
                                 </div>
                                 <div class="mb-3" >
                                     <label for="exampleFormControlInput1" class="form-label">Tỉnh Thành</label>
@@ -96,6 +111,9 @@
                                      @error('street')
                                         <span class="text-danger">{{$message}}</span>
                                     @enderror
+                                    @if (session('street'))
+                                        <span class="text-danger">{{session('street')}}</span>
+                                    @endif
                                 </div>
                                 <input type="hidden" name="province" id="city"/>
                                 <input type="hidden" name="district" id="district"/>
@@ -112,6 +130,9 @@
                                      @error('address')
                                         <span class="text-danger">{{$message}}</span>
                                     @enderror
+                                    @if (session('address'))
+                                        <span class="text-danger">{{session('address')}}</span>
+                                    @endif
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleFormControlInput1" class="form-label">Note</label>
@@ -125,6 +146,9 @@
                                      @error('note')
                                         <span class="text-danger">{{$message}}</span>
                                     @enderror
+                                    @if (session('note'))
+                                        <span class="text-danger">{{session('note')}}</span>
+                                    @endif
                                 </div>
                             </div>
                             <div class="heading5">Phương Thức Thanh Toán</div>

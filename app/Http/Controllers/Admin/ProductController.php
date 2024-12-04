@@ -329,6 +329,14 @@ class ProductController extends Controller
         // dd($_SESSION['data']);
         foreach ($_SESSION['data'] as $item) {
             unset($item['stt']);
+            
+            if(empty($item['size_id'])){
+                unset($item['size_id']);
+            }
+            if(empty($item['color_id'])){
+                unset($item['color_id']);
+            }
+            // dd( $item);
             ProductVariant::create($item);
         }
         return redirect()->route('Administration.products.create')->with('message', 'Thêm sản phẩm thành công');

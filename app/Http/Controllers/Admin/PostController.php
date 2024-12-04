@@ -37,7 +37,7 @@ class PostController extends Controller
         $request['slug'] = Str::slug($request['title']);
         $request-> validate(
             [
-                'title' => 'required|unique:posts,title',
+                'title' => 'required|max:255|unique:posts,title|regex:/^[a-zA-Z0-9\s]+$/',
                 'short_description' => 'nullable',
                 'content' => 'required',
                 'category_post_id' => 'required'
@@ -46,10 +46,11 @@ class PostController extends Controller
             [
                 'title.required' => 'title bài viết không được để trống',
                 'title.unique' => 'title bài viết đã bị trùng',
+                'title.max' => 'title bài viết không được quá 255 kí tự',
+                'title.regex' => 'title bài viết không được chứa kí tự đặc biệt',
                 'content.required' => 'Nội dung  không được để trống',
                 'category_post_id.required' => 'danh mục không được để trống',
             ]
-
         );
         $data=[ 
             'title'             =>$request['title'],
@@ -100,7 +101,7 @@ class PostController extends Controller
         else{
             $request-> validate(
                 [
-                    'title' => 'required',
+                    'title' => 'required|max:255|regex:/^[a-zA-Z0-9\s]+$/',
                     'short_description' => 'nullable',
                     'content' => 'required',
                     'category_post_id' => 'required'
@@ -108,6 +109,8 @@ class PostController extends Controller
                 ],
                 [
                     'title.required' => 'title bài viết không được để trống',
+                    'title.max' => 'title bài viết không được quá 255 kí tự',
+                    'title.regex' => 'title bài viết không được chứa kí tự đặc biệt',
                     'content.required' => 'Nội dung  không được để trống',
                     'category_post_id.required' => 'danh mục không được để trống',
                 ]
@@ -164,6 +167,15 @@ class PostController extends Controller
     {
         if(isset($request->post_id) && !empty($request->post_id)){
             foreach($request->post_id as $item){
+                $image = PostImage::query()->where('post_id',$item)->get();
+                if(count($image)>0){
+                    foreach($image as  $value) {
+                        if (file_exists('storage/' . $value->image_name)) {
+                            unlink('storage/' .  $value->image_name);
+                        }
+                        $value->delete();
+                    }
+                }
                 Post::query()->where('post_id',$item)->delete();
             }
             return redirect()->back()->with('success','Xóa bài viết thành công');

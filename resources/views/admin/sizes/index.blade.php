@@ -140,10 +140,12 @@
                             </tbody>
                         </table>
                     </div>
-                    <button class="btn btn-danger mb-3" type="submit" onclick="return confirm('Bạn có muốn xóa những size này không?')">
-                        {{-- <i class="feather-trash-2"></i> --}}
-                        Xóa Size
-                    </button>
+                    <div class="" style="padding: 20px">
+                        <button class="btn btn-danger mb-3" type="submit" onclick="return confirm('Bạn có muốn xóa những size này không?')">
+                            {{-- <i class="feather-trash-2"></i> --}}
+                            Xóa Size
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

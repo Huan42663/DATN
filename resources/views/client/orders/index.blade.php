@@ -1,12 +1,12 @@
-@extends('client.masterOrder')
+@extends('client.master')
 @section('title', 'Danh sách đơn hàng')
 
 @section('content')
 
+<h3 style="font-size: 26px; font-weight: bold; color: #333; margin-bottom: 30px; margin-top: 30px; text-align: center; text-transform: uppercase;">Đơn hàng của bạn</h3>
 <div class="order-tracking py-10 bg-light" style="background-color: #f8f9fa; padding: 40px 0;">
     <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 15px;">
         <div class="content-main">
-            <h3 style="font-size: 26px; font-weight: bold; color: #333; margin-bottom: 30px; text-align: center; text-transform: uppercase;">Đơn hàng của bạn</h3>
             
             <div class="order-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; max-width: 100%; margin: 0;">
                 @forelse ($orders as $order)
@@ -22,7 +22,7 @@
                                 </span>
                             </div>
                             <div class="order-total" style="font-size: 1.25rem; font-weight: bold; color: #333; margin-bottom: 15px;">
-                                Tổng tiền: <span style="color: #000;">{{ number_format($order->total, 0, ',', '.') }} đ</span>
+                                Tổng tiền: <span style="color: #000;">{{ number_format($order->total, 0, ',', '.')  . ' VNĐ' }} </span>
                             </div>
                         </div>
 
@@ -65,12 +65,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-
 
 
 

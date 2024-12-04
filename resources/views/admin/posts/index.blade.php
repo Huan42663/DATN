@@ -25,6 +25,12 @@
 <div class="col-lg-12 mt-3" >
     <div class="card stretch stretch-full">
         <div class="card-body custom-card-action p-0">
+            <div class="mb-3">
+                <a href="{{ route('Administration.posts.create') }}" class="btn btn-primary">
+                    <i class="feather-plus me-2"></i>
+                    <span>Thêm Danh Bài Viết Mới</span>
+                </a>
+            </div>
             <form action="{{route('Administration.posts.destroy')}}" method="post">
                 @csrf
                 @method('DELETE')
