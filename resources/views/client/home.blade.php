@@ -52,13 +52,15 @@
         </div>
     </div>
     <br>
-    <div class="heading3 text-center" > EVENT </div>
-    <div class="banner-block style-one grid sm:grid-cols-2 gap-5 md:pt-20 pt-10" style="padding: 20px" >
-        @if(isset($events) && !empty($events))
-            @foreach ($events as $event )
-                @include('client.components.banner-block',['event'=>$event])
-            @endforeach
-        @endif
+    <div class="container">
+        <div class="heading3 text-center" > EVENT </div>
+        <div class="banner-block style-one grid sm:grid-cols-2 gap-5 md:pt-20 pt-10" style="padding: 20px" >
+            @if(isset($events) && !empty($events))
+                @foreach ($events as $event )
+                    @include('client.components.banner-block',['event'=>$event])
+                @endforeach
+            @endif
+        </div>
     </div>
     @if (session('success'))
         <input type="hidden" id="OrderSuccess" value="{{session('success')}}">

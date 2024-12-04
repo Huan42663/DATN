@@ -257,8 +257,7 @@
                     type: 'POST',
                     data: formData,
                     success: function(response) {
-                        // Xử lý khi gửi thành công
-                        console.log(response);
+                        // alert('Thêm sản phẩm vào giỏ hàng thành công');
                     },
                     error: function(error) {
                         // Xử lý khi gửi thất bại

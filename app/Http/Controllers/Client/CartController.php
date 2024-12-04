@@ -40,27 +40,27 @@ class CartController extends Controller
         }
         $data = 
         [
-           "cart_id"            =>$cart_id->cart_id,
-           "product_variant_id" =>$product->product_variant_id,
+           "cart_id"            =>$cart_id[0]->cart_id,
+           "product_variant_id" =>$product[0]->product_variant_id,
            "quantity"           =>$request->quantity
         ];
         $cart = CartDetail::query()
                             ->join('product_variant','cart_detail.product_variant_id','=','product_variant.product_variant_id')
-                            ->where('cart_detail.cart_id',$cart_id->cart_id)
-                            ->where('cart_detail.product_variant_id',$product->product_variant_id)
+                            ->where('cart_detail.cart_id',$cart_id[0]->cart_id)
+                            ->where('cart_detail.product_variant_id',$product[0]->product_variant_id)
                             ->select('cart_detail.product_variant_id','cart_detail.quantity as cartQuantity')
                             ->get();
         if(count($cart) <= 0){
             CartDetail::create($data);
         }
         else{
-            $data['quantity'] = $cart->cartQuantity + $request['quantity'];
+            $data['quantity'] = $cart[0]->cartQuantity + $request['quantity'];
             if($data['quantity'] > $product[0]->quantity){
                 return response()->json("Số lượng sản phẩm bạn vừa thêm vào giỏ hàng đã quá số lượng chúng tôi có!",Response::HTTP_BAD_REQUEST);  
              }
             else{
-                CartDetail::query()->where('cart_detail.cart_id',$cart_id->cart_id)
-                            ->where('cart_detail.product_variant_id',$product->product_variant_id)
+                CartDetail::query()->where('cart_detail.cart_id',$cart_id[0]->cart_id)
+                            ->where('cart_detail.product_variant_id',$product[0]->product_variant_id)
                             ->update($data);
             }
         }
