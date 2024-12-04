@@ -1,16 +1,17 @@
 
 @extends('admin.master')
 
-@section('title', 'Order-Detail')
+@section('title', 'Chi Tiết Đơn Hàng')
 @section('page-header')
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Order Detail</h5>
+                <h5 class="m-b-10">Chi Tiết Đơn Hàng</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">Order Detail</li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang Chủ</a></li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang Chủ</a></li>
+                <li class="breadcrumb-item">Chi Tiết Đơn Hàng</li>
             </ul>
         </div>
     </div>
@@ -195,12 +196,12 @@
                                                                 <span class="fs-12 text-muted d-block"><img src="{{asset("storage/".$value->product_image)}}" alt="{{$value->product_image}}" width="100"></span>
                                                             </td>
                                                             <td>
-                                                                <span  class="d-block mb-1">{{$value->product_name}}</span>
+                                                                <span  class="d-block mb-1 fs-6 fw-bold">{{$value->product_name}}</span>
                                                             </td>
                                                             <td>
                                                                 <span  class="d-block mb-1">{{$value->size_name}}, {{$value->color_name}}</span>
                                                             </td>
-                                                            <td>
+                                                            <td class="fw-bold">
                                                                 @if($value->sale_price !=null || $value->sale_price > 0)
                                                                     <span  class="d-block mb-1 text-danger">{{number_format($value->sale_price, 0, ',', '.') . 'VNĐ';}}</span>
                                                                     <del class="text-secondary">{{number_format($value->price, 0, ',', '.') . ' VNĐ';}}</del>
@@ -209,9 +210,9 @@
                                                                 @endif
                                                             </td>
                                                             <td>
-                                                                <span  class="d-block mb-1">{{$value->quantity}}</span>
+                                                                <span  class="d-block mb-1 fw-bold">{{$value->quantity}}</span>
                                                             </td>
-                                                            <td>
+                                                            <td class="fw-bold">
                                                                 @if($value->sale_price !=null || $value->sale_price > 0)
                                                                     <span  class="d-block mb-1 text-danger">{{number_format($value->sale_price * $value->quantity, 0, ',', '.') . ' VNĐ';}}</span>
                                                                 @else
@@ -228,11 +229,12 @@
                                                             <td><h6>Tổng Tiền :</h6> </td>
                                                             <td>
                                                                 @if($infoOrder[0]->total > $infoOrder[0]->total_discount && $infoOrder[0]->total_discount !=null )
-                                                                    <span class="d-block mb-1 text-danger" style="font-size: 15px;font-weight: 600">{{number_format($infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ';}}</span>
-                                                                    <del class="text-secondary" style="font-size: 15px;font-weight: 600">{{number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ';}}</del>
+                                                                    <span class="d-block mb-1 text-danger fs-5 fw-bold">{{number_format($infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ';}}</span>
+                                                                    <del class="text-secondary fs-6 fw-bold">{{number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ';}}</del>
                                                                 @else
-                                                                <span  class="d-block mb-1 text-danger" style="font-size: 15px;font-weight: 600">{{number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ';}}</span>
+                                                                <span  class="d-block mb-1 text-danger fs-5 fw-bold" >{{number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ';}}</span>
                                                                 @endif
+                                                                <br>
                                                             </td>
                                                         </tr>
                                                     </tbody>

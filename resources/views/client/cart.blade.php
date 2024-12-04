@@ -30,7 +30,7 @@
                             <tbody id ="product-list">
                                 @foreach($cart['Cart'] as $item)
                                 <tr>
-                                    <th scope="row"><input type="checkbox" name="cart_variant_id[]" id ="cart_variant_id" value="{{$item->cart_detail_id}}" data-price="{{$item->total}}"></th>
+                                    <th scope="row"><input type="checkbox" name="cart_variant_id[]" id ="cart_variant_id{{$item->cart_detail_id}}" value="{{$item->cart_detail_id}}" data-price ={{$item->total}} ></th>
                                     <td>
                                         <div class="d-flex">
                                             <a href="{{route('Client.product.detail',$item->product_slug)}}"><img class="me-3" src="{{asset('storage/'.$item->product_image)}}" alt="" width="100"/></a>
@@ -112,16 +112,23 @@
         </div>
     </div>
 </div>
+@if (session('error'))
+    <input type="hidden" id="error" value="{{session('error')}}">
+@endif
 <script>
-
+    const error = document.getElementById('error');
+    if(error){
+        if(error.value !=""){
+        alert(error.value);
+    }
+    }
     function Checkout() {
-    // let cart_detail_id = document.getElementById("cart_variant_id").value;
-    // console.log(cart_detail_id);
-    // if (cart_detail_id == null) {
-    //     alert("Vui lòng chọn sản phẩm");
-    //     return false; 
-    // }
-    return true;
+        const cart_detail_id = document.getElementById('product').value;
+        if (cart_detail_id == "") {
+            alert("Vui lòng chọn sản phẩm");
+            return false; 
+        }
+        return true;
     }
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     const totalElement = document.getElementById('totalPrice');
@@ -177,6 +184,8 @@
                 }
                 const totalPrice = (parseInt(price.innerHTML) *  quantityElement.value);
                 total.innerHTML =  `${Intl.NumberFormat('vi').format(totalPrice)} VNĐ `;
+                const productElement = document.getElementById(`cart_variant_id${cart_detail_id}`);
+                productElement.dataset.price = totalPrice;
             },
             error: function(){
                 alert("Lỗi Vui lòng thử lại")

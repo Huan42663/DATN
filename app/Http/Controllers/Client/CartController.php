@@ -19,6 +19,7 @@ class CartController extends Controller
         if(isset(Auth::user()->user_id)){
             $cart = $this->showCart(Auth::user()->user_id);
         }
+        // $cart = $this->showCart(1);
         // dd(Auth::check());
         return View('client.cart',compact('cart'));
     }
@@ -27,9 +28,9 @@ class CartController extends Controller
         $product = ProductVariant::query()
                 //    ->leftJoin('sizes','product_variant.size_id','=','sizes.size_id')
                 //    ->leftJoin('colors','product_variant.color_id','=','colors.color_id')
-                   ->where('product_variant.product_id',$request['product_id'])
-                   ->where('product_variant.size_id',$request['size_id'])
-                   ->where('product_variant.color_id',$request['color_id'])
+                   ->where('product_variant.product_id',$request->product_id)
+                   ->where('product_variant.size_id',$request->size_id)
+                   ->where('product_variant.color_id',$request->color_id)
                    ->get();
         if(empty($product)){
             return response()->json("Sản phẩm bạn vừa thêm không có vui lòng kiểm tra lại",Response::HTTP_NOT_FOUND);  
@@ -39,27 +40,27 @@ class CartController extends Controller
         }
         $data = 
         [
-           "cart_id"            =>$cart_id[0]->cart_id,
-           "product_variant_id" =>$product[0]->product_variant_id,
-           "quantity"           =>$request['quantity']
+           "cart_id"            =>$cart_id->cart_id,
+           "product_variant_id" =>$product->product_variant_id,
+           "quantity"           =>$request->quantity
         ];
         $cart = CartDetail::query()
                             ->join('product_variant','cart_detail.product_variant_id','=','product_variant.product_variant_id')
-                            ->where('cart_detail.cart_id',$cart_id[0]->cart_id)
-                            ->where('cart_detail.product_variant_id',$product[0]->product_variant_id)
+                            ->where('cart_detail.cart_id',$cart_id->cart_id)
+                            ->where('cart_detail.product_variant_id',$product->product_variant_id)
                             ->select('cart_detail.product_variant_id','cart_detail.quantity as cartQuantity')
                             ->get();
         if(count($cart) <= 0){
             CartDetail::create($data);
         }
         else{
-            $data['quantity'] = $cart[0]->cartQuantity + $request['quantity'];
+            $data['quantity'] = $cart->cartQuantity + $request['quantity'];
             if($data['quantity'] > $product[0]->quantity){
                 return response()->json("Số lượng sản phẩm bạn vừa thêm vào giỏ hàng đã quá số lượng chúng tôi có!",Response::HTTP_BAD_REQUEST);  
              }
             else{
-                CartDetail::query()->where('cart_detail.cart_id',$cart_id[0]->cart_id)
-                            ->where('cart_detail.product_variant_id',$product[0]->product_variant_id)
+                CartDetail::query()->where('cart_detail.cart_id',$cart_id->cart_id)
+                            ->where('cart_detail.product_variant_id',$product->product_variant_id)
                             ->update($data);
             }
         }
@@ -101,7 +102,7 @@ class CartController extends Controller
         // ->leftJoin("variant_image_color","product_variant.product_variant_id","=","variant_image_color.product_variant_id")
         // ->leftJoin("image_color","variant_image_color.image_color_id","=","image_color.image_color_id")
         ->selectRaw(
-        'cart_detail.cart_detail_id,products.product_id,products.product_name,products.product_slug,products.product_image,
+        'cart_detail.cart_detail_id,products.product_id,products.product_name,products.product_slug,products.product_image,sizes.size_id as size_id, colors.color_id as color_id,
                      sizes.size_name as size ,colors.color_name as color,cart_detail.quantity,product_variant.price,product_variant.quantity as Instock,
                      CASE WHEN product_variant.sale_price > 0 THEN product_variant.sale_price
                      END AS sale_price,

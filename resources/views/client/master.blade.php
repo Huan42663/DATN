@@ -41,9 +41,45 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tai+Viet&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <style>
+        .page-item.active .page-link {
+         background-color: #ffff;
+         border-color: black;
+         color: black;
+         }
+ 
+         .page-item.disabled .page-link {
+         color: #ffff;
+         background-color: black;
+         pointer-events: none;
+         cursor: default;
+         }
+          .page-link {
+         color: white;
+         background-color: black;
+         text-decoration: none;
+         padding: 0.5rem 1rem;
+         border: 1px solid black;
+         border-radius: 0.25rem;
+         margin:5px;
+         } 
+         .page-link:hover {
+         color: black;
+         background-color: #ffff;
+         border-color: black;
+         } 
+         .text-muted{
+             display: none;
+         }
+         .pagination{
+             margin-bottom:20px;
+             margin-top:20px;
+         }
+     </style>
 </head>
 
 <body class="__className_082e4d" style="background-color:rgb(249,246,241) ">
+    
     @include('client.layouts.header')
 
     @yield('content')

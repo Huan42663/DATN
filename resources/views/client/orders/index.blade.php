@@ -1,4 +1,4 @@
-@extends('client.masterOrder')
+@extends('client.master')
 @section('title', 'Danh sách đơn hàng')
 
 @section('content')

@@ -47,8 +47,8 @@ class OrderController extends Controller
                                 'order_detail.quantity',
                                 'products.product_name',
                                 'products.product_image',
-                                'sizes.size_name',
-                                'colors.color_name',
+                                'order_detail.size',
+                                'order_detail.color',
                                
                             )
                             ->where('orders.order_code', '=', $order_code)
@@ -67,8 +67,6 @@ class OrderController extends Controller
         if ($value[0]->status == "unconfirm") $request["status"] = "confirmed";                     
         elseif($value[0]->status == "confirmed") $request["status"] = "shipping";           
         elseif($value[0]->status == "shipping") $request["status"] = "delivered";                
-        elseif($value[0]->status == "delivered") $request["status"] = "received";              
-                       
         $data =['status'=>$request["status"]];
         Order::query()->where('order_id', '=', $order_id)->update($data);
         return redirect()->back();

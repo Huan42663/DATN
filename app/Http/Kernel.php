@@ -29,8 +29,10 @@ class Kernel extends HttpKernel
 
         // Middleware kiểm tra vai trò
         'role' => \App\Http\Middleware\RoleMiddleware::class,
+        'checkRole' => \App\Http\Middleware\CheckRole::class,
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
     ];
-    
+
     /**
      * The application's route middleware groups.
      *

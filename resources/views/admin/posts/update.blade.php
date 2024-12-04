@@ -55,7 +55,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Category Post </label>
+                                        <label for="fullnameInput" class="fw-semibold">Danh Mục </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -75,7 +75,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Image </label>
+                                        <label for="fullnameInput" class="fw-semibold">Hình Ảnh </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -85,7 +85,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Image </label>
+                                        <label for="fullnameInput" class="fw-semibold">Danh Sách Ảnh </label>
                                     </div>
                                    
                                     <div class="col-lg-8">
@@ -100,7 +100,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Short Description </label>
+                                        <label for="fullnameInput" class="fw-semibold">Mô Tả Ngắn </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -110,7 +110,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Content </label>
+                                        <label for="fullnameInput" class="fw-semibold">Nội Dung </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -119,7 +119,7 @@
                                     </div>
                                 </div>
                                 <div class="d-flex">
-                                    <button type="submit" class="btn btn-sm btn-light-brand me-2">Update</button>
+                                    <button type="submit" class="btn btn-sm btn-light-brand me-2">Cập Nhật</button>
                                     <a href="{{route('Administration.posts.list')}}"><button type="button" class="btn btn-sm btn-success">Danh sách bài viết</button></a>
                                 </div>
                             </form>

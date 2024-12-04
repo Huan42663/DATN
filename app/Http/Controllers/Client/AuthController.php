@@ -55,7 +55,7 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('Client.Home');
+        return redirect()->route('login');
     }
 
     // Hiển thị form đăng ký
@@ -102,14 +102,6 @@ class AuthController extends Controller
                 'phone' => $request->phone,
                 'role' => 'guest', // Role mặc định
             ]);
-
-            // if ($user) {
-            //     Log::info('User created:', ['id' => $user->id, 'email' => $user->email]);
-            //     dd($user->id); // Hiển thị user_id
-            // } else {
-            //     Log::error('User creation failed.');
-            //     return redirect()->back()->with('error', 'Failed to create account.');
-            // }
 
             // Tạo giỏ hàng
             Cart::create([
