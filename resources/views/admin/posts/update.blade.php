@@ -2,9 +2,19 @@
 
 @section('title', 'Sửa Bài Viết')
 
-@section('model', 'Post')
-
-@section('function', 'Update')
+@section('page-header')
+    <div class="page-header">
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Post</h5>
+            </div>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
+                <li class="breadcrumb-item">Cập Nhật</li>
+            </ul>
+        </div>
+    </div>
+@endsection
 
 @section('content')
 @if(session('success'))
@@ -20,7 +30,7 @@
                         <div class="card-body personal-info">
                             <div class="mb-4 d-flex align-items-center justify-content-between">
                                 <h5 class="fw-bold mb-0 me-4">
-                                    <span class="d-block mb-2">Update An Post</span>
+                                    <span class="d-block mb-2">Cập Nhật Bài Viết</span>
                                 </h5>
                             </div>
                             <form action="{{route('Administration.posts.update',$post[0])}}" method="POST" enctype="multipart/form-data">
@@ -45,7 +55,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Category Post </label>
+                                        <label for="fullnameInput" class="fw-semibold">Danh Mục </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -65,7 +75,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Image </label>
+                                        <label for="fullnameInput" class="fw-semibold">Hình Ảnh </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -75,7 +85,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Image </label>
+                                        <label for="fullnameInput" class="fw-semibold">Danh Sách Ảnh </label>
                                     </div>
                                    
                                     <div class="col-lg-8">
@@ -90,7 +100,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Short Description </label>
+                                        <label for="fullnameInput" class="fw-semibold">Mô Tả Ngắn </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -100,15 +110,23 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Content </label>
+                                        <label for="fullnameInput" class="fw-semibold">Nội Dung </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <textarea name="content" id="content" cols="30" rows="10" class="form-control">@if(!empty(old('content'))){{old('content')}}@else{{$post[0]->content}} @endif</textarea>
+                                            <textarea name="content" id="editor" cols="30" rows="10" class="form-control">@if(!empty(old('content'))){{old('content')}}@else{{$post[0]->content}} @endif</textarea>
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-sm btn-light-brand">Update</button>
+                                <div class="d-flex">
+                                    <button type="submit" class="btn btn-sm btn-light-brand me-2">Cập Nhật</button>
+                                    <a href="{{route('Administration.posts.list')}}"><button type="button" class="btn btn-sm btn-success">Danh sách bài viết</button></a>
+                                </div>
+                            </form>
+                            <form action="{{route('Administration.posts.destroyImage',$post[0])}}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-danger mb-3 mt-2" type="submit">Xóa Toàn Bộ Ảnh</button>
                             </form>
                         </div>
                     </div>

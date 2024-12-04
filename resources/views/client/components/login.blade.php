@@ -15,12 +15,19 @@
                     <div class="email">
                         <input class="border-line px-4 pt-3 pb-3 w-full rounded-lg"
                                id="email" name="email" type="email"
+                               value="{{ old('email') }}"
                                placeholder="Email *" required />
+                               @error('email')
+                               <span class="text-danger">{{ $message }}</span>
+                               @enderror
                     </div>
                     <div class="pass mt-5">
                         <input class="border-line px-4 pt-3 pb-3 w-full rounded-lg"
                                id="password" name="password" type="password"
                                placeholder="Password *" required />
+                               @error('password')
+                               <span class="text-danger">{{ $message }}</span>
+                               @enderror
                     </div>
                     <div class="block-button md:mt-7 mt-4"><button class="button-main">Login</button></div>
                 </form>

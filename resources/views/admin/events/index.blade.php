@@ -17,15 +17,23 @@
 @endsection
 
 @section('content')
+    @if (session('success'))
+        <div class="alert alert-success mt-1" role="alert">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger mt-1" role="alert">
+            {{ session('error') }}
+        </div>
+    @endif
     <!-- [Recent Orders] start -->
     <div class="col-lg-12 mt-3">
         <div class="card stretch stretch-full">
+            <a href="{{ route('Administration.events.listDelete') }}"><button class="btn btn-danger"><i
+                        class="bi bi-trash3 me-2"></i>Thùng Rác</button></a>
             <div class="card-body custom-card-action p-0">
                 <div class="table-responsive">
-                    <a href="{{ route('Administration.events.create') }}" class=" btn btn-primary">
-                        <i class="feather-plus me-2"></i>
-                        <span>Tạo sự kiện</span>
-                    </a>
                     <table id="example" class="table table-hover mb-0">
                         <thead>
                             <tr>
@@ -78,10 +86,15 @@
                                                 class="avatar-text avatar-md">
                                                 <i class="feather-edit"></i>
                                             </a>
-                                            <a href="{{ route('Administration.events.destroy', $event->event_id) }}"
-                                                class="avatar-text avatar-md">
-                                                <i class="feather-trash-2"></i>
-                                            </a>
+                                            <form action="{{ route('Administration.events.destroy', $event->event_id) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <button onclick="return confirm(' có chắc xóa sự kiện này không ?')"
+                                                    type="submit" class="avatar-text avatar-md">
+                                                    <i class="feather-trash-2"></i>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>

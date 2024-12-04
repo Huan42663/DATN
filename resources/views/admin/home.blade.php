@@ -3,7 +3,7 @@
 @section('title', 'trang chủ')
 
 @section('content')
-<div class="row mt-3">
+<div class="row">
 <div class="col-xxl-3 col-md-6">
     <div class="card stretch stretch-full">
         <div class="card-body">
@@ -142,7 +142,7 @@
                                             <span  class="d-block mb-1">{{$value->product_name}}</span>
                                         </td>
                                         <td>
-                                            <span  class="d-block mb-1 text-danger">
+                                            <span  class="d-block mb-1 text-danger fw-bold">
                                                 @if($value->minPrice > 0){{number_format($value->minPrice, 0, ',', '.') . 'VNĐ';}} - @endif {{number_format($value->maxPrice, 0, ',', '.') . 'VNĐ';}}
                                             </span>
                                         </td>
@@ -215,7 +215,7 @@
                                             <span  class="d-block mb-1">{{$value->product_name}}</span>
                                         </td>
                                         <td>
-                                            <span  class="d-block mb-1 text-danger">
+                                            <span  class="d-block mb-1 text-danger fw-bold">
                                                 @if($value->minPrice > 0){{number_format($value->minPrice, 0, ',', '.') . 'VNĐ';}} - @endif {{number_format($value->maxPrice, 0, ',', '.') . 'VNĐ';}}
                                             </span>
                                         </td>

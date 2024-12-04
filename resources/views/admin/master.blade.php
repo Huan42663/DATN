@@ -31,6 +31,11 @@
     <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" />
+        <style>
+            .ck-editor__editable_inline{
+                height: 200px;
+            }
+        </style>
     <!--! END: Vendors CSS-->
     <!--! BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="/admin/assets/css/theme.min.css" />
@@ -61,14 +66,17 @@
     <main class="nxl-container">
         <div class="nxl-content">
             @yield('page-header')
-            <div class="page-header-left d-flex align-items-center">
-                <div class="page-header-title">
-                    <h5 class="m-b-10">@yield('model')</h5>
+
+            {{-- <div class="bg-white" >
+                <div class="page-header-left d-flex align-items-center">
+                    <div class="page-header-title">
+                        <h5 class="m-b-10">@yield('model')</h5>
+                    </div>
+                    <ul class="breadcrumb" style="padding:10px ">
+                        <li class="breadcrumb-item"><a href="{{route('Administration.Home')}}">Home</a></li>
+                        <li class="breadcrumb-item">@yield('function')</li>
+                    </ul>
                 </div>
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item">@yield('function')</li>
-                </ul>
             </div>
             <div class="page-header-right ms-auto">
                 <div class="page-header-right-items">
@@ -84,7 +92,7 @@
                         <i class="feather-align-right fs-20"></i>
                     </a>
                 </div>
-            </div>
+            </div> --}}
             @yield('content')
 
         </div>
@@ -125,7 +133,10 @@
     </script>
     <script>
         ClassicEditor
-            .create(document.querySelector('#editor'))
+            .create(document.querySelector('#editor'), {
+                width: '200px',
+                height: '200px'
+            })
             .then(editor => {
                 console.log(editor);
             })

@@ -1,4 +1,4 @@
-@extends('client.masterLogin')
+@extends('client.master')
 
 @section('title', 'Login Form')
 

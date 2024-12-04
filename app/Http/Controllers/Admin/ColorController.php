@@ -82,9 +82,33 @@ class ColorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Color $color)
+    public function destroy(Request $request)
     {
-        $color->delete();
-        return redirect()->route('Administration.colors.list')->with('success', 'Xóa Màu Thành Công');
+        if (isset($request->color_id) && !empty($request->color_id)) {
+            foreach ($request->color_id as $item) {
+                $color = Color::query()->find($item);
+                $color->delete();
+            }
+            return redirect()->route('Administration.colors.list')->with('success', 'Xóa màu thành công');
+        } else {
+            return redirect()->route('Administration.colors.list')->with('error', 'Không tìm thấy màu ');
+        }
+    }
+    public function listColorDelete()
+    {
+        $color = Color::onlyTrashed()->get();
+        return View('admin.colors.listDelete', compact('color'));
+    }
+    public function restoreColor(Request $request)
+    {
+        if (isset($request->color_id) && !empty($request->color_id)) {
+            foreach ($request->color_id as $item) {
+                $color = Color::withTrashed()->find($item);
+                $color->restore();
+            }
+            return redirect()->route('Administration.colors.list')->with('success', 'Khôi phục màu thành công');
+        } else {
+            return redirect()->route('Administration.colors.list');
+        }
     }
 }

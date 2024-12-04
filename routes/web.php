@@ -17,6 +17,7 @@ use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\ProductController as CLientProductController;
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CategoryController;
+use App\Http\Controllers\Client\EventController as ClientEventController;
 use App\Http\Controllers\Client\HomeController as CLientHomeController;
 use App\Http\Controllers\Client\OrderController as CLientOrderController;
 use App\Http\Controllers\Client\PostController as CLientPostController;
@@ -35,7 +36,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // ROUTE ADMIN
-Route::prefix('/Administration')->group(function () {
+Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function () {
 
     // ROUTE HOME
     Route::get('/', [HomeController::class, 'index'])->name('Administration.Home');
@@ -51,18 +52,22 @@ Route::prefix('/Administration')->group(function () {
     Route::prefix('sizes')->group(function () {
         Route::get('/', [SizeController::class, 'index'])->name('Administration.sizes.list');
         Route::post('/', [SizeController::class, 'store'])->name('Administration.sizes.store');
-        Route::get('/{size_id}', [SizeController::class, 'show'])->name('Administration.sizes.show');
+        Route::get('/show-{size_id}', [SizeController::class, 'show'])->name('Administration.sizes.show');
         Route::put('/{size}', [SizeController::class, 'update'])->name('Administration.sizes.update');
-        Route::delete('/{size}', [SizeController::class, 'destroy'])->name('Administration.sizes.destroy');
+        Route::delete('/', [SizeController::class, 'destroy'])->name('Administration.sizes.destroy');
+        Route::get('/list-delete', [SizeController::class, 'listSizeDelete'])->name('Administration.sizes.delete');
+        Route::post('/list-delete', [SizeController::class, 'restoreSize'])->name('Administration.sizes.updateDelete');
     });
 
     // ROUTE COLOR
     Route::prefix('colors')->group(function () {
         Route::get('/', [ColorController::class, 'index'])->name('Administration.colors.list');
         Route::post('/', [ColorController::class, 'store'])->name('Administration.colors.store');
-        Route::get('/{color_id}', [ColorController::class, 'show'])->name('Administration.colors.show');
+        Route::get('/show-{color_id}', [ColorController::class, 'show'])->name('Administration.colors.show');
         Route::put('/{color}', [ColorController::class, 'update'])->name('Administration.colors.update');
-        Route::delete('/{color}', [ColorController::class, 'destroy'])->name('Administration.colors.destroy');
+        Route::delete('/', [ColorController::class, 'destroy'])->name('Administration.colors.destroy');
+        Route::get('/list-delete', [ColorController::class, 'listColorDelete'])->name('Administration.colors.listDelete');
+        Route::post('/list-delete', [ColorController::class, 'restoreColor'])->name('Administration.colors.updateDelete');
     });
 
     // ROUTE POST
@@ -92,7 +97,7 @@ Route::prefix('/Administration')->group(function () {
         Route::post('/create', [VoucherController::class, 'store'])->name('Administration.vouchers.store');
         Route::get('/{voucher_code}', [VoucherController::class, 'show'])->name('Administration.vouchers.show');
         Route::put('/{voucher}', [VoucherController::class, 'update'])->name('Administration.vouchers.update');
-        Route::delete('/{voucher}', [VoucherController::class, 'destroy'])->name('Administration.vouchers.destroy');
+        Route::delete('/', [VoucherController::class, 'destroy'])->name('Administration.vouchers.destroy');
     });
 
     // ROUTE PRODUCT
@@ -104,7 +109,7 @@ Route::prefix('/Administration')->group(function () {
         Route::post('/create-variant-update1', [ProductController::class, 'createVariantUpdate1'])->name('Administration.products.create-variant-update1');
         Route::post('/create-variant-update', [ProductController::class, 'createVariant2'])->name('Administration.products.createVariant2');
         Route::post('/create-variant', [ProductController::class, 'createVariant1'])->name('Administration.products.createVariant1');
-        Route::post('/delte-variant', [ProductController::class, 'deleteVariant'])->name('Administration.products.deleteVariant');
+        Route::post('/delete-variant', [ProductController::class, 'deleteVariant'])->name('Administration.products.deleteVariant');
         Route::post('/create', [ProductController::class, 'store'])->name('Administration.products.store');
         Route::get('/show-{product_slug}', [ProductController::class, 'show'])->name('Administration.products.show');
         Route::get('/{product_slug}/edit', [ProductController::class, 'edit'])->name('Administration.products.edit');
@@ -166,7 +171,9 @@ Route::prefix('/Administration')->group(function () {
         Route::put('/show-remove/{event}', [EventController::class, 'remove'])->name('Administration.events.show-remove');
         Route::get('/edit/{event}', [EventController::class, 'edit'])->name('Administration.events.edit');
         Route::put('/update/{event}', [EventController::class, 'update'])->name('Administration.events.update');
-        Route::delete('/destroy/{event}', [EventController::class, 'destroy'])->name('Administration.events.destroy');
+        Route::put('/destroy/{event}', [EventController::class, 'destroy'])->name('Administration.events.destroy');
+        Route::get('/list-delete', [EventController::class, 'listEventDelete'])->name('Administration.events.listDelete');
+        Route::put('/list-delete', [EventController::class, 'restoreEvent'])->name('Administration.events.restore');
     });
 
     // ROUTE USER
@@ -189,12 +196,13 @@ Route::prefix('/')->group(function () {
 
     // ROUTE PRODUCT
     Route::get('products', [CLientProductController::class, 'index'])->name('Client.product.list');
-    Route::get('products/search', [CLientProductController::class, 'search'])->name('Client.product.search');
+    Route::get('products/search', [CLientProductController::class, 'index'])->name('Client.product.search');
     Route::get('products/{slug}', [CLientProductController::class, 'index'])->name('Client.product.category');
-    Route::get('products/detail-{slug}', [CLientProductController::class, 'index'])->name('Client.product.detail');
+    Route::get('products/detail/{slug}', [CLientProductController::class, 'productDetail'])->name('Client.product.detail');
 
     // ROUTE CART
     Route::get('cart', [CartController::class, 'index'])->name('Client.cart.list');
+    Route::post('create/cart', [CartController::class, 'store'])->name('Client.cart.store');
     Route::post('cart', [CartController::class, 'UpdateCartDetail'])->name('Client.cart.update');
     Route::delete('cart', [CartController::class, 'DestroyCart'])->name('Client.cart.destroy');
 
@@ -209,28 +217,29 @@ Route::prefix('/')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->name('register');
 
     // ROUTE POST
-    Route::get('posts/{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');
-    Route::get('posts/detail-{slug}', [ClientPostController::class, 'index'])->name('Client.posts.detail');
+    Route::get('/posts', [ClientPostController::class, 'index'])->name('Client.posts.category');
+    // Route::get('client/posts/category/{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');
+
+    Route::get('posts/{slug}', [ClientPostController::class, 'detail'])->name('Client.posts.detail');
+
 
     // ROUTE ORDER
     Route::get('orders', [ClientOrderController::class, 'index'])->middleware('auth')->name('Client.orders.list');
-    Route::get('orders/create', [ClientOrderController::class, 'create'])->name('Client.orders.create');
+    // Route::post('orders/create', [ClientOrderController::class, 'create'])->name('Client.orders.create');
+    Route::get('orders/create', [ClientOrderController::class, 'orderCart'])->name('Client.orders.orderCart');
     Route::post('orders', [ClientOrderController::class, 'store'])->name('Client.orders.store');
     Route::get('orders/{order_code}/{order_id}', [ClientOrderController::class, 'show'])->middleware('auth')->name('Client.orders.show');
     Route::put('orders/{order}', [ClientOrderController::class, 'show'])->name('Client.orders.update');
-    Route::post('order/{order_code}/{order_id}/cancel', [CLientOrderController::class, 'cancel'])->middleware('auth')->name('Client.orders.cancel');
+    Route::post('order/{order_code}/{order_id}', [CLientOrderController::class, 'cancel'])->middleware('auth')->name('Client.orders.cancel');
     Route::post('order/{order_code}/{order_id}/confirmDelivered', [CLientOrderController::class, 'confirmDelivered'])->middleware('auth')->name('Client.orders.confirmDelivered');
 
-    //ROUTER CATEGORY
-    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
-    Route::get('/categories/{slug}', [CategoryController::class, 'show'])->name('categories.show');
 
-
+    // ROUTE RATE
+    Route::get('rate/{product_id}/{order_code}', [ClientOrderController::class, 'rates'])->name('Client.rate');
+    Route::post('order/rate', [ClientOrderController::class, 'CreateRate'])->name('Client.orders.createRate');
 
 
     // ROUTE EVENT
-    // Route::get('events/',[ClientEventController::class],'list')->name('Client.events.list');
-    // Route::get('events/{slug}',[ClientEventController::class],'show')->name('Client.events.show');
-
-
+    Route::get('events/', [ClientEventController::class, 'index'])->name('Client.events.list');
+    Route::get('events/{slug}', [ClientEventController::class, 'show'])->name('Client.events.show');
 })->name('Client');

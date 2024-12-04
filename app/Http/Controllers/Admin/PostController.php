@@ -37,7 +37,7 @@ class PostController extends Controller
         $request['slug'] = Str::slug($request['title']);
         $request-> validate(
             [
-                'title' => 'required|unique:posts,title',
+                'title' => 'required|max:255|unique:posts,title|regex:/^[a-zA-Z0-9\s]+$/',
                 'short_description' => 'nullable',
                 'content' => 'required',
                 'category_post_id' => 'required'
@@ -46,10 +46,11 @@ class PostController extends Controller
             [
                 'title.required' => 'title bài viết không được để trống',
                 'title.unique' => 'title bài viết đã bị trùng',
+                'title.max' => 'title bài viết không được quá 255 kí tự',
+                'title.regex' => 'title bài viết không được chứa kí tự đặc biệt',
                 'content.required' => 'Nội dung  không được để trống',
                 'category_post_id.required' => 'danh mục không được để trống',
             ]
-
         );
         $data=[ 
             'title'             =>$request['title'],
@@ -78,10 +79,12 @@ class PostController extends Controller
     {
         $post = Post::query()->with('PostImage')->where('slug',$slug)->get();
         $categoryPost = CategoryPost::get();
+       
         if(!$post){
             return redirect()->route('Administration.posts.list')->with("error","Không tìm thấy bài viết ");
         }else
         {    
+            // dd($post);
             return View('admin.posts.update',compact('post','categoryPost'));
         }
     }
@@ -98,7 +101,7 @@ class PostController extends Controller
         else{
             $request-> validate(
                 [
-                    'title' => 'required',
+                    'title' => 'required|max:255|regex:/^[a-zA-Z0-9\s]+$/',
                     'short_description' => 'nullable',
                     'content' => 'required',
                     'category_post_id' => 'required'
@@ -106,6 +109,8 @@ class PostController extends Controller
                 ],
                 [
                     'title.required' => 'title bài viết không được để trống',
+                    'title.max' => 'title bài viết không được quá 255 kí tự',
+                    'title.regex' => 'title bài viết không được chứa kí tự đặc biệt',
                     'content.required' => 'Nội dung  không được để trống',
                     'category_post_id.required' => 'danh mục không được để trống',
                 ]
@@ -158,14 +163,25 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(Request $request)
     {
-        $Check = Post::query()->where('post_id',$post)->get();
-        if(!$Check){
-            return redirect()->back()->with("error","Không tìm thấy bài viết");
-        }else{
-            $post->delete();
-            return redirect()->back()->with("success","Xóa bài viết thành công");
+        if(isset($request->post_id) && !empty($request->post_id)){
+            foreach($request->post_id as $item){
+                $image = PostImage::query()->where('post_id',$item)->get();
+                if(count($image)>0){
+                    foreach($image as  $value) {
+                        if (file_exists('storage/' . $value->image_name)) {
+                            unlink('storage/' .  $value->image_name);
+                        }
+                        $value->delete();
+                    }
+                }
+                Post::query()->where('post_id',$item)->delete();
+            }
+            return redirect()->back()->with('success','Xóa bài viết thành công');
+        }
+        else{
+            return redirect()->back()->with('error','Không tìm thấy bài viết ');
         }
     }
     public function destroyImage(Post $post){
@@ -176,5 +192,7 @@ class PostController extends Controller
             }
             $value->delete();
         }
+        return redirect()->route('Administration.posts.show',$post->slug)->with("success","Xóa Ảnh Bài Viết Thành Công");
+
     }
 }

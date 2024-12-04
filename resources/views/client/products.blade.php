@@ -23,6 +23,7 @@
                 </div>
             </div>
             @endif
+            {{$products->links()}}
         </div>
     </div>
 </div>

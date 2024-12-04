@@ -32,7 +32,7 @@
                     <table id="example" class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                {{-- <th>ID</th> --}}
                                 <th>Banner Image</th>
                                 <th>Event</th>
                                 <th>Status</th>
@@ -45,7 +45,7 @@
                         <tbody>
                             @foreach ($banners as $banner)
                                 <tr>
-                                    <td>{{ $banner->banner_id }}</td>
+                                    {{-- <td>{{ $banner->banner_id }}</td> --}}
                                     <td>
                                         <div class="hstack gap-3">
 

@@ -49,7 +49,7 @@ class HomeController extends Controller
             ->join('order_detail', 'products.product_id', '=', 'order_detail.product_id')
             ->join('orders', 'order_detail.order_id', '=', 'orders.order_id')
             ->where('products.status', 1)
-            ->selectRaw('products.product_name, products.product_image,product_slug,COUNT(products.product_id) as quantityProduct,MIN(product_variant.price) as minPrice , Max(product_variant.sale_price) as maxPrice')
+            ->selectRaw('products.product_name, products.product_image,product_slug,COUNT(products.product_id) as quantityProduct,Max(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
             ->groupBy('products.product_name', 'products.product_image', 'product_slug')
             ->having('quantityProduct', '>', 0)
             ->limit(10)
@@ -85,7 +85,7 @@ class HomeController extends Controller
         $productNew = Products::query()
         ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
         ->where('products.status',1)
-        ->selectRaw('products.product_name, products.product_image,product_slug,MIN(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
+        ->selectRaw('products.product_name, products.product_image,product_slug,Max(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
         ->groupBy('products.product_name', 'products.product_image', 'product_slug')
         ->limit(10)
         ->get();

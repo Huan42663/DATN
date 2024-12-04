@@ -81,8 +81,10 @@
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <select name="type_event" class="form-control" id="type_event">
-                                                <option value="0">Giới thiệu</option>
-                                                <option value="1">Giảm giá</option>
+                                                <option {{ old('type_event') == 0 ? 'selected' : '' }} value="0">Giới
+                                                    thiệu</option>
+                                                <option {{ old('type_event') == 1 ? 'selected' : '' }} value="1">Giảm
+                                                    giá</option>
                                             </select>
                                         </div>
                                         @error('type_event')
@@ -96,7 +98,8 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="text" name="discount" class="form-control">
+                                            <input type="text" id="inp-discount" value="{{ old('discount') }}"
+                                                name="discount" class="form-control">
                                         </div>
                                         @error('discount')
                                             <span class="text-danger">{{ $message }}</span>
@@ -124,7 +127,8 @@
                                                                 @checked($item == $product->product_id) @endforeach @endif
                                                                 value="{{ $product->product_id }}" id=""></td>
                                                         <td>{{ $product->product_name }}</td>
-                                                        <td><img src="{{ asset('storage/' . $product->product_image) }}"
+                                                        <td><img width="100px"
+                                                                src="{{ asset('storage/' . $product->product_image) }}"
                                                                 alt=""></td>
                                                     </tr>
                                                 @endforeach
@@ -142,13 +146,21 @@
     </div>
     <script>
         a = document.querySelector('[id = "discount"]');
+        c = document.querySelector('[id = "inp-discount"]');
         selectElement = document.getElementById('type_event');
+        const b = selectElement.value;
+        if (b == 1) {
+            a.style.display = 'flex';
+        } else if (b == 0) {
+            a.style.display = 'none';
+        }
         selectElement.addEventListener('change', () => {
             const b = selectElement.value;
             if (b == 1) {
                 a.style.display = 'flex';
             } else if (b == 0) {
                 a.style.display = 'none';
+                c.value = null;
             }
         });
     </script>

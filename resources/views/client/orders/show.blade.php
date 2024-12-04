@@ -1,4 +1,4 @@
-@extends('client.masterOrderDetail')
+@extends('client.master')
 @section('title', 'Chi tiết đơn hàng')
 
 @section('content')
@@ -6,16 +6,16 @@
     <div
         style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; font-family: Arial, sans-serif; justify-content: center;">
         <div
-            style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; font-family: Arial, sans-serif; justify-content: center;">
+            style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; font-family: Arial, sans-serif; justify-content: center; flex: 1 1 70%;">
             <div
-                style="flex: 1; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+                style="flex: 1; max-width: 760px;  border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
                 <h2
                     style="text-align: center; font-size: 26px; font-weight: bold; color: #4caf50; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 20px;">
                     Chi tiết đơn hàng
                 </h2>
 
                 <!-- Thông tin đơn hàng -->
-                <div style="line-height: 1.8; font-size: 16px; color: #555;">
+                <div style="padding: 25px; line-height: 1.8; font-size: 16px; color: #555;">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                         <strong style="color: #333;">Mã đơn hàng:</strong> <span>{{ $order->order_code }}</span>
                     </div>
@@ -25,8 +25,21 @@
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                         <strong style="color: #333;">Trạng thái:</strong>
-                        <span
-                            style="color: {{ $order->status == 'delivered' ? '#10b848' : '#ff5722' }};">{{ $order->status }}</span>
+                        @if ($order->status == 'unconfirm')
+                            <span class="badge bg-soft-warning text-warning">Chờ Xác Nhận</span>
+                        @elseif($order->status == 'confirmed')
+                            <span class="badge bg-soft-success text-success">Đã Xác Nhận</span>
+                        @elseif($order->status == 'shipping')
+                            <span class="badge bg-soft-success text-success">Đang Vận Chuyển</span>
+                        @elseif($order->status == 'delivered')
+                            <span class="badge bg-soft-success text-success">Đã Giao Đến Khách Hàng</span>
+                        @elseif($order->status == 'received')
+                            <span class="badge bg-soft-warning text-warning">Đã Xác Nhận Nhận Hàng</span>
+                        @elseif($order->status == 'canceled')
+                            <span class="badge bg-soft-danger text-danger">Hủy</span>
+                        @elseif($order->status == 'return')
+                            <span class="badge bg-soft-dark text-dark">Trả Hàng</span>
+                        @endif
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                         <strong style="color: #333;">Phương thức thanh toán:</strong>
@@ -45,40 +58,42 @@
 
                 <!-- Danh sách sản phẩm -->
                 <h3
-                    style="font-size: 20px; font-weight: bold; color: #333; margin-top: 30px; border-top: 2px solid #e0e0e0; padding-top: 10px; text-align: center;">
+                    style="font-size: 22px; font-weight: bold; color: #333; margin-top: 30px; border-top: 2px solid #e0e0e0; padding-top: 10px; text-align: center;">
                     Danh sách sản phẩm
                 </h3>
-                <ul style="list-style: none; padding: 0; margin: 0;">
+                <div class="product-list" style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px;">
+
+                    <div class="product-header"
+                        style="display: grid; grid-template-columns: 5% 30% 15% 15% 15% 20%; font-size: 16px; font-weight: bold; color: #333; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 10px; background-color: #f8f9fa; align-items: center;">
+                        <span style="text-align: center; padding: 8px;">#</span>
+                        <span style="text-align: left; padding-left: 10px;">Sản phẩm</span>
+                        <span style="text-align: center;">Giá</span>
+                        <span style="text-align: center;">Size</span>
+                        <span style="text-align: center;">Màu</span>
+                        <span style="text-align: center;">Số lượng</span>
+                    </div>
+
                     @foreach ($order->orderDetail as $index => $detail)
-                        <li
-                            style="border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 5px; padding: 15px; margin-bottom: 10px; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #333;">
-                                <div style="flex: 1; display: flex; justify-content: space-between;">
-                                    <span><strong>Sản phẩm:</strong>
-                                        {{ $detail->product->product_name ?? 'Không tồn tại' }}</span>
-                                    <span><strong>Size:</strong>
-                                        {{ $detail->product->size->size_name ?? 'Không có' }}</span>
-                                    <span><strong>Màu:</strong>
-                                        {{ $detail->product->color->color_name ?? 'Không có' }}</span>
-                                </div>
-                            </div>
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #333;">
-                                <span><strong>Giá:</strong> {{ number_format($detail->price, 0, ',', '.') }} đ</span>
-                                <span><strong>Giá Sale:</strong> {{ number_format($detail->sale_price, 0, ',', '.') }}
-                                    đ</span>
-                                <span><strong>Số lượng:</strong> {{ $detail->quantity }}</span>
-                            </div>
-                        </li>
+                        <div class="product-item"
+                            style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); padding: 20px; border: 1px solid rgba(0, 0, 0, 0.1); display: grid; grid-template-columns: 5% 30% 15% 15% 15% 20%; gap: 10px; align-items: center;">
+
+                            <!-- Dòng giá trị sản phẩm -->
+                            <span style="text-align: center;">{{ $index + 1 }}</span> 
+                            <span
+                                style="text-align: left; padding-left: 10px;">{{ $detail->product_name ?? 'Không tồn tại' }}</span>
+                            <span style="text-align: center;">{{ number_format($detail->price, 0, ',', '.') }} đ</span>
+                            <span style="text-align: center;">{{ $detail->size ?? 'Không có' }}</span>
+                            <span style="text-align: center;">{{ $detail->color ?? 'Không có' }}</span>
+                            <span style="text-align: center;">{{ $detail->quantity }}</span>
+                        </div>
                     @endforeach
-                </ul>
+                </div>
 
                 <!-- Tổng Tiền -->
                 <div
                     style="border: 1px solid #e0e0e0; padding: 15px; margin-top: 20px; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
                     <strong style="color: #333;">Tổng Tiền:</strong>
-                    <span style="color: #f44336;">{{ number_format($order->total, 0, ',', '.') }} đ</span>
+                    <span style="color: #f44336;">{{ number_format($order->total_discount, 0, ',', '.') }} đ</span>
                 </div>
 
                 <!-- Nút hành động -->
@@ -101,12 +116,10 @@
                     @if ($order->status == 'delivered')
                         <form
                             action="{{ route('Client.orders.confirmDelivered', [$order->order_code, $order->order_id]) }}"
-                            method="POST"
-                            onsubmit="return confirm('Bạn đã nhận đơn hàng này?')">
+                            method="POST" onsubmit="return confirm('Bạn đã nhận đơn hàng này?')">
                             @csrf
                             @method('POST')
-                            <input type="hidden"
-                            name="delivereShow" value="delivereShow">
+                            <input type="hidden" name="delivereShow" value="delivereShow">
                             <button type="submit"
                                 style="background-color: #10b848; color: white; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
                                 Xác Nhận Đã Nhận Hàng
@@ -118,7 +131,7 @@
 
             <!-- Phần bên phải: Bill hóa đơn -->
             <div
-                style="flex: 1; max-width: 400px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+                style="flex: 1; max-width: 450px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 25px; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
                 <h2
                     style="text-align: center; font-size: 26px; font-weight: bold; color: #f44336; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 20px;">
                     Hóa đơn của bạn

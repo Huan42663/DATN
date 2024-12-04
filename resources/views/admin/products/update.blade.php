@@ -84,7 +84,7 @@
 
                                 <hr class="my-4">
 
-                                <h5 class="fw-bold mb-3">Biến thể sản phẩm</h5>
+                                {{-- <h5 class="fw-bold mb-3">Biến thể sản phẩm</h5>
 
                                 <!-- Hiển thị từng biến thể -->
                                 <div class="row">
@@ -162,7 +162,7 @@
                                             </div>
                                         </div>
                                     @endforeach
-                                </div>
+                                </div> --}}
 
                                 <div class="row">
                                     <button type="submit" class="btn btn-lg btn-primary">Cập nhật sản phẩm</button>

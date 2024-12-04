@@ -2,8 +2,19 @@
 @extends('admin.master')
 
 @section('title', 'Order')
-@section('model', 'Orders')
-@section('function', 'List')
+@section('page-header')
+    <div class="page-header">
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Orders</h5>
+            </div>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
+                <li class="breadcrumb-item">List</li>
+            </ul>
+        </div>
+    </div>
+@endsection
 
 @section('content')
 <div class="col-lg-12 mt-3" >

@@ -20,7 +20,7 @@ class EventController extends Controller
      */
     public function index()
     {
-        $events = Event::all();
+        $events = Event::query()->orderByDesc('event_id')->get();
         return view('admin.events.index', compact('events'));
     }
 
@@ -72,7 +72,7 @@ class EventController extends Controller
                 ProductEvent::create(['event_id' => $event->id, 'product_id' => $value]);
             }
         }
-        return redirect()->route('Administration.events.list')->with('message', 'thêm thành công');
+        return redirect()->route('Administration.events.list')->with('success', 'thêm thành công');
     }
 
     /**
@@ -202,7 +202,7 @@ class EventController extends Controller
                     ProductEvent::create(['event_id' => $id, 'product_id' => $value]);
                 }
             }
-            return redirect()->route('Administration.events.list')->with('message', 'cập nhật thành công');
+            return redirect()->route('Administration.events.list')->with('success', 'cập nhật thành công');
         }
     }
 
@@ -211,19 +211,23 @@ class EventController extends Controller
      */
     public function destroy(string $id)
     {
-        try {
-            $data = Event::query()->where('event_id', $id)->get();
-            $data->delete();
-            return view('admin.events.index')->with('message', 'xóa thành công');
-        } catch (\Throwable $th) {
-            Log::error(__CLASS__ . "@" . __FUNCTION__, [
-                'Line' => $th->getLine(),
-                'message' => $th->getMessage(),
-            ]);
+        Event::query()->where('event_id', $id)->delete();;
 
-            if ($th instanceof ModelNotFoundException) {
-                return view('error-404')->with('error', 'không tìm thấy sự kiện');
-            }
+        return redirect()->back()->with('success', 'xóa thành công');
+    }
+    public function listEventDelete()
+    {
+        $events = Event::onlyTrashed()->get();
+        return View('admin.events.listDelete', compact('events'));
+    }
+    public function restoreEvent(Request $request)
+    {
+        if (isset($request->event_id) && !empty($request->event_id)) {
+            $event = Event::withTrashed()->where('event_id', $request->event_id);
+            $event->restore();
+            return redirect()->route('Administration.events.list')->with('success', 'Khôi phục sự kiện thành công');
+        } else {
+            return redirect()->route('Administration.events.list');
         }
     }
 }
