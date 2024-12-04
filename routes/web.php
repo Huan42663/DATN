@@ -36,7 +36,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // ROUTE ADMIN
-Route::prefix('/Administration')->group(function () {
+Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function () {
 
     // ROUTE HOME
     Route::get('/', [HomeController::class, 'index'])->name('Administration.Home');

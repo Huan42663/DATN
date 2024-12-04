@@ -55,7 +55,7 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('Client.Home');
+        return redirect()->route('login');
     }
 
     // Hiển thị form đăng ký
@@ -102,7 +102,7 @@ class AuthController extends Controller
                 'phone' => $request->phone,
                 'role' => 'guest', // Role mặc định
             ]);
-            
+
             // Tạo giỏ hàng
             Cart::create([
                 'user_id' => $user->user_id,

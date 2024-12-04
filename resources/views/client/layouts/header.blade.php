@@ -72,7 +72,7 @@
                                                         src="{{asset('storage/'.$item->product_image)}}" />
                                                 </div>
                                                 @endforeach
-                                                
+
                                             </div>
                                         </div>
                                     </div>
@@ -122,7 +122,7 @@
                                   <li><a class="dropdown-item" href="#">Thông Tin Tài Khoản</a></li>
                                 </ul>
                             </div>
-                         </div> 
+                         </div>
                         <div class="max-md:hidden cart-icon flex items-center relative cursor-pointer"><svg
                                 xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"
                                 viewBox="0 0 256 256">
@@ -1020,7 +1020,7 @@
         <div class="slider-main h-full w-full">
             <div class="swiper h-full relative">
                 <div class="swiper-wrapper">
-                   
+
                         <div class="swiper-slide">
                             <div class="slider-item h-full w-full relative">
                                 <div class="container w-full h-full flex items-center relative">
@@ -1038,8 +1038,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>  
-                   
+                        </div>
+
 
                 </div>
                 <div class="swiper-pagination"></div>
@@ -1188,12 +1188,23 @@
                                 </svg>
                                 </button>
                                 <ul class="dropdown-menu">
-                                  <li><a class="dropdown-item" href="{{route('Client.account.showLoginForm')}}">Login</a></li>
-                                  <li><a class="dropdown-item" href="{{route('Client.account.showRegisterForm')}}">Register</a></li>
-                                  <li><a class="dropdown-item" href="{{route('Client.account.show')}}">Info</a></li>
-                                  <li><a class="dropdown-item" href="{{route('Administration.Home')}}">Admin</a></li>
-                                  <li><a class="dropdown-item" href="{{route('Client.account.logout')}}">Logout</a></li>
-                                </ul>
+                                    <!-- Các menu khác -->
+
+                                    @auth
+                                      @if(Auth::user()->role == 'admin') <!-- Kiểm tra nếu người dùng là admin -->
+                                        <li><a class="dropdown-item" href="{{ route('Administration.Home') }}">Admin</a></li>
+                                      @endif
+                                    @endauth
+
+                                    @guest
+                                      <li><a class="dropdown-item" href="{{ route('Client.account.showLoginForm') }}">Login</a></li>
+                                      <li><a class="dropdown-item" href="{{ route('Client.account.showRegisterForm') }}">Register</a></li>
+                                    @endguest
+
+                                    @auth
+                                      <li><a class="dropdown-item" href="{{ route('Client.account.logout') }}">Logout</a></li>
+                                    @endauth
+                                  </ul>
                               </div>
                               <a href="{{route('Client.cart.list')}}">
                                 <div class="max-md:hidden cart-icon flex items-center relative cursor-pointer">
