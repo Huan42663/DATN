@@ -25,23 +25,22 @@
                         <div class="card-body personal-info">
                             <div class="mb-4 d-flex align-items-center justify-content-between">
                                 <h5 class="fw-bold mb-0 me-4">
-                                    <span class="d-block mb-2">Thêm Danh Mục Sản Phẩm:</span>
+                                    <span class="d-block mb-2">Add Product Category:</span>
                                 </h5>
                             </div>
                             <form action="{{ route('Administration.categoryProduct.store') }}" method="POST">
                                 @csrf
                                 @method('POST')
 
-                                {{-- Input Tên danh mục --}}
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="category_name" class="fw-semibold">Tên Danh mục: </label>
+                                        <label for="category_name" class="fw-semibold">Category Name: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="category_name"
                                                 value="{{ old('category_name') }}" id="category_name"
-                                                placeholder="Nhập tên danh mục">
+                                                placeholder="Enter a category name">
                                         </div>
                                         @error('category_name')
                                             <span class="text-danger">{{ $message }}</span>
@@ -49,18 +48,17 @@
                                     </div>
                                 </div>
 
-                                {{-- Chọn danh mục cha --}}
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="category_parent_id" class="fw-semibold">Chọn danh mục cha (Nếu
-                                            có):</label>
+                                        <label for="category_parent_id" class="fw-semibold">Select the parent category (If
+                                            any):</label>
                                     </div>
                                     <div class="col-lg-8">
                                         <table id="example" class="table" style="width:100%">
                                             <thead>
                                                 <tr>
                                                     <th></th>
-                                                    <th>Tên danh mục</th>
+                                                    <th>Category name</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -82,8 +80,7 @@
                                     </div>
                                 </div>
 
-                                {{-- Nút thêm mới --}}
-                                <button type="submit" class="btn btn-lg btn-light-brand">Thêm Mới</button>
+                                <button type="submit" class="btn btn-lg btn-light-brand">Add New</button>
                             </form>
                         </div>
                     </div>

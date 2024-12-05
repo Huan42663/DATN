@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'danh sách danh mục bài viết')
+@section('title', 'Article category list')
 
 @section('page-header')
     <div class="page-header">
@@ -21,18 +21,26 @@
     <div class="col-lg-12 mt-3">
         <div class="card stretch stretch-full">
             <div class="card-body custom-card-action p-0">
-                @session('massage')
-                    <p class="bg-success">{{ $massage }}</p>
-                @endsession
+                @if (session('success'))
+                    <p class="bg-danger text-white p-2">{{ session('success') }}</p>
+                @endif
+                @if (session('message'))
+                    <p class="bg-success text-white p-2">{{ session('message') }}</p>
+                @endif
                 <div class="table-responsive">
                     <a href="{{ route('Administration.categoryPost.create') }}" class=" btn btn-primary">
                         <i class="feather-plus me-2"></i>
                         <span>ADD NEW CATEGORY POST</span>
                     </a>
+                    <div class="col-1">
+                        <a href="{{ route('Administration.categoryPost.listDelete') }}" class=" btn btn-danger mt-2">
+                            <i class="fa fa-trash"></i> Trash
+                        </a>
+                    </div>
                     <table id="example" class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Tên Danh Mục</th>
+                                <th>Category Name</th>
                                 <th class="text-end">Actions</th>
                             </tr>
                         </thead>
@@ -51,7 +59,7 @@
                                                 method="POST">
                                                 @method('DELETE')
                                                 @csrf
-                                                <button onclick="return confirm('bạn có muốn xóa danh mục này ?') "
+                                                <button onclick="return confirm('Do you want to delete this category?') "
                                                     class="avatar-text avatar-md">
                                                     <i class="feather-trash-2"></i>
                                                     </i>

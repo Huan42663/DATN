@@ -20,7 +20,7 @@ class ColorController extends Controller
     {
 
         $data = Color::query()->orderByDesc('color_id')->get();
-        return View('admin.colors.index',compact('data'));
+        return View('admin.colors.index', compact('data'));
     }
 
     /**
@@ -34,10 +34,10 @@ class ColorController extends Controller
                 "color_name.required" => "Không được bỏ trống",
                 "color_name.unique" => "Màu đã có"
             ]
-            );
-            $data=['color_name'=>$request['color_name']];
-            Color::create($data);
-            return redirect()->back()->with("success","Thêm màu Thành Công");
+        );
+        $data = ['color_name' => $request['color_name']];
+        Color::create($data);
+        return redirect()->back()->with("success", "Thêm màu Thành Công");
     }
 
     /**
@@ -45,13 +45,13 @@ class ColorController extends Controller
      */
     public function show(string $color_id)
     {
-            $ColorInfo = Color::query()->where("color_id", '=', $color_id)->get();
-            $data = Color::query()->orderByDesc('color_id')->get();
-            if ($ColorInfo) {
-                return View('admin.colors.index',compact('ColorInfo','data'));
-            } else {
-                return View('admin.colors.index',compact('data'))->with('error','Không tìm thấy màu');
-            }
+        $ColorInfo = Color::query()->where("color_id", '=', $color_id)->get();
+        $data = Color::query()->orderByDesc('color_id')->get();
+        if ($ColorInfo) {
+            return View('admin.colors.index', compact('ColorInfo', 'data'));
+        } else {
+            return View('admin.colors.index', compact('data'))->with('error', 'Không tìm thấy màu');
+        }
     }
 
     /**
@@ -61,52 +61,53 @@ class ColorController extends Controller
     {
         $ColorInfo = Color::query()->where("color_id", '=', $color->color_id)->get();
         $data = Color::query()->orderByDesc('color_id')->get();
-       
+
         $ColorCheck = Color::query()->where("color_id", '!=', $color->color_id)->get();
         foreach ($ColorCheck as $value) {
             if ($value->color_name == $request["color_name"]) {
-                return View('admin.colors.index',compact('ColorInfo','data'))->with('error','Màu đã có');
+                return View('admin.colors.index', compact('ColorInfo', 'data'))->with('error', 'Màu đã có');
             }
         }
         $request->validate(
             ['color_name' => "required"],
-        [
-            "color_name.required" => "Không được bỏ trống"
-        ]) ;
-            $data=['color_name'=>$request['color_name']];
-            $color->update($data);
-            return redirect()->route('Administration.colors.list')->with('success','Sửa Màu Thành Công');;
-        }
+            [
+                "color_name.required" => "Không được bỏ trống"
+            ]
+        );
+        $data = ['color_name' => $request['color_name']];
+        $color->update($data);
+        return redirect()->route('Administration.colors.list')->with('success', 'Sửa Màu Thành Công');;
+    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Request $request)
     {
-        if(isset($request->color_id) && !empty($request->color_id)){
-            foreach($request->color_id as $item){
-                $color =Color::query()->find($item);
+        if (isset($request->color_id) && !empty($request->color_id)) {
+            foreach ($request->color_id as $item) {
+                $color = Color::query()->find($item);
                 $color->delete();
             }
-            return redirect()->route('Administration.colors.list')->with('success','Xóa màu thành công');
-        }
-        else{
-            return redirect()->route('Administration.colors.list')->with('error','Không tìm thấy màu ');
+            return redirect()->route('Administration.colors.list')->with('success', 'Xóa màu thành công');
+        } else {
+            return redirect()->route('Administration.colors.list')->with('error', 'Không tìm thấy màu ');
         }
     }
-    public function listColorDelete(){
+    public function listColorDelete()
+    {
         $color = Color::onlyTrashed()->get();
-        return View('admin.colors.listDelete',compact('color'));
+        return View('admin.colors.listDelete', compact('color'));
     }
-    public function restoreColor(Request $request){
-        if(isset($request->color_id) && !empty($request->color_id)){
-            foreach($request->color_id as $item){
-                $color =Color::withTrashed()->find($item);
+    public function restoreColor(Request $request)
+    {
+        if (isset($request->color_id) && !empty($request->color_id)) {
+            foreach ($request->color_id as $item) {
+                $color = Color::withTrashed()->find($item);
                 $color->restore();
             }
-            return redirect()->route('Administration.colors.list')->with('success','Khôi phục màu thành công');
-        }
-        else{
+            return redirect()->route('Administration.colors.list')->with('success', 'Khôi phục màu thành công');
+        } else {
             return redirect()->route('Administration.colors.list');
         }
     }

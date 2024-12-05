@@ -26,8 +26,7 @@
                                     @elseif(!empty(old('fullname')))
                                         value="{{old('fullname')}}"
                                     @else
-                                        {{-- value="{{Auth::user()->fullname}}" --}}
-                                        value=""
+                                        value="{{Auth::user()->fullname}}"
                                     @endif
                                     >
                                     @error('fullname')
@@ -45,8 +44,7 @@
                                     @elseif(!empty(old('email')))
                                         value="{{old('email')}}"
                                     @else
-                                        {{-- value="{{Auth::user()->email}}" --}}
-                                        value=""
+                                        value="{{Auth::user()->email}}"
                                     @endif
                                     >
                                      @error('email')
@@ -61,8 +59,7 @@
                                     @elseif(!empty(old('phone')))
                                         value="{{old('phone')}}"
                                     @else
-                                        {{-- value="{{Auth::user()->phone}}" --}}
-                                        value=""
+                                        value="{{Auth::user()->phone}}"
                                     @endif
                                     >
                                      @error('phone')

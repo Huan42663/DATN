@@ -1,4 +1,3 @@
-
 @php
     $Category_post = (new App\Models\CategoryPost())::query()->where('showHeader', true)->get();
     $HOT = (new App\Models\Products())
@@ -13,12 +12,15 @@
         ->groupBy('products.product_id', 'products.product_name', 'products.product_image', 'product_slug')
         ->limit(2)
         ->get();
-    $Event = (new App\Models\Event())::query()->where('status', '=',1)->get();
+    $Event = (new App\Models\Event())::query()->where('status', '=', 1)->get();
     $category = (new App\Models\Category())::query()->get();
     $Banner = (new App\Models\Banner())::query()->get();
-    if(Auth::user()){
-        $Cart = (new App\Models\Cart())::query()->leftJoin('cart_detail','carts.cart_id','=','cart_detail.cart_id')
-        ->where('user_id',Auth::user()->id)->count();
+    if (Auth::user()) {
+        $Cart = (new App\Models\Cart())
+            ::query()
+            ->leftJoin('cart_detail', 'carts.cart_id', '=', 'cart_detail.cart_id')
+            ->where('user_id', Auth::user()->user_id)
+            ->count();
     }
 @endphp
 <div id="header" class="relative w-full">
@@ -29,14 +31,13 @@
                 </div>
                 <div class="left flex items-center gap-16"><a
                         class="flex items-center max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2"
-                        href="{{route('Client.Home')}}">
+                        href="{{ route('Client.Home') }}">
                         <div class="heading4">JS STORE</div>
                     </a>
                     <div class="menu-main h-full max-lg:hidden">
                         <ul class="flex items-center gap-8 h-full">
                             <li class="h-full">
-                                <a
-                                    class="text-button-uppercase duration-300 h-full flex items-center justify-center font-semibold text-blue-500"
+                                <a class="text-button-uppercase duration-300 h-full flex items-center justify-center font-semibold text-blue-500"
                                     href="#!">Danh Mục</a>
                                 <div class="mega-menu absolute top-[74px] left-0 bg-white w-screen">
                                     <div class="container">
@@ -48,17 +49,19 @@
                                                             <a class="text-decoration: none"
                                                                 href="{{ route('Client.product.category', $item->category_slug) }}">
                                                                 <div
-                                                                    class="text-button-uppercase pb-2 font-semibold text-blue-500">
-                                                                    {{ $item->category_name }}</div>
+                                                                    class="text-button-uppercase pb-2 font-semibold text-blue-500 fw-bold">
+                                                                </div>
+                                                                {{ $item->category_name }}
                                                             </a>
                                                             <ul class="w-full">
                                                                 @foreach ($category as $children)
                                                                     @if ($children->category_parent_id == $item->category_id)
                                                                         <li>
                                                                             <a class="link text-secondary text-decoration: none"
-                                                                                href="{{ route('Client.product.category', $children->category_slug) }}" style="text-decoration: none">
-                                                                                <div
-                                                                                    class="link text-secondary duration-300 cursor-pointer" style="text-decoration: none">
+                                                                                href="{{ route('Client.product.category', $children->category_slug) }}"
+                                                                                style="text-decoration: none">
+                                                                                <div class="link text-secondary duration-300 cursor-pointer"
+                                                                                    style="text-decoration: none">
                                                                                     {{ $children->category_name }}</div>
                                                                             </a>
                                                                         </li>
@@ -106,13 +109,15 @@
                                     href="{{ route('Client.product.list') }}">Sản Phẩm</a>
                             </li>
                             <li class="h-full relative">
-                                <a class="text-button-uppercase duration-300 h-full flex items-center justify-center " href="#!">Event</a>
-                                @if(isset($Event) && count($Event))
+                                <a class="text-button-uppercase duration-300 h-full flex items-center justify-center "
+                                    href="#!">Event</a>
+                                @if (isset($Event) && count($Event))
                                     <div class="sub-menu py-3 px-5 -left-10 absolute bg-white rounded-b-xl">
                                         <ul class="w-full">
                                             @foreach ($Event as $item)
-                                            <li><a class="link text-secondary duration-300 "
-                                                    href="{{ route('Client.events.show', $item->slug)}}">{{ $item->event_name }}</a></li>
+                                                <li><a class="link text-secondary duration-300 "
+                                                        href="{{ route('Client.events.show', $item->slug) }}">{{ $item->event_name }}</a>
+                                                </li>
                                             @endforeach
                                         </ul>
                                     </div>
@@ -131,72 +136,80 @@
                 <div class="right flex gap-12">
                     <div class="max-md:hidden search-icon flex items-center cursor-pointer relative">
                         <div class="input-group mb-3 mt-3">
-                            <form action="{{route('Client.product.search')}}" method="GET" class=d-flex>
+                            <form action="{{ route('Client.product.search') }}" method="GET" class=d-flex>
                                 @csrf
-                                <input type="text" name="keyword" class="form-control" placeholder="search" aria-label="search" aria-describedby="button-addon2" style="border-radius: 20px">
-                                <button class="btn btn" type="submit" id="button-addon2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"
-                                    viewBox="0 0 256 256">
-                                    <path
-                                        d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z">
-                                    </path>
-                                </svg></button>
+                                <input type="text" name="keyword" class="form-control" placeholder="search"
+                                    aria-label="search" aria-describedby="button-addon2" style="border-radius: 20px">
+                                <button class="btn btn" type="submit" id="button-addon2"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"
+                                        viewBox="0 0 256 256">
+                                        <path
+                                            d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z">
+                                        </path>
+                                    </svg></button>
                             </form>
-                          </div>
+                        </div>
                         <div class="line absolute bg-line w-px h-6 -right-6"></div>
                     </div>
                     <div class="list-action flex items-center gap-4">
-                            <div class="dropdown" >
-                                <button class="" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    fill="black" viewBox="0 0 256 256" style="border:none !important">
+                        <div class="dropdown">
+                            <button class="" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"
+                                    viewBox="0 0 256 256" style="border:none !important">
                                     <path
                                         d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z">
                                     </path>
                                 </svg>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <!-- Các menu khác -->
+                            </button>
+                            <ul class="dropdown-menu">
+                                <!-- Các menu khác -->
 
-                                    @auth
-                                      @if(Auth::user()->role == 'admin') <!-- Kiểm tra nếu người dùng là admin -->
-                                        <li><a class="dropdown-item" href="{{ route('Administration.Home') }}">Admin</a></li>
-                                      @endif
-                                    @endauth
+                                @auth
+                                    @if (Auth::user()->role == 'admin')
+                                        <!-- Kiểm tra nếu người dùng là admin -->
+                                        <li><a class="dropdown-item" href="{{ route('Administration.Home') }}">Admin</a>
+                                        </li>
+                                    @endif
+                                @endauth
 
-                                    @guest
-                                      <li><a class="dropdown-item" href="{{ route('Client.account.showLoginForm') }}">Login</a></li>
-                                      <li><a class="dropdown-item" href="{{ route('Client.account.showRegisterForm') }}">Register</a></li>
-                                    @endguest
+                                @guest
+                                    <li><a class="dropdown-item"
+                                            href="{{ route('Client.account.showLoginForm') }}">Login</a></li>
+                                    <li><a class="dropdown-item"
+                                            href="{{ route('Client.account.showRegisterForm') }}">Register</a></li>
+                                @endguest
 
-                                    @auth
-                                      <li><a class="dropdown-item" href="{{ route('Client.account.logout') }}">Logout</a></li>
-                                    @endauth
-                                  </ul>
-                              </div>
-                              <a href="{{route('Client.cart.list')}}">
-                                <div class="max-md:hidden cart-icon flex items-center relative cursor-pointer">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"
-                                        viewBox="0 0 256 256">
-                                        <path
-                                            d="M239.89,198.12l-14.26-120a16,16,0,0,0-16-14.12H176a48,48,0,0,0-96,0H46.33a16,16,0,0,0-16,14.12l-14.26,120A16,16,0,0,0,20,210.6a16.13,16.13,0,0,0,12,5.4H223.92A16.13,16.13,0,0,0,236,210.6,16,16,0,0,0,239.89,198.12ZM128,32a32,32,0,0,1,32,32H96A32,32,0,0,1,128,32ZM32,200,46.33,80H80v24a8,8,0,0,0,16,0V80h64v24a8,8,0,0,0,16,0V80h33.75l14.17,120Z">
-                                        </path>
-                                    </svg>
-                                    <span class="quantity cart-quantity absolute -right-1.5 -top-1.5 text-xs text-white bg-black w-4 h-4 flex items-center justify-center rounded-full">
-                                        @if(isset($Cart) && $Cart > 0)
-                                            {{$Cart}}
-                                        @else
-                                            0
-                                        @endif
-                                    </span>
-                                </div>
-                            </a>
+                                @auth
+                                    <li><a class="dropdown-item" href="{{ route('Client.account.logout') }}">Logout</a>
+                                    </li>
+                                @endauth
+                            </ul>
+                        </div>
+                        <a href="{{ route('Client.cart.list') }}">
+                            <div class="max-md:hidden cart-icon flex items-center relative cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"
+                                    viewBox="0 0 256 256">
+                                    <path
+                                        d="M239.89,198.12l-14.26-120a16,16,0,0,0-16-14.12H176a48,48,0,0,0-96,0H46.33a16,16,0,0,0-16,14.12l-14.26,120A16,16,0,0,0,20,210.6a16.13,16.13,0,0,0,12,5.4H223.92A16.13,16.13,0,0,0,236,210.6,16,16,0,0,0,239.89,198.12ZM128,32a32,32,0,0,1,32,32H96A32,32,0,0,1,128,32ZM32,200,46.33,80H80v24a8,8,0,0,0,16,0V80h64v24a8,8,0,0,0,16,0V80h33.75l14.17,120Z">
+                                    </path>
+                                </svg>
+                                <span
+                                    class="quantity cart-quantity absolute -right-1.5 -top-1.5 text-xs text-white bg-black w-4 h-4 flex items-center justify-center rounded-full">
+                                    @if (isset($Cart) && $Cart > 0)
+                                        {{ $Cart }}
+                                    @else
+                                        0
+                                    @endif
+                                </span>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    {{-- <div id="menu-mobile" class="">
+</div>
+{{-- <div id="menu-mobile" class="">
         <div class="menu-container bg-white h-full">
             <div class="container h-full">
                 <div class="menu-main h-full overflow-hidden">
@@ -1193,12 +1206,11 @@
                 </div><span class="menu_bar-title caption2 font-semibold">Cart</span>
             </a></div>
     </div> --}}
-    <div class="breadcrumb-block style-shared">
-        <div class="breadcrumb-main bg-linear overflow-hidden">
-            <div class="container lg:pt-[30px] pt-24 pb-10 relative">
-            </div>
+<div class="breadcrumb-block style-shared">
+    <div class="breadcrumb-main bg-linear overflow-hidden">
+        <div class="container lg:pt-[30px] pt-24 pb-10 relative">
         </div>
     </div>
 </div>
-<script>
-</script>
+</div>
+<script></script>

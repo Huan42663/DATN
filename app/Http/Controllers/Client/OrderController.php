@@ -238,26 +238,28 @@ class OrderController extends Controller
         }
         return redirect()->route('Client.orders.list');
     }
-    public function rates(string $product_id, string $order_code)
-    {
-        $product = OrderDetail::query()
-            ->join('orders', 'order_detail.order_id', '=', 'orders.order_id')
-            ->join('products', 'order_detail.product_id', '=', 'products.product_id')
-            ->leftJoin('sizes', 'order_detail.size', '=', 'sizes.size_name')
-            ->leftJoin('colors', 'order_detail.color', '=', 'colors.color_name')
-            ->where('order_detail.product_id', $product_id)
-            ->where('orders.order_code', $order_code)
-            ->where('orders.user_id', 1)
-            //    ->where('orders.user_id',Auth::user()->user_id)
-            ->selectRaw('products.*,order_detail.*,orders.order_id')
-            ->get();
-
-        $productCheck = ProductVariant::leftJoin('sizes', 'product_variant.size_id', '=', 'sizes.size_id')
-            ->leftJoin('colors', 'product_variant.color_id', '=', 'colors.color_id')
-            ->where('product_variant.product_id', $product[0]->product_id)
-            ->where('sizes.size_name', $product[0]->size)
-            ->where('colors.color_name', $product[0]->color)
-            ->get();
+    public function rates(string $product_id,string $order_code){
+            $product = OrderDetail::query()
+                       ->join('orders','order_detail.order_id','=','orders.order_id')
+                       ->join('products','order_detail.product_id','=','products.product_id')
+                       ->leftJoin('sizes','order_detail.size','=','sizes.size_name')
+                       ->leftJoin('colors','order_detail.color','=','colors.color_name')
+                       ->where('order_detail.product_id',$product_id)
+                       ->where('orders.order_code',$order_code)
+                    //    ->where('orders.user_id',1)  
+                       ->where('orders.user_id',Auth::user()->user_id)
+                       ->selectRaw('products.*,order_detail.*,orders.order_id')
+                       ->get();
+            if(isset($product) && count($product) >0){
+                $productCheck = ProductVariant::leftJoin('sizes','product_variant.size_id','=','sizes.size_id')
+                                ->leftJoin('colors','product_variant.color_id','=','colors.color_id')
+                                ->where('product_variant.product_id',$product[0]->product_id)
+                                ->where('sizes.size_name',$product[0]->size)
+                                ->where('colors.color_name',$product[0]->color)
+                                ->get();
+            }else{
+                return redirect()->back();
+            }
 
         $rate = Rate::query()->where('order_id', $product[0]->order_id)->where('product_id', $product[0]->product_id)->where('product_variant_id', $productCheck[0]->product_variant_id)->get();
 

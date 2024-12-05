@@ -50,9 +50,9 @@ Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function 
 
     // ROUTE SIZE
     Route::prefix('sizes')->group(function () {
-        Route::get('/', [SizeController::class, 'index'])->name('Administration.sizes.list'); 
-        Route::post('/', [SizeController::class, 'store'])->name('Administration.sizes.store'); 
-        Route::get('/show-{size_id}', [SizeController::class, 'show'])->name('Administration.sizes.show'); 
+        Route::get('/', [SizeController::class, 'index'])->name('Administration.sizes.list');
+        Route::post('/', [SizeController::class, 'store'])->name('Administration.sizes.store');
+        Route::get('/show-{size_id}', [SizeController::class, 'show'])->name('Administration.sizes.show');
         Route::put('/{size}', [SizeController::class, 'update'])->name('Administration.sizes.update');
         Route::delete('/', [SizeController::class, 'destroy'])->name('Administration.sizes.destroy');
         Route::get('/list-delete', [SizeController::class, 'listSizeDelete'])->name('Administration.sizes.delete');
@@ -61,9 +61,9 @@ Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function 
 
     // ROUTE COLOR
     Route::prefix('colors')->group(function () {
-        Route::get('/', [ColorController::class, 'index'])->name('Administration.colors.list'); 
-        Route::post('/', [ColorController::class, 'store'])->name('Administration.colors.store'); 
-        Route::get('/show-{color_id}', [ColorController::class, 'show'])->name('Administration.colors.show'); 
+        Route::get('/', [ColorController::class, 'index'])->name('Administration.colors.list');
+        Route::post('/', [ColorController::class, 'store'])->name('Administration.colors.store');
+        Route::get('/show-{color_id}', [ColorController::class, 'show'])->name('Administration.colors.show');
         Route::put('/{color}', [ColorController::class, 'update'])->name('Administration.colors.update');
         Route::delete('/', [ColorController::class, 'destroy'])->name('Administration.colors.destroy');
         Route::get('/list-delete', [ColorController::class, 'listColorDelete'])->name('Administration.colors.listDelete');
@@ -77,8 +77,17 @@ Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function 
         Route::post('/create', [PostController::class, 'store'])->name('Administration.posts.store');
         Route::get('/{slug}', [PostController::class, 'show'])->name('Administration.posts.show');
         Route::put('/{post}', [PostController::class, 'update'])->name('Administration.posts.update');
-        Route::delete('/', [PostController::class, 'destroy'])->name('Administration.posts.destroy');
-        Route::delete('/{post}', [PostController::class, 'destroyImage'])->name('Administration.posts.destroyImage');
+        Route::delete('/{post}', [PostController::class, 'destroy'])->name('Administration.posts.destroy');
+    });
+
+    // ROUTE VOUCHER
+    Route::prefix('vouchers')->group(function () {
+        Route::get('/', [VoucherController::class, 'index'])->name('Administration.vouchers.list');
+        Route::get('/create', [VoucherController::class, 'create'])->name('Administration.vouchers.create');
+        Route::post('/create', [VoucherController::class, 'store'])->name('Administration.vouchers.store');
+        Route::get('/{voucher_code}', [VoucherController::class, 'show'])->name('Administration.vouchers.show');
+        Route::put('/{voucher}', [VoucherController::class, 'update'])->name('Administration.vouchers.update');
+        Route::delete('/{voucher}', [VoucherController::class, 'destroy'])->name('Administration.vouchers.destroy');
     });
 
     // ROUTE VOUCHER
@@ -120,6 +129,10 @@ Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function 
         Route::get('/{category}/edit', [CategoryProductController::class, 'edit'])->name('Administration.categoryProduct.edit');
         Route::put('/{category}/update', [CategoryProductController::class, 'update'])->name('Administration.categoryProduct.update');
         Route::delete('/{category}', [CategoryProductController::class, 'destroy'])->name('Administration.categoryProduct.destroy');
+        Route::post('/list-delete', [CategoryProductController::class, 'restoreCategoryProduct'])
+            ->name('Administration.categoryProduct.updateDelete');
+        Route::get('/product/list-delete', [CategoryProductController::class, 'listCategoryProductDelete'])
+            ->name('Administration.categoryProduct.listDelete');
     });
 
     // ROUTE  CATEGORY POST
@@ -131,6 +144,10 @@ Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function 
         Route::get('/{category}/edit', [CategoryPostController::class, 'edit'])->name('Administration.categoryPost.edit');
         Route::put('/{category}', [CategoryPostController::class, 'update'])->name('Administration.categoryPost.update');
         Route::delete('/{category}', [CategoryPostController::class, 'destroy'])->name('Administration.categoryPost.destroy');
+        Route::post('/list-delete', [CategoryPostController::class, 'restoreCategoryPost'])
+            ->name('Administration.categoryPost.updateDelete');
+        Route::get('/post/list-delete', [CategoryPostController::class, 'listCategoryPostDelete'])
+            ->name('Administration.categoryPost.listDelete');
     });
 
     // ROUTE BANNER
@@ -218,9 +235,10 @@ Route::prefix('/')->group(function () {
 
 
     // ROUTE RATE
-    Route::get('rate/{product_id}/{order_code}',[ClientOrderController::class, 'rates'])->name('Client.rate');
-    Route::post('order/rate',[ClientOrderController::class, 'CreateRate'])->name('Client.orders.createRate');
+    Route::get('rate/{product_id}/{order_code}', [ClientOrderController::class, 'rates'])->name('Client.rate');
+    Route::post('order/rate', [ClientOrderController::class, 'CreateRate'])->name('Client.orders.createRate');
 
+    Route::post('category-{slug}', [CategoryController::class, 'show'])->name('Client.product.category');
 
     // ROUTE EVENT
     Route::get('events/', [ClientEventController::class, 'index'])->name('Client.events.list');
