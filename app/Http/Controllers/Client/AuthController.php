@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,22 +18,28 @@ class AuthController extends Controller
 {
     public function show()
     {
-        return view('client.account.profile', ['user' => Auth::user()]);
+        $user = Auth::user(); // Lấy thông tin người dùng đang đăng nhập
+        $userId = auth()->user()->user_id;
+        $orders = Order::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        // dd($orders);
+        return view('client.components.account', ['orders' => $orders], ['user' => $user]);
     }
 
     // Cập nhật thông tin tài khoản
-    public function update(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . Auth::id(),
-        ]);
+    // public function update(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'email' => 'required|email|unique:users,email,' . Auth::id(),
+    //     ]);
 
-        $user = Auth::user();
-        // $user->update($request->only('name', 'email'));
+    //     $user = Auth::user();
+    //     // $user->update($request->only('name', 'email'));
 
-        return redirect()->back()->with('success', 'Account updated successfully.');
-    }
+    //     return redirect()->back()->with('success', 'Account updated successfully.');
+    // }
 
     // Hiển thị form quên mật khẩu
     public function resetPassword(Request $request)
@@ -119,4 +126,47 @@ class AuthController extends Controller
         return redirect()->route('Client.account.showLoginForm')->with('success', 'Account created successfully.');
     }
 
+    // public function verifyEmail($token){
+    //     $user = User::where('email_verified_token', $token)->first();
+    //     if($user){
+    //         $user->email_verified_at = now();
+    //         $user->email_verified_token = null;
+    //         $user->save();
+    //         return redirect()->route('Client.account.showLoginForm')->with('success', 'Email verified successfully.');
+    //     }
+    //     return redirect()->route('login')->with('error', 'Invalid or expired token.');
+    // }
+    // public function verifyPassword($token){
+    //     $user = User::where('password_reset_token', $token)->first();
+    //     if($user){
+    //         return view('auth.passwords.reset', compact('user'));
+    //     }
+    //     return redirect()->route('login')->with('error', 'Invalid or expired token.');
+    // }
+    public function update(Request $request)
+    {
+        // Lấy thông tin người dùng hiện tại
+        $user = auth()->user();
+
+        $request->validate([
+            'fullName' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->user_id . ',user_id',
+            'phone' => 'nullable|numeric',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Cập nhật thông tin tài khoản
+        $user->fullName = $request->fullName;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $path;
+        }
+
+        $user->save();
+
+        return redirect()->back()->with('success', 'Account updated successfully!');
+    }
 }
