@@ -182,6 +182,8 @@
                                 @auth
                                     <li><a class="dropdown-item" href="{{ route('Client.account.logout') }}">Logout</a>
                                     </li>
+                                    <li><a class="dropdown-item" href="{{ route('Client.account.show') }}">Account</a>
+                                    </li>
                                 @endauth
                             </ul>
                         </div>
