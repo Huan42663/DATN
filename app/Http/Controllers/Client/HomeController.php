@@ -75,7 +75,7 @@ class HomeController extends Controller
         // $arr_tree = build_tree($arr);
 
         // dd($arr_tree);
-
+        // dd($Banner);
         return View('client.home', compact('Category_post_header', 'Category_post_footer', 'Banner', 'events', 'productNew', 'Product_hot'));
     }
 }

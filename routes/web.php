@@ -217,7 +217,7 @@ Route::prefix('/')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->name('register');
 
     // ROUTE POST
-    Route::get('/posts', [ClientPostController::class, 'index'])->name('Client.posts.category');
+    Route::get('/posts/category-{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');
     // Route::get('client/posts/category/{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');
 
     Route::get('posts/{slug}', [ClientPostController::class, 'detail'])->name('Client.posts.detail');
@@ -238,9 +238,10 @@ Route::prefix('/')->group(function () {
     Route::get('rate/{product_id}/{order_code}', [ClientOrderController::class, 'rates'])->name('Client.rate');
     Route::post('order/rate', [ClientOrderController::class, 'CreateRate'])->name('Client.orders.createRate');
 
-    Route::post('category-{slug}', [CategoryController::class, 'show'])->name('Client.product.category');
+    Route::get('category-{slug}', [CategoryController::class, 'show'])->name('Client.product.category');
 
     // ROUTE EVENT
     Route::get('events/', [ClientEventController::class, 'index'])->name('Client.events.list');
-    Route::get('events/{slug}', [ClientEventController::class, 'show'])->name('Client.events.show');
+    Route::get('events/show-{slug}', [ClientEventController::class, 'show'])->name('Client.events.show');
+
 })->name('Client');

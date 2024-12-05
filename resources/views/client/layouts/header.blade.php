@@ -16,11 +16,17 @@
     $category = (new App\Models\Category())::query()->get();
     $Banner = (new App\Models\Banner())::query()->get();
     if (Auth::user()) {
+        $Cart1 = (new App\Models\Cart())
+            ::query()
+            ->where('user_id', Auth::user()->user_id)
+            ->get();
+
         $Cart = (new App\Models\Cart())
             ::query()
             ->leftJoin('cart_detail', 'carts.cart_id', '=', 'cart_detail.cart_id')
-            ->where('user_id', Auth::user()->user_id)
+            ->where('cart_detail.cart_id', $Cart1[0]->cart_id)
             ->count();
+        
     }
 @endphp
 <div id="header" class="relative w-full">
@@ -180,6 +186,8 @@
                                 @endguest
 
                                 @auth
+                                    <li><a class="dropdown-item" href="{{ route('Client.cart.list') }}">Cart</a>
+                                    <li><a class="dropdown-item" href="{{ route('Client.orders.list') }}">Order</a>
                                     <li><a class="dropdown-item" href="{{ route('Client.account.logout') }}">Logout</a>
                                     </li>
                                 @endauth

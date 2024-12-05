@@ -69,15 +69,15 @@
                     @method('POST')
                     <input type="hidden" name="product_name" value="{{ $product->product_name }}">
                     <input type="hidden" name="product_id" value="{{ $product->product_id }}">
-                    <p class="fs-3">{{ $product->product_name }}</p>
+                    <p class="fs-3 lh-1">{{ $product->product_name }}</p>
                     <hr>
                     <h3 class="text-danger">
-                        <span>{{ $product->min_price }} Đ</span>
+                        <span class="fs-5 fw-bold"> {{number_format($product->min_price, 0, ',', '.') . ' VNĐ';}} </span>
                         <i>-</i>
-                        <span>{{ $product->max_price }}</span>
+                        <span class="fs-5 fw-bold">{{number_format($product->max_price, 0, ',', '.') . ' VNĐ';}}</span>
                     </h3>
                     <p>
-                        <b>Mô Tả :</b> {!! $product->description !!}
+                        <b>Mô Tả :</b> {!! substr($product->description, 0, 200) !!}
                     </p>
 
                     <div class="form-group mt-3">
@@ -257,9 +257,10 @@
                     type: 'POST',
                     data: formData,
                     success: function(response) {
-                        // alert('Thêm sản phẩm vào giỏ hàng thành công');
+                        alert('Thêm sản phẩm vào giỏ hàng thành công');
                     },
                     error: function(error) {
+                        alert('Thêm sản phẩm vào giỏ hàng that bai vui long thu lai');
                         // Xử lý khi gửi thất bại
                         console.error(error);
                     }

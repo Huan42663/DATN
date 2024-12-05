@@ -203,6 +203,7 @@ class OrderController extends Controller
                     unset($_SESSION['voucher']);
                 }
             }
+            $_SESSION['access'] = "Dặt hàng thành công";
             return redirect()->route('Client.Home')->with('success', 'Cảm Ơn Bạn Đã Tin Tưởng Đặt Hàng Của Chúng Tôi !');
         }
     }

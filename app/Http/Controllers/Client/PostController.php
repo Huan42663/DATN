@@ -13,21 +13,31 @@ use Illuminate\Support\Str;
 class PostController extends Controller
 {
     // Lấy danh sách bài viết
-    public function index()
+    public function index($slug)
     {
 
-        $posts = Post::with(['categoryPost', 'postImage'])->paginate(4);
-        // dd($posts);
+        $posts = Post::with(['categoryPost', 'postImage'])
+        ->join('category_post','posts.category_post_id','=','category_post.category_post_id')
+        ->where('category_post.category_post_slug',$slug)
+        ->paginate(4);
+        //  // Lấy danh mục bài viết theo slug
+        //  $categoryPost = CategoryPost::where('slug', $slug)->firstOrFail();
+        //  // Lấy danh sách bài viết theo danh mục
+        //  $posts = $categoryPost->posts()->paginate(4);
+        //  // Trả về view và truyền dữ liệu
+        //  return view('client.posts.index', compact('posts', 'categoryPost'));
+        // // dd($posts);
         // Trả về view và truyền dữ liệu
         return view('client.posts.index', compact('posts'));
     }
-
+    public function catePost($slug){
+       
+    }
     // Lấy chi tiết một bài viết
     public function detail($slug)
     {
         // Lấy bài viết theo slug
         $post = Post::with('PostImage')->where('slug', $slug)->firstOrFail();
-        
         // Loại bỏ các thẻ HTML trong nội dung bài viết
         $content = strip_tags($post->content);
     
@@ -85,7 +95,7 @@ class PostController extends Controller
             ->inRandomOrder()
             ->take(5)
             ->get();
-    
+        // dd($post);
         // Truyền dữ liệu về view
         return view('client.posts.detail', [
             'textChunks' => $textChunks,

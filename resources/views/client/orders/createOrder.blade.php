@@ -26,7 +26,7 @@
                                     @elseif(!empty(old('fullname')))
                                         value="{{old('fullname')}}"
                                     @else
-                                        value="{{Auth::user()->fullname}}"
+                                        value="{{Auth::user()->fullName}}"
                                     @endif
                                     >
                                     @error('fullname')

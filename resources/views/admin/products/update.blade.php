@@ -163,6 +163,36 @@
                                         </div>
                                     @endforeach
                                 </div> --}}
+                                <div class="row mb-3">
+                                    <h5 class="fw-bold mb-0 me-4">
+                                        <span class="d-block mb-2">Danh Mục Sản Phẩm:</span>
+                                    </h5>
+                                    @foreach ($categories as $item)
+                                        <div class="form-check">
+                                            <input type="checkbox" name="category_id[]"  value="{{ $item->category_id }}"  
+                                            @foreach ($data6 as $item1 )
+                                                @checked($item->category_id == $item1->category_id)
+                                            @endforeach>
+                                            <label class="form-check-label" for="flexCheckDefault">
+                                                {{ $item->category_name }}
+                                            </label>
+                                        </div>
+                                        @foreach ($cate_children as $item1)
+                                            @if ($item1->category_parent_id == $item->category_id)
+                                                <div class="form-check" style="margin-left: 15px">
+                                                    <input type="checkbox" name="category_id[]"  value="{{ $item1->category_id }}"  
+                                                    @foreach ($data6 as $item2 )
+                                                        @checked($item1->category_id == $item2->category_id)
+                                                    @endforeach>
+                                                    <label class="form-check-label" for="flexCheckDefault">
+                                                        {{ $item1->category_name }}
+                                                    </label>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    @endforeach
+
+                                </div>
 
                                 <div class="row">
                                     <button type="submit" class="btn btn-lg btn-primary">Cập nhật sản phẩm</button>

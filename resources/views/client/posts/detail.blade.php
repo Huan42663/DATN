@@ -23,7 +23,6 @@
                 <div class="mb-4">
                     <p class="lead text-dark">{{ $post->short_description }}</p>
                 </div>
-
                 <!-- Hiển thị nội dung bài viết -->
                 <div class="mb-4">
                     @foreach($textChunks as $index => $text)
