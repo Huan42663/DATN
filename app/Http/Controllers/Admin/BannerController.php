@@ -77,7 +77,7 @@ class BannerController extends Controller
         $link = null;
         if ($request->event_id) {
             $event = Event::where('event_id', $request->event_id)->first();
-            $link = url('events/' . $event->slug);
+            $link = url('events/show-' . $event->slug);
         }
         if ($request->product_id) {
             $product = Products::where('product_id', $request->product_id)->first();
