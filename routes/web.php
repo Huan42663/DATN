@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\ProductController as CLientProductController;
 use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\ForgotPasswordController;
 use App\Http\Controllers\Client\CategoryController;
 use App\Http\Controllers\Client\EventController as ClientEventController;
 use App\Http\Controllers\Client\HomeController as CLientHomeController;
@@ -71,13 +72,22 @@ Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function 
     });
 
     // ROUTE POST
+    // Route::prefix('posts')->group(function () {
+    //     Route::get('/', [PostController::class, 'index'])->name('Administration.posts.list');
+    //     Route::get('/create', [PostController::class, 'create'])->name('Administration.posts.create');
+    //     Route::post('/create', [PostController::class, 'store'])->name('Administration.posts.store');
+    //     Route::get('/{slug}', [PostController::class, 'show'])->name('Administration.posts.show');
+    //     Route::put('/{post}', [PostController::class, 'update'])->name('Administration.posts.update');
+    //     Route::delete('/{post}', [PostController::class, 'destroy'])->name('Administration.posts.destroy');
+    // });
     Route::prefix('posts')->group(function () {
         Route::get('/', [PostController::class, 'index'])->name('Administration.posts.list');
         Route::get('/create', [PostController::class, 'create'])->name('Administration.posts.create');
         Route::post('/create', [PostController::class, 'store'])->name('Administration.posts.store');
         Route::get('/{slug}', [PostController::class, 'show'])->name('Administration.posts.show');
         Route::put('/{post}', [PostController::class, 'update'])->name('Administration.posts.update');
-        Route::delete('/{post}', [PostController::class, 'destroy'])->name('Administration.posts.destroy');
+        Route::delete('/', [PostController::class, 'destroy'])->name('Administration.posts.destroy');
+        Route::delete('/{post}', [PostController::class, 'destroyImage'])->name('Administration.posts.destroyImage');
     });
 
     // ROUTE VOUCHER
@@ -219,6 +229,14 @@ Route::prefix('/')->group(function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('Client.account.logout');
     Route::get('register', [AuthController::class, 'showRegisterForm'])->name('Client.account.showRegisterForm');
     Route::post('register', [AuthController::class, 'register'])->name('register');
+
+    
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('forgot-password.send');
+    Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('reset-password.form');
+    Route::post('reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('reset-password.update');
+
+
 
     // ROUTE POST
     Route::get('/posts/category-{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');
