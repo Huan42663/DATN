@@ -51,7 +51,7 @@
                                                                 <div
                                                                     class="text-button-uppercase pb-2 font-semibold text-blue-500">
                                                                 </div>
-                                                                {{-- {{ $item->category_name }} --}}
+                                                                {{ $item->category_name }}
                                                             </a>
                                                             <ul class="w-full">
                                                                 @foreach ($category as $children)
