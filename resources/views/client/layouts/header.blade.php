@@ -16,11 +16,17 @@
     $category = (new App\Models\Category())::query()->get();
     $Banner = (new App\Models\Banner())::query()->get();
     if (Auth::user()) {
+        $Cart1 = (new App\Models\Cart())
+            ::query()
+            ->where('user_id', Auth::user()->user_id)
+            ->get();
+
         $Cart = (new App\Models\Cart())
             ::query()
             ->leftJoin('cart_detail', 'carts.cart_id', '=', 'cart_detail.cart_id')
-            ->where('user_id', Auth::user()->id)
+            ->where('cart_detail.cart_id', $Cart1[0]->cart_id)
             ->count();
+        
     }
 @endphp
 <div id="header" class="relative w-full">
@@ -49,7 +55,7 @@
                                                             <a class="text-decoration: none"
                                                                 href="{{ route('Client.product.category', $item->category_slug) }}">
                                                                 <div
-                                                                    class="text-button-uppercase pb-2 font-semibold text-blue-500">
+                                                                    class="text-button-uppercase pb-2 font-semibold text-blue-500 fw-bold">
                                                                 </div>
                                                                 {{ $item->category_name }}
                                                             </a>
@@ -180,7 +186,11 @@
                                 @endguest
 
                                 @auth
+                                    <li><a class="dropdown-item" href="{{ route('Client.cart.list') }}">Cart</a>
+                                    <li><a class="dropdown-item" href="{{ route('Client.orders.list') }}">Order</a>
                                     <li><a class="dropdown-item" href="{{ route('Client.account.logout') }}">Logout</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('Client.account.show') }}">Account</a>
                                     </li>
                                 @endauth
                             </ul>
@@ -204,24 +214,6 @@
                             </div>
                         </a>
                     </div>
-                    <a href="{{ route('Client.cart.list') }}">
-                        <div class="max-md:hidden cart-icon flex items-center relative cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"
-                                viewBox="0 0 256 256">
-                                <path
-                                    d="M239.89,198.12l-14.26-120a16,16,0,0,0-16-14.12H176a48,48,0,0,0-96,0H46.33a16,16,0,0,0-16,14.12l-14.26,120A16,16,0,0,0,20,210.6a16.13,16.13,0,0,0,12,5.4H223.92A16.13,16.13,0,0,0,236,210.6,16,16,0,0,0,239.89,198.12ZM128,32a32,32,0,0,1,32,32H96A32,32,0,0,1,128,32ZM32,200,46.33,80H80v24a8,8,0,0,0,16,0V80h64v24a8,8,0,0,0,16,0V80h33.75l14.17,120Z">
-                                </path>
-                            </svg>
-                            <span
-                                class="quantity cart-quantity absolute -right-1.5 -top-1.5 text-xs text-white bg-black w-4 h-4 flex items-center justify-center rounded-full">
-                                @if (isset($Cart) && $Cart > 0)
-                                    {{ $Cart }}
-                                @else
-                                    0
-                                @endif
-                            </span>
-                        </div>
-                    </a>
                 </div>
             </div>
         </div>

@@ -61,7 +61,7 @@ class BannerController extends Controller
         // Validate input
         $request->validate(
             [
-                'image_name' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'image_name' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:2048',
                 'event_id' => ['nullable', 'exists:events,event_id', Rule::prohibitedIf($request->has("product_id"))], // event_id phải tồn tại trong bảng events
                 'product_id' => ['nullable', 'exists:products,product_id', Rule::prohibitedIf($request->has("event_id"))], // product_id phải tồn tại trong bảng products
             ],
@@ -77,11 +77,11 @@ class BannerController extends Controller
         $link = null;
         if ($request->event_id) {
             $event = Event::where('event_id', $request->event_id)->first();
-            $link = url('/events/detail-' . $event->slug);
+            $link = url('events/show-' . $event->slug);
         }
         if ($request->product_id) {
             $product = Products::where('product_id', $request->product_id)->first();
-            $link = url('/products/detail-' . $product->product_slug);
+            $link = url('/products/detail/' . $product->product_slug);
         }
         if ($request->event_id == null && $request->product_id == null) {
             $link = url('/products');

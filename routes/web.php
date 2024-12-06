@@ -201,14 +201,18 @@ Route::prefix('/')->group(function () {
     Route::get('products/detail/{slug}', [CLientProductController::class, 'productDetail'])->name('Client.product.detail');
 
     // ROUTE CART
-    Route::get('cart', [CartController::class, 'index'])->name('Client.cart.list');
-    Route::post('create/cart', [CartController::class, 'store'])->name('Client.cart.store');
-    Route::post('cart', [CartController::class, 'UpdateCartDetail'])->name('Client.cart.update');
-    Route::delete('cart', [CartController::class, 'DestroyCart'])->name('Client.cart.destroy');
-
-    // ROUTE ACCOUNT USER, LOGIN, REGISTER, FORGOT PASSWORD
-    Route::get('account', [AuthController::class, 'show'])->name('Client.account.show');
-    Route::put('account', [AuthController::class, 'update'])->name('Client.account.update');
+    Route::middleware('auth')->group(function () {
+        Route::get('cart', [CartController::class, 'index'])->name('Client.cart.list');
+        Route::post('create/cart', [CartController::class, 'store'])->name('Client.cart.store');
+        Route::post('cart', [CartController::class, 'UpdateCartDetail'])->name('Client.cart.update');
+        Route::delete('cart', [CartController::class, 'DestroyCart'])->name('Client.cart.destroy');
+    });
+    // ROUTE ACCOUNT
+    Route::middleware('auth')->group(function () {
+        Route::get('account', [AuthController::class, 'show'])->name('Client.account.show');
+        Route::put('account', [AuthController::class, 'update'])->name('Client.account.update');
+    });
+    // ROUTE USER, LOGIN, REGISTER, FORGOT PASSWORD
     Route::put('forgotPassword', [AuthController::class, 'update'])->name('Client.account.update');
     Route::get('login', [AuthController::class, 'showLoginForm'])->name('Client.account.showLoginForm');
     Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -217,29 +221,31 @@ Route::prefix('/')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->name('register');
 
     // ROUTE POST
-    Route::get('/posts', [ClientPostController::class, 'index'])->name('Client.posts.category');
+    Route::get('/posts/category-{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');
     // Route::get('client/posts/category/{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');
 
     Route::get('posts/{slug}', [ClientPostController::class, 'detail'])->name('Client.posts.detail');
 
-
-    // ROUTE ORDER
-    Route::get('orders', [ClientOrderController::class, 'index'])->middleware('auth')->name('Client.orders.list');
-    // Route::post('orders/create', [ClientOrderController::class, 'create'])->name('Client.orders.create');
-    Route::get('orders/create', [ClientOrderController::class, 'orderCart'])->name('Client.orders.orderCart');
-    Route::post('orders', [ClientOrderController::class, 'store'])->name('Client.orders.store');
-    Route::get('orders/{order_code}/{order_id}', [ClientOrderController::class, 'show'])->middleware('auth')->name('Client.orders.show');
-    Route::put('orders/{order}', [ClientOrderController::class, 'show'])->name('Client.orders.update');
-    Route::post('order/{order_code}/{order_id}', [CLientOrderController::class, 'cancel'])->middleware('auth')->name('Client.orders.cancel');
-    Route::post('order/{order_code}/{order_id}/confirmDelivered', [CLientOrderController::class, 'confirmDelivered'])->middleware('auth')->name('Client.orders.confirmDelivered');
-
+    Route::middleware('auth')->group(function () {
+        // ROUTE ORDER
+        Route::get('orders', [ClientOrderController::class, 'index'])->middleware('auth')->name('Client.orders.list');
+        // Route::post('orders/create', [ClientOrderController::class, 'create'])->name('Client.orders.create');
+        Route::get('orders/create', [ClientOrderController::class, 'orderCart'])->name('Client.orders.orderCart');
+        Route::post('orders', [ClientOrderController::class, 'store'])->name('Client.orders.store');
+        Route::get('orders/{order_code}/{order_id}', [ClientOrderController::class, 'show'])->middleware('auth')->name('Client.orders.show');
+        Route::put('orders/{order}', [ClientOrderController::class, 'show'])->name('Client.orders.update');
+        Route::post('order/{order_code}/{order_id}', [CLientOrderController::class, 'cancel'])->middleware('auth')->name('Client.orders.cancel');
+        Route::post('order/{order_code}/{order_id}/confirmDelivered', [CLientOrderController::class, 'confirmDelivered'])->middleware('auth')->name('Client.orders.confirmDelivered');
+    });
 
     // ROUTE RATE
     Route::get('rate/{product_id}/{order_code}', [ClientOrderController::class, 'rates'])->name('Client.rate');
     Route::post('order/rate', [ClientOrderController::class, 'CreateRate'])->name('Client.orders.createRate');
 
+    Route::get('category-{slug}', [CategoryController::class, 'show'])->name('Client.product.category');
 
     // ROUTE EVENT
     Route::get('events/', [ClientEventController::class, 'index'])->name('Client.events.list');
-    Route::get('events/{slug}', [ClientEventController::class, 'show'])->name('Client.events.show');
+    Route::get('events/show-{slug}', [ClientEventController::class, 'show'])->name('Client.events.show');
+
 })->name('Client');

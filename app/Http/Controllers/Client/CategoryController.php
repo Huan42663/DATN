@@ -15,7 +15,7 @@ class CategoryController extends Controller
         $categories = Category::all();
         $products = Products::query()
             ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
-            ->selectRaw('products.product_id, products.product_name, products.product_image, product_slug, MAX(product_variant.price) as maxPrice, MIN(product_variant.sale_price) as minPrice')
+            ->selectRaw('products.product_id, products.product_name, products.product_image, product_slug, MAX(product_variant.price) as maxPrice, Max(product_variant.sale_price) as minPrice')
             ->groupBy('products.product_id', 'products.product_name', 'products.product_image', 'product_slug')
             ->orderBy('products.product_id', 'desc')
             ->get();
@@ -31,7 +31,7 @@ class CategoryController extends Controller
             ->join('categories', 'category_product.category_id', '=', 'categories.category_id')
             ->where('categories.category_slug', $slug)
             ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
-            ->selectRaw('products.product_id, products.product_name, products.product_image, product_slug, MAX(product_variant.price) as maxPrice, MIN(product_variant.sale_price) as minPrice')
+            ->selectRaw('products.product_id, products.product_name, products.product_image, product_slug, MAX(product_variant.price) as maxPrice, Max(product_variant.sale_price) as minPrice')
             ->groupBy('products.product_id', 'products.product_name', 'products.product_image', 'product_slug')
             ->orderBy('products.product_id', 'desc')
             ->get();

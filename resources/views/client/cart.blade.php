@@ -212,6 +212,8 @@
             // // // Tăng giá trị số lượng lên 1
             if(parseInt(quantityElement1.textContent) > quantityElement.value ){
                 edit_data(id,(parseInt(quantityElement.value) + 1),quantityElement,responseData,price,total); 
+                const checkboxes = document.getElementsByName("cart_variant_id[]");
+                checkboxes.forEach(checkbox => checkbox.checked = false);
             }
             
         });
@@ -231,8 +233,9 @@
             // // // Tăng giá trị số lượng lên 1
             var responseData = false;
             if(quantityElement.value >1){
-                
                 edit_data(id,(parseInt(quantityElement.value) - 1),quantityElement,responseData,price,total); 
+                const checkboxes = document.getElementsByName("cart_variant_id[]");
+                checkboxes.forEach(checkbox => checkbox.checked = false);
             }
         });
     });

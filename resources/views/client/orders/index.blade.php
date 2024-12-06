@@ -6,11 +6,11 @@
     <div class="order-tracking py-10 bg-light" style="background-color: #f8f9fa; padding: 40px 0;">
         <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 15px;">
             <div class="content-main">
-                <h3 class="fancy-title">Đơn hàng của bạn</h3>
+                <h4 class="fancy-title">Đơn hàng của bạn</h4>
 
                 <style>
                     .fancy-title {
-                        font-size: 30px;
+                        font-size: 25px;
                         font-weight: bold;
                         color: #333;
                         margin-bottom: 30px;
@@ -45,7 +45,6 @@
                 </style>
 
 
-
                 <div class="order-list"
                     style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; max-width: 100%; margin: 0;">
                     @forelse ($orders as $order)
@@ -62,28 +61,29 @@
                                     <span style="font-size: 14px; color: #777; margin-bottom: 15px;">Trạng thái:</span>
                                     <span class="badge"
                                         style="font-size: 0.875rem; padding: 8px 15px; border-radius: 20px; 
-                                background-color: #7e9da1;">
+                                background-color: #61959c;">
 
-                                    @if ($order->status == 'unconfirm')
-                                        <span class="badge bg-soft-warning text-warning">Chờ Xác Nhận</span>
-                                    @elseif($order->status == 'confirmed')
-                                        <span class="badge bg-soft-success text-success">Đã Xác Nhận</span>
-                                    @elseif($order->status == 'shipping')
-                                        <span class="badge bg-soft-success text-success">Đang Vận Chuyển</span>
-                                    @elseif($order->status == 'delivered')
-                                        <span class="badge bg-soft-success text-success">Đã Giao Đến Khách Hàng</span>
-                                    @elseif($order->status == 'received')
-                                        <span class="badge bg-soft-warning text-warning">Đã Xác Nhận Nhận Hàng</span>
-                                    @elseif($order->status == 'canceled')
-                                        <span class="badge bg-soft-danger text-danger">Hủy</span>
-                                    @elseif($order->status == 'return')
-                                        <span class="badge bg-soft-dark text-dark">Trả Hàng</span>
-                                    @endif
+                                        @if ($order->status == 'unconfirm')
+                                            <span class="badge bg-soft-warning text-warning">Chờ Xác Nhận</span>
+                                        @elseif($order->status == 'confirmed')
+                                            <span class="badge bg-soft-success text-success">Đã Xác Nhận</span>
+                                        @elseif($order->status == 'shipping')
+                                            <span class="badge bg-soft-success text-success">Đang Vận Chuyển</span>
+                                        @elseif($order->status == 'delivered')
+                                            <span class="badge bg-soft-success text-success">Đã Giao Đến Khách Hàng</span>
+                                        @elseif($order->status == 'received')
+                                            <span class="badge bg-soft-warning text-warning">Đã Xác Nhận Nhận Hàng</span>
+                                        @elseif($order->status == 'canceled')
+                                            <span class="badge bg-soft-danger text-danger">Hủy</span>
+                                        @elseif($order->status == 'return')
+                                            <span class="badge bg-soft-dark text-dark">Trả Hàng</span>
+                                        @endif
                                     </span>
                                 </div>
                                 <div class="order-total"
                                     style="font-size: 1.25rem; font-weight: bold; color: #333; margin-bottom: 15px;">
-                                    Tổng tiền: <span style="color: #000;">{{ number_format($order->total, 0, ',', '.') }}
+                                    Tổng tiền: <span
+                                        style="color: #000;">{{ number_format($order->total_discount, 0, ',', '.') }}
                                         đ</span>
                                 </div>
                             </div>
