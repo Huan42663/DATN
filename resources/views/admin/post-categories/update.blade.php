@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'thêm sự kiện')
+@section('title', 'Update Article List')
 
 @section('page-header')
     <div class="page-header">
@@ -10,7 +10,7 @@
             </div>
             <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">Create</li>
+                <li class="breadcrumb-item">Update</li>
             </ul>
         </div>
     </div>
@@ -26,7 +26,7 @@
                         <div class="card-body personal-info">
                             <div class="mb-4 d-flex align-items-center justify-content-between">
                                 <h5 class="fw-bold mb-0 me-4">
-                                    <span class="d-block mb-2">Cập Nhật Danh Mục Sản Phẩm:</span>
+                                    <span class="d-block mb-2">Update Article List:</span>
                                 </h5>
                             </div>
                             <form
@@ -36,7 +36,7 @@
                                 @method('PUT')
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="category_post_name" class="fw-semibold">Tên Danh mục: </label>
+                                        <label for="category_post_name" class="fw-semibold">Category Name: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -50,7 +50,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="category_post_name" class="fw-semibold">Hiển Thị Header:</label>
+                                        <label for="category_post_name" class="fw-semibold">Show Header:</label>
                                     </div>
                                     <div class="col-lg-8">
                                         <input type="checkbox" name="showHeader"
@@ -60,7 +60,7 @@
 
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="category_post_name" class="fw-semibold">Hiển Thị Footer:</label>
+                                        <label for="category_post_name" class="fw-semibold">Show Footer:</label>
                                     </div>
                                     <div class="col-lg-8">
                                         <input type="checkbox" name="showFooter"
@@ -68,7 +68,7 @@
                                     </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-lg btn-light-brand">Cập Nhật</button>
+                                <button type="submit" class="btn btn-lg btn-light-brand">Update</button>
                             </form>
                         </div>
                     </div>

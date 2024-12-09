@@ -21,8 +21,7 @@ class CategoryPostController extends Controller
      */
     public function index()
     {
-        //
-        $category_post = CategoryPost::query()->get();
+        $category_post = CategoryPost::query()->orderByDesc('category_post_id')->get();
         return view('admin.post-categories.index', compact('category_post'));
     }
 
@@ -37,17 +36,15 @@ class CategoryPostController extends Controller
     public function store(Request $request)
     {
         $slug = Str::slug($request->category_post_name);
-        // dd($request->all());
-
-        // Xác thực dữ liệu
         $request->validate(
             [
-                'category_post_name' => 'required|string|max:255',
+                'category_post_name' => 'required|unique:category_post,category_post_name|string|max:255',
             ],
             [
-                'category_post_name.required' => 'Tên danh mục bài viết không được để trống',
-                'category_post_name.string' => 'Tên danh mục bài viết phải là chuỗi',
-                'category_post_name.max' => 'Tên danh mục bài viết không được lớn hơn 255 ký tự',
+                'category_post_name.required' => 'The article category name cannot be empty',
+                'category_post_name.unnique' => 'The name of the article category already exists',
+                'category_post_name.string' => 'The article category name must be a string',
+                'category_post_name.max' => 'The article category name cannot be larger than 255 characters',
             ]
         );
         $data = $request->except('_token', '_method', 'example_length', 'category_post');
@@ -57,7 +54,7 @@ class CategoryPostController extends Controller
 
         $category_post = CategoryPost::query()->create($data);
 
-        return redirect()->route('Administration.categoryPost.list')->with('message', 'thêm thành công');
+        return redirect()->route('Administration.categoryPost.list')->with('message', 'Added article categories successfully');
     }
 
     /**
@@ -88,20 +85,21 @@ class CategoryPostController extends Controller
         $category_post = CategoryPost::query()->where('category_post_id', $id)->get();
         $listCategoryPost = CategoryPost::query()->where('category_post_id', "!=", $id)->get();
         if (empty($category_post[0])) {
-            return view('error-404', compact(['errors' => "Không tìm thấy danh mục sản phẩm"]));
+            return view('error-404', compact(['message' => "No product categories found"]));
         } else {
             foreach ($listCategoryPost as $value) {
                 if ($value->category_post_name == $request->category_post_name) {
-                    return view('admin.post-categories.update', compact(['data' => $category_post, 'errors' => "Tên danh mục bị trùng"]));
+                    return view('admin.post-categories.update', compact(['data' => $category_post, 'message' => "The category name is duplicated"]));
                 } else {
                     $request['category_post_slug'] = Str::slug($request->category_post_name);
                     $request->validate(
                         [
-                            'category_post_name' => 'required|string|max:255',
+                            'category_post_name' => 'required|unique:category_post,category_post_name|string|max:255',
                         ],
                         [
-                            'category_post_name.required' => 'Tên danh mục bài viết không được để trống',
-                            'category_post_name.max' => 'Tên danh mục bài viết không được lớn hơn 255 ký tự',
+                            'category_post_name.required' => 'The article category name cannot be empty',
+                            'category_post_name.unnique' => 'The name of the article category already exists',
+                            'category_post_name.max' => 'The article category name cannot be larger than 255 characters',
                         ]
                     );
                 }
@@ -111,7 +109,7 @@ class CategoryPostController extends Controller
 
                 $category_post = CategoryPost::query()->where('category_post_id', $id)->update($data);
 
-                return redirect()->route('Administration.categoryPost.list')->with('message', 'Cập nhật thành công');
+                return redirect()->route('Administration.categoryPost.list')->with('message', 'Updated article list successfully');
             }
         }
     }
@@ -123,9 +121,33 @@ class CategoryPostController extends Controller
     {
         $category_post = CategoryPost::query()->where('category_post_id', '=', $id)->delete();
         if (!$category_post) {
-            return view('error-404', compact(['error' => 'không tìm danh mục sản phẩm']));
+            return view('error-404', compact(['error' => 'No find product categories']));
         } else {
-            return redirect()->route('Administration.categoryPost.list')->with('message', 'Xóa danh mục bài viết thành công');
+            return redirect()->route('Administration.categoryPost.list')->with('message', 'Successfully deleted article category');
         }
+    }
+
+    public function listCategoryPostDelete()
+    {
+        $category_post = CategoryPost::onlyTrashed()->get();
+        return view('admin.post-categories.listDelete', compact('category_post'));
+    }
+
+    public function restoreCategoryPost(Request $request)
+    {
+        if (isset($request->category_post_id) && !empty($request->category_post_id)) {
+            foreach ($request->category_post_id as $item) {
+                $category_post = CategoryPost::withTrashed()->where('category_post_id', $item)->get();
+                if (isset($category_post) && count($category_post) > 0) {
+                    CategoryPost::withTrashed()->where('category_post_id', $item)->restore();
+                }
+            }
+
+            return redirect()->route('Administration.categoryPost.list')
+                ->with('message', 'Restore article category successfully');
+        }
+
+        return redirect()->route('Administration.categoryPost.list')
+            ->with('message', 'No categories selected');
     }
 }

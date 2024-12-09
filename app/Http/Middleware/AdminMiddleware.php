@@ -16,10 +16,10 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        // Kiểm tra nếu người dùng đã đăng nhập và có vai trò admin
-        if (Auth::check() && Auth::user()->role == 'admin') {
-            return $next($request); // Cho phép truy cập
-        }
+    // Kiểm tra nếu người dùng đã đăng nhập và có vai trò admin hoặc manager
+    if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')) {
+        return $next($request); // Cho phép truy cập
+    }
 
         // Nếu không phải admin, chuyển hướng đến trang chủ hoặc trang khác
         return redirect()->route('Client.Home'); // Hoặc trang login

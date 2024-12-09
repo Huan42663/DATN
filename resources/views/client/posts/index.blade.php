@@ -35,8 +35,7 @@
                             {{ $post->short_description }}
                         </div>
                         <div class="blog-content mt-3 duration-300">
-                        {{ strlen($post->content) > 20 ? substr($post->content, 0, 20) . '...' : $post->content }}
-
+                        {!! substr($post->content, 0, 200) . '...' !!}
                         </div>
 
                     </div>

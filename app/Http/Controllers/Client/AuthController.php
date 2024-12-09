@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,22 +18,28 @@ class AuthController extends Controller
 {
     public function show()
     {
-        return view('client.account.profile', ['user' => Auth::user()]);
+        $user = Auth::user(); // Lấy thông tin người dùng đang đăng nhập
+        $userId = auth()->user()->user_id;
+        $orders = Order::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        // dd($orders);
+        return view('client.components.account', ['orders' => $orders], ['user' => $user]);
     }
 
     // Cập nhật thông tin tài khoản
-    public function update(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . Auth::id(),
-        ]);
+    // public function update(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'email' => 'required|email|unique:users,email,' . Auth::id(),
+    //     ]);
 
-        $user = Auth::user();
-        // $user->update($request->only('name', 'email'));
+    //     $user = Auth::user();
+    //     // $user->update($request->only('name', 'email'));
 
-        return redirect()->back()->with('success', 'Account updated successfully.');
-    }
+    //     return redirect()->back()->with('success', 'Account updated successfully.');
+    // }
 
     // Hiển thị form quên mật khẩu
     public function resetPassword(Request $request)
@@ -52,10 +59,22 @@ class AuthController extends Controller
     }
 
     // Đăng xuất
-    public function logout()
+    public function logout(Request $request)
     {
+        $user = Auth::user();
+
+        if ($user) {
+            // Cập nhật trạng thái thành 1 (đã đăng xuất)
+            $user->status = 1;
+            $user->save();
+        }
+
         Auth::logout();
-        return redirect()->route('login');
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login'); // Điều hướng đến trang login
     }
 
     // Hiển thị form đăng ký
@@ -72,9 +91,27 @@ class AuthController extends Controller
             'password' => 'required|min:5',
         ]);
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $request->session()->regenerate();
-            return redirect()->intended('/'); // Điều hướng đến trang chủ hoặc trang trước đó
+        // Lấy thông tin người dùng qua email
+        $user = \App\Models\User::where('email', $request->email)->first();
+
+        if ($user) {
+            // Kiểm tra nếu người dùng đang đăng nhập
+            if ($user->status == 2) {
+                return back()->withErrors([
+                    'email' => 'This account is already logged in from another session.',
+                ])->withInput();
+            }
+
+            // Thực hiện đăng nhập
+            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+                $request->session()->regenerate();
+
+                // Cập nhật trạng thái thành 2 (đang đăng nhập)
+                $user->status = 2;
+                $user->save();
+
+                return redirect()->intended('/'); // Điều hướng đến trang chủ hoặc trang trước đó
+            }
         }
 
         return back()->withErrors([
@@ -119,4 +156,69 @@ class AuthController extends Controller
         return redirect()->route('Client.account.showLoginForm')->with('success', 'Account created successfully.');
     }
 
+    // public function verifyEmail($token){
+    //     $user = User::where('email_verified_token', $token)->first();
+    //     if($user){
+    //         $user->email_verified_at = now();
+    //         $user->email_verified_token = null;
+    //         $user->save();
+    //         return redirect()->route('Client.account.showLoginForm')->with('success', 'Email verified successfully.');
+    //     }
+    //     return redirect()->route('login')->with('error', 'Invalid or expired token.');
+    // }
+    // public function verifyPassword($token){
+    //     $user = User::where('password_reset_token', $token)->first();
+    //     if($user){
+    //         return view('auth.passwords.reset', compact('user'));
+    //     }
+    //     return redirect()->route('login')->with('error', 'Invalid or expired token.');
+    // }
+    public function update(Request $request)
+    {
+        // Lấy thông tin người dùng hiện tại
+        $user = auth()->user();
+
+        // Validate các trường thông tin người dùng
+        $request->validate([
+            'fullName' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->user_id . ',user_id',
+            'phone' => 'nullable|numeric',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Cập nhật thông tin tài khoản (Full Name, Email, Phone)
+        $user->fullName = $request->fullName;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+
+        // Cập nhật Avatar nếu có
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $path;
+        }
+
+        // Kiểm tra mật khẩu mới và mật khẩu cũ
+        if ($request->filled('current_password') && $request->filled('new_password')) {
+            // Kiểm tra mật khẩu cũ
+            if (!Hash::check($request->current_password, $user->password)) {
+                return redirect()->back()->withErrors(['current_password' => 'Mật khẩu cũ không chính xác.']);
+            }
+
+            // Kiểm tra mật khẩu mới
+            $request->validate([
+                'new_password' => 'required|min:8|confirmed',
+            ]);
+
+            // Cập nhật mật khẩu mới
+            $user->password = Hash::make($request->new_password);
+
+            session()->flash('password_success', 'Mật khẩu của bạn đã được thay đổi thành công!');
+
+        }
+
+        // Lưu thông tin đã cập nhật
+        $user->save();
+
+        return redirect()->back()->with('success', 'Cập nhật tài khoản thành công');
+    }
 }

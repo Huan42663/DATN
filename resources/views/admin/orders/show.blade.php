@@ -199,7 +199,7 @@
                                                                 <span  class="d-block mb-1 fs-6 fw-bold">{{$value->product_name}}</span>
                                                             </td>
                                                             <td>
-                                                                <span  class="d-block mb-1">{{$value->size_name}}, {{$value->color_name}}</span>
+                                                                <span  class="d-block mb-1">{{$value->size}}, {{$value->color}}</span>
                                                             </td>
                                                             <td class="fw-bold">
                                                                 @if($value->sale_price !=null || $value->sale_price > 0)

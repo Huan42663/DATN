@@ -2,6 +2,19 @@
 @section('title', 'Chi tiết đơn hàng')
 
 @section('content')
+    <!-- Nút quay lại -->
+    <div style="margin: 20px 0 0 250px; display: flex; align-items: center; gap: 10px;">
+        <a href="{{ route('Client.orders.list') }}"
+            style="text-decoration: none; color: #0b2c50; font-weight: bold; transition: color 0.3s ease;"
+            onmouseover="this.style.color='#0056b3'" onmouseout="this.style.color='#007bff'">
+            Danh sách đơn hàng
+        </a>
+        <span style="color: #6c757d;">/</span>
+        <a href="#" style="text-decoration: none; color: #0e2e51; font-weight: bold; transition: color 0.3s ease;"
+            onmouseover="this.style.color='#0056b3'" onmouseout="this.style.color='#007bff'">
+            Chi tiết đơn hàng
+        </a>
+    </div>
 
     <div
         style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; font-family: Arial, sans-serif; justify-content: center;">
@@ -9,6 +22,7 @@
             style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; font-family: Arial, sans-serif; justify-content: center; flex: 1 1 70%;">
             <div
                 style="flex: 1; max-width: 760px;  border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+
                 <h2
                     style="text-align: center; font-size: 26px; font-weight: bold; color: #4caf50; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 20px;">
                     Chi tiết đơn hàng
@@ -72,28 +86,33 @@
                         <span style="text-align: center;">Màu</span>
                         <span style="text-align: center;">Số lượng</span>
                     </div>
-
                     @foreach ($order->orderDetail as $index => $detail)
                         <div class="product-item"
                             style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); padding: 20px; border: 1px solid rgba(0, 0, 0, 0.1); display: grid; grid-template-columns: 5% 30% 15% 15% 15% 20%; gap: 10px; align-items: center;">
 
-                            <!-- Dòng giá trị sản phẩm -->
-                            <span style="text-align: center;">{{ $index + 1 }}</span> 
-                            <span
-                                style="text-align: left; padding-left: 10px;">{{ $detail->product->product_name ?? 'Không tồn tại' }}</span>
-                            <span style="text-align: center;">{{ number_format($detail->price, 0, ',', '.') }} đ</span>
+                            <span style="text-align: center;">{{ $index + 1 }}</span>
+
+                            <span style="text-align: left; padding-left: 10px;">
+                                {{ $detail->product->product_name ?? 'Không tồn tại' }}
+                            </span>
+
+                            <span style="text-align: center;">
+                                {{ number_format($detail->price, 0, ',', '.') }} đ
+                            </span>
+
                             <span style="text-align: center;">{{ $detail->size ?? 'Không có' }}</span>
                             <span style="text-align: center;">{{ $detail->color ?? 'Không có' }}</span>
                             <span style="text-align: center;">{{ $detail->quantity }}</span>
                         </div>
                     @endforeach
+
                 </div>
 
                 <!-- Tổng Tiền -->
                 <div
                     style="border: 1px solid #e0e0e0; padding: 15px; margin-top: 20px; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
                     <strong style="color: #333;">Tổng Tiền:</strong>
-                    <span style="color: #f44336;">{{ number_format($order->total, 0, ',', '.') }} đ</span>
+                    <span style="color: #f44336;">{{ number_format($order->total_discount, 0, ',', '.') }} đ</span>
                 </div>
 
                 <!-- Nút hành động -->

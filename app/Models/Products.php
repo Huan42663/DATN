@@ -43,12 +43,16 @@ class Products extends Model
     }
 
     public function size()
-{
-    return $this->belongsTo(Size::class, 'size_id', 'size_id');
-}
+    {
+        return $this->belongsTo(Size::class, 'size_id', 'size_id');
+    }
 
-public function color()
-{
-    return $this->belongsTo(Color::class, 'color_id', 'color_id');
-}
+    public function color()
+    {
+        return $this->belongsTo(Color::class, 'color_id', 'color_id');
+    }
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'category_product', 'product_id', 'category_id');
+    }
 }
