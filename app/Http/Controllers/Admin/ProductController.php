@@ -441,7 +441,7 @@ class ProductController extends Controller
                 ],
 
                 'price' => 'required|numeric|min:1|max:100000000',
-                'sale_price' => 'required|numeric|min:0|lte:price',
+                'sale_price' => 'numeric|min:0|lte:price',
                 'quantity' => 'required|integer|min:1|max:1000',
                 'weight' => 'required|numeric|min:0.1|max:500',
                 'status' => 'required|in:1,2',

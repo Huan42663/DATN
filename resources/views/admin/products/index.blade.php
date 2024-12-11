@@ -67,7 +67,7 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <a href="javascript:void(0);"
+                                                <a href="{{ route('Administration.products.show', $product->product_slug) }}"
                                                     class="d-block">{{ $product->product_name }}</a>
                                             </div>
                                         </td>

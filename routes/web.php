@@ -79,7 +79,6 @@ Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function 
         Route::put('/{post}', [PostController::class, 'update'])->name('Administration.posts.update');
         Route::delete('/{post}', [PostController::class, 'destroy'])->name('Administration.posts.destroy');
     });
-
     // ROUTE VOUCHER
     Route::prefix('vouchers')->group(function () {
         Route::get('/', [VoucherController::class, 'index'])->name('Administration.vouchers.list');
