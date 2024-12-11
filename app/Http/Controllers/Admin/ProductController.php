@@ -1023,6 +1023,28 @@ class ProductController extends Controller
         }
     }
 
+    public function listProductDelete(){
+        $products = Products::query()
+        ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
+        ->where('products.status', 1)
+        ->selectRaw('products.product_id,products.product_name,products.status ,products.product_image,product_slug,MIN(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
+        ->groupBy('products.product_id', 'products.product_name', 'products.status', 'products.product_image', 'product_slug')
+        ->orderBy('product_id', 'desc')
+        ->onlyTrashed()->get();
+
+        return View('admin.products.listDelete', compact('products'));
+    }
+
+    public function restoreProduct(Request $request){
+        if (isset($request->product_id) && !empty($request->product_id)) {
+            $products = Products::withTrashed()->where('product_id', $request->product_id);
+            $products->restore();
+            return redirect()->route('Administration.products.list')->with('message', 'Khôi phục sản phẩm thành công');
+        } else {
+            return redirect()->route('Administration.products.list');
+        }
+    }
+
     public function destroyImage(Request $request)
     {
         try {

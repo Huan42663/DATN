@@ -127,6 +127,8 @@ Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function 
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('Administration.products.destroy');
         Route::post('/delete-image', [ProductController::class, 'destroyImage'])->name('Administration.products.destroyImage');
         Route::post('/create-list-images', [ProductController::class, 'createListImages'])->name('Administration.products.createListImages');
+        Route::get('/list-delete', [ProductController::class, 'listProductDelete'])->name('Administration.products.listDelete');
+        Route::post('/restore-product', [ProductController::class, 'restoreProduct'])->name('Administration.products.restore');
     });
 
     // ROUTE CATEGORY PRODUCT
@@ -229,7 +231,7 @@ Route::prefix('/')->group(function () {
     Route::get('register', [AuthController::class, 'showRegisterForm'])->name('Client.account.showRegisterForm');
     Route::post('register', [AuthController::class, 'register'])->name('register');
 
-    
+
     Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
     Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('forgot-password.send');
     Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('reset-password.form');
@@ -264,5 +266,4 @@ Route::prefix('/')->group(function () {
     // ROUTE EVENT
     Route::get('events/', [ClientEventController::class, 'index'])->name('Client.events.list');
     Route::get('events/show-{slug}', [ClientEventController::class, 'show'])->name('Client.events.show');
-
 })->name('Client');
