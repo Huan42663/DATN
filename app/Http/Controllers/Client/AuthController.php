@@ -123,12 +123,18 @@ class AuthController extends Controller
     {
         // Xác thực dữ liệu đầu vào
         $request->validate([
-            'fullName' => 'required|string|max:255',
+            'fullName' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[a-zA-Z0-9\s]+$/', // Chỉ cho phép chữ cái, số và khoảng trắng
+            ],
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
             'phone' => 'required|string|max:15|unique:users,phone',
+        ], [
+            'fullName.regex' => 'Full name chỉ được dùng chữ cái và số',
         ]);
-
 
         try {
             // Tạo tài khoản người dùng
@@ -151,9 +157,6 @@ class AuthController extends Controller
             Log::error('Registration Error: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
-
-        // Chuyển hướng sau khi đăng ký thành công
-        return redirect()->route('Client.account.showLoginForm')->with('success', 'Account created successfully.');
     }
 
     // public function verifyEmail($token){
