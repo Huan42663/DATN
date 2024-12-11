@@ -2,7 +2,7 @@
     <div class="container">
         <div class="content-main flex gap-y-8 max-md:flex-col">
             <div class="left md:w-1/2 w-full lg:pr-[60px] md:pr-[40px] md:border-r border-line">
-                <div class="heading4">Login</div>
+                <div class="heading4">Đăng Nhập</div>
 
                 @if(session('success'))
                 <div id="success-alert" class="alert alert-success alert-dismissible">
@@ -35,7 +35,7 @@
                         @enderror
                     </div>
                     <div class="block-button md:mt-7 mt-4" style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-                        <button class="button-main">Login</button>
+                        <button class="button-main">Đăng Nhập</button>
                        <button type="submit" class="btn btn-primary"> <a href="{{ route('password.request') }}" style="color: #000000; text-decoration: none;">Quên mật khẩu?</a></button>
                     </div>
 
@@ -43,10 +43,8 @@
             </div>
             <div class="right md:w-1/2 w-full lg:pl-[60px] md:pl-[40px] flex items-center">
                 <div class="text-content">
-                    <div class="heading4">New Customer</div>
-                    <div class="mt-2 text-secondary">Be part of our growing family of new customers! Join us today
-                        and unlock a world of exclusive benefits, offers, and personalized experiences.</div>
-                    <div class="block-button md:mt-7 mt-4"><a class="button-main" href="{{ route('Client.account.showRegisterForm') }}">Register</a>
+                    <div class="heading4">Tạo tài khoản mới</div>
+                    <div class="block-button md:mt-7 mt-4"><a class="button-main" href="{{ route('Client.account.showRegisterForm') }}">Đăng Kí</a>
                     </div>
                 </div>
             </div>
