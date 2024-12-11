@@ -58,6 +58,17 @@
                 <div class="right md:w-2/3 w-full pl-2.5">
                     <div class="tab text-content w-full block">
                         <div class="recent_order pt-5 px-5 pb-2 mt-7 border border-line rounded-xl">
+                            @if(session('password_success'))
+                                <div id="passwordSuccess" class="alert alert-success bg-green-500 text-white p-3 rounded mb-4">
+                                    {{ session('password_success') }}
+                                </div>
+                            @endif
+
+                            @if(session('success'))
+                                <div id="accountSuccess" class="alert alert-success bg-green-500 text-white p-3 rounded mb-4">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
                             <h6 class="heading6">Recent Orders</h6>
                             <div class="list overflow-x-auto w-full mt-5">
                                 <table class="w-full max-[1400px]:w-[700px] max-md:w-[700px]">
@@ -80,15 +91,17 @@
                                     <tbody>
                                         @foreach ($orders as $order)
                                             <tr class="item duration-300 border-b border-line">
-                                                <td scope="row" class="py-3 text-left">
-                                                    <strong class="text-title">{{ $order->order_code }}</strong>
-                                                </td>
-                                                <td class="py-3">
-                                                    <strong class="text-title">{{ number_format($order->total_discount / 1, 0) }}</strong>
-                                                </td>
-                                                <td class="py-3 price">
-                                                    <strong class="text-title">{{ $order->created_at }}</strong>
-                                                </td>
+                                                <a href="{{ route('Client.cart.list') }}">
+                                                    <td scope="row" class="py-3 text-left">
+                                                        <strong class="text-title">{{ $order->order_code }}</strong>
+                                                    </td>
+                                                    <td class="py-3">
+                                                        <strong class="text-title">{{ number_format($order->total_discount / 1, 0) }}</strong>
+                                                    </td>
+                                                    <td class="py-3 price">
+                                                        <strong class="text-title">{{ $order->created_at }}</strong>
+                                                    </td>
+                                                </a>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -138,6 +151,40 @@
                                             @endif
                                         </div>
 
+                                                            <!-- Change Password Section -->
+                                        <div class="mt-8 border-t border-gray-300 pt-4">
+                                            <h6 class="heading6">Change Password</h6>
+
+                                            <!-- Current Password -->
+                                            <div class="flex flex-col">
+                                                <label for="current_password" class="text-sm font-medium">Current Password</label>
+                                                <input type="password" name="current_password" id="current_password"
+                                                    class="border border-gray-300 rounded p-2 focus:outline-none focus:border-primary">
+                                                @error('current_password')
+                                                    <div class="alert alert-danger text-sm mt-1">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <!-- New Password -->
+                                            <div class="flex flex-col">
+                                                <label for="new_password" class="text-sm font-medium">New Password</label>
+                                                <input type="password" name="new_password" id="new_password"
+                                                    class="border border-gray-300 rounded p-2 focus:outline-none focus:border-primary">
+                                                @error('new_password')
+                                                    <div class="alert alert-danger text-sm mt-1">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <!-- Confirm New Password -->
+                                            <div class="flex flex-col">
+                                                <label for="new_password_confirmation" class="text-sm font-medium">Confirm New Password</label>
+                                                <input type="password" name="new_password_confirmation" id="new_password_confirmation"
+                                                    class="border border-gray-300 rounded p-2 focus:outline-none focus:border-primary">
+                                                @error('new_password_confirmation')
+                                                    <div class="alert alert-danger text-sm mt-1">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
                                         <!-- Submit Button -->
                                         <div class="flex justify-end gap-3">
                                             {{-- <button type="reset" class="bg-gray-300 text-black py-2 px-4 rounded">Reset</button> --}}
@@ -152,5 +199,13 @@
             </div>
         </div>
     </div>
-
+    <script>
+        // Ẩn thông báo sau 3 giây
+        setTimeout(function() {
+            const successMessages = document.querySelectorAll('.alert');
+            successMessages.forEach(function(message) {
+                message.style.display = 'none';
+            });
+        }, 3000); // 3000ms = 3 giây
+    </script>
 @endsection

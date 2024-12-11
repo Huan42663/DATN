@@ -26,7 +26,7 @@
             ->leftJoin('cart_detail', 'carts.cart_id', '=', 'cart_detail.cart_id')
             ->where('cart_detail.cart_id', $Cart1[0]->cart_id)
             ->count();
-        
+
     }
 @endphp
 <div id="header" class="relative w-full">
@@ -171,7 +171,7 @@
                                 <!-- Các menu khác -->
 
                                 @auth
-                                    @if (Auth::user()->role == 'admin')
+                                    @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
                                         <!-- Kiểm tra nếu người dùng là admin -->
                                         <li><a class="dropdown-item" href="{{ route('Administration.Home') }}">Admin</a>
                                         </li>

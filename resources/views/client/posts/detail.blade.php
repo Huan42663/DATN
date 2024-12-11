@@ -26,13 +26,14 @@
                 <!-- Hiển thị nội dung bài viết -->
                 <div class="mb-4">
                     @foreach($textChunks as $index => $text)
-                    <p>{{ $text }}</p>
+                   
 
                     @if(isset($imageUrls[$index]))
                     <div class="image-item">
                         <img src="{{ $imageUrls[$index] }}" alt="{{ $post->title }}" style="margin: 20px 0;">
                     </div>
                     @endif
+                    <p>{{ $text }}</p>
                     @endforeach
                 </div>
             </div>

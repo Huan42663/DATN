@@ -17,13 +17,12 @@ class ProductController extends Controller
         if (isset($_GET['price'])) {
             $prices = explode("-", $_GET['price']);
             $minPrice = $prices[0];
-            if(!isset($prices[1])){
+            if (!isset($prices[1])) {
                 $maxPrice = 10000000000000;
-            }else{
+            } else {
                 $maxPrice = $prices[1];
             }
             $products = $this->product("", $minPrice, $maxPrice);
-            
         }
         return View('client.products', compact('products'));
     }
@@ -107,7 +106,8 @@ class ProductController extends Controller
                 ->join('category_product', 'products.product_id', '=', 'category_product.product_id')
                 ->join('categories', 'category_product.category_id', '=', 'categories.category_id')
                 ->select(
-                    'category_name'
+                    'category_name',
+                    'categories.category_id'
                 )
                 ->get();
 
@@ -116,16 +116,16 @@ class ProductController extends Controller
             $related_products = [];
             for ($i = 0; $i < $count; $i++) {
                 $resuilt =  Products::query()
-                    ->where('category_name',  "LIKE", $product['categories'][$i]->category_name)
+                    ->where('categories.category_id',  "=", $product['categories'][$i]->category_id)
+                    ->where('product_slug', '!=', $slug)
+                    ->where('status', '=', 1)
                     ->join('category_product', 'products.product_id', '=', 'category_product.product_id')
+                    ->join('product_variant', 'product_variant.product_id', '=', 'products.product_id')
                     ->join('categories', 'category_product.category_id', '=', 'categories.category_id')
-                    ->select(
-                        'category_name',
-                        'product_image',
-                        'product_name',
-                        'description',
-                        'product_slug'
+                    ->selectRaw(
+                        'products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.price) as minPrice'
                     )
+                    ->groupBy('products.product_id', 'products.product_name', 'products.product_image', 'product_slug')
                     ->limit(8)
                     ->get();
                 $related_products[$i] = $resuilt;
@@ -154,8 +154,8 @@ class ProductController extends Controller
             //         'image_name'
             //     )
             //     ->get();
-                
-                // dd($related_products);
+
+            // dd($related_products);
             return view('client.product-detail', compact(
                 'product',
                 'product_variant',
