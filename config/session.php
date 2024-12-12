@@ -31,9 +31,13 @@ return [
     |
     */
 
-    'lifetime' => env('SESSION_LIFETIME', 120),
+    // 'lifetime' => env('SESSION_LIFETIME', 120),
 
-    'expire_on_close' => false,
+    // 'expire_on_close' => false,
+
+    'lifetime' => 30, // Thời gian session tồn tại tính bằng phút (ví dụ: 30 phút)
+
+    'expire_on_close' => true, // Session sẽ hết hạn khi trình duyệt bị đóng
 
     /*
     |--------------------------------------------------------------------------

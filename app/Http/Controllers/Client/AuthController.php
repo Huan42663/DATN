@@ -94,24 +94,29 @@ class AuthController extends Controller
         // Lấy thông tin người dùng qua email
         $user = \App\Models\User::where('email', $request->email)->first();
 
-        if ($user) {
-            // Kiểm tra nếu người dùng đang đăng nhập
-            if ($user->status == 2) {
-                return back()->withErrors([
-                    'email' => 'This account is already logged in from another session.',
-                ])->withInput();
-            }
+        if (!$user) {
+            // Tài khoản không tồn tại
+            return back()->withErrors([
+                'email' => 'The account does not exist.',
+            ])->withInput();
+        }
 
-            // Thực hiện đăng nhập
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-                $request->session()->regenerate();
+        // Kiểm tra nếu người dùng đang đăng nhập
+        if ($user->status == 2) {
+            return back()->withErrors([
+                'email' => 'This account is already logged in from another session.',
+            ])->withInput();
+        }
 
-                // Cập nhật trạng thái thành 2 (đang đăng nhập)
-                $user->status = 2;
-                $user->save();
+        // Thực hiện đăng nhập
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $request->session()->regenerate();
 
-                return redirect()->intended('/'); // Điều hướng đến trang chủ hoặc trang trước đó
-            }
+            // Cập nhật trạng thái thành 2 (đang đăng nhập)
+            $user->status = 2;
+            $user->save();
+
+            return redirect()->intended('/'); // Điều hướng đến trang chủ hoặc trang trước đó
         }
 
         return back()->withErrors([
