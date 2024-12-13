@@ -1,12 +1,12 @@
 @extends('client.master')
 
-@section('title', 'Danh sách sự kiện')
+@section('title', 'Chi tiết sự kiện')
 
 @section('content')
     <div class="shop-product breadcrumb1 lg:py-20 md:py-14 py-10">
         <div class="container">
             <div class="list-product-block relative">
-                <div class="filter-heading flex items-center justify-between gap-5 flex-wrap">
+                {{-- <div class="filter-heading flex items-center justify-between gap-5 flex-wrap">
                     <div class="left flex has-line items-center flex-wrap gap-5">
                         <div class="choose-layout max-sm:hidden flex items-center gap-2">
                             <div
@@ -70,31 +70,24 @@
                                 </path>
                             </svg></div>
                     </div>
-                </div>
+                </div> --}}
                 <div class="list-filtered items-center gap-3 mt-4">
                     <div class="row">
-                        <p class="fs-1">Danh Sách Sự Kiện</p>
+                        <p class="fs-1">Sự Kiện: {{ $event->event_name }}</p>
                     </div>
-                    <div class="row mt-4 mb-4">
-                        <div class="col-4">
-                            <img src="" alt="" class="image-fluid">
-                        </div>
-                        <div class="col-8">
-                            <div class="row d-flex flex-warp">
-                                <a href="">
-                                    <p class="fs-4">DAUISDHUASDH</p>
-                                </a>
-                                <div>
-                                    <p class="fs-6 text-secondary">2024/10/10 - 2024-10-16</p>
-                                </div>
+                    <div class="whate-new-block">
+                        <div class="container">
+                            <div
+                                class="list-product hide-product-sold grid lg:grid-cols-4 grid-cols-2 sm:gap-[30px] gap-[20px] md:mt-10 mt-6">
+        
+                                @if ($products != [])
+                                    @foreach ($products as $product)
+                                        @include('client.components.whate-block', ['product' => $product])
+                                    @endforeach
+                                @endif
                             </div>
                         </div>
                     </div>
-                    <span class="text-secondary pl-1">Products Found</span>
-                </div>
-                <div
-                    class="list-product hide-product-sold grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-2 sm:gap-[30px] gap-[20px] mt-7">
-                    <div class="no-data-product">No products match the selected criteria.</div>
                 </div>
             </div>
         </div>
