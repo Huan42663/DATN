@@ -21,7 +21,8 @@ class OrderController extends Controller
 
     public function index()
     {
-        $data = Order::query()->get();
+        $data = Order::query()->orderBy('order_id','desc')->get();
+        // dd($data);
         return View('admin.orders.index', compact('data'));
     }
 
@@ -34,7 +35,7 @@ class OrderController extends Controller
         // dd($order_code);
              $infoOrder =   Order::query()->where('order_code', $order_code)->get();
              
-             $bill      =  Bill::query()->where('order_id', '=', $infoOrder[0]->order_id)->get();
+             $bill      =  Bill::query()->where('order_id', '=', $infoOrder[0]->order_id)->first();
                 
              $detail   =   Order::join('order_detail', 'orders.order_id', '=', 'order_detail.order_id')
                             ->join('products', 'order_detail.product_id', "=", 'products.product_id')

@@ -36,7 +36,14 @@ class ColorController extends Controller
             ]
         );
         $data = ['color_name' => $request['color_name']];
+        $checkText = new PostController;
+        $check = $checkText->ValidateText($request['color_name']);
+        if($check == false){
+            $_SESSION['color'] = $request['color_name'];
+            return redirect()->back()->with('color','tên của màu không được chứa kí tự đặc biệt');
+        }
         Color::create($data);
+        unset($_SESSION['color']);
         return redirect()->back()->with("success", "Thêm màu Thành Công");
     }
 
@@ -75,7 +82,14 @@ class ColorController extends Controller
             ]
         );
         $data = ['color_name' => $request['color_name']];
+        $checkText = new PostController;
+        $check = $checkText->ValidateText($request['color_name']);
+        if($check == false){
+            $_SESSION['color'] = $request['color_name'];
+            return redirect()->back()->with('color','tên của màu không được chứa kí tự đặc biệt');
+        }
         $color->update($data);
+        unset($_SESSION['color']);
         return redirect()->route('Administration.colors.list')->with('success', 'Sửa Màu Thành Công');;
     }
 

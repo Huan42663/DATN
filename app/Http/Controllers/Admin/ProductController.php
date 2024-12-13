@@ -10,6 +10,7 @@ use App\Models\ImageColor;
 use App\Models\ProductEvent;
 use App\Models\Products;
 use App\Models\ProductVariant;
+use App\Models\CartDetail;
 use App\Models\Rate;
 use App\Models\Size;
 use Illuminate\Http\Request;
@@ -31,7 +32,7 @@ class ProductController extends Controller
         $data = Products::query()
             ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
             ->where('products.status', 1)
-            ->selectRaw('products.product_id,products.product_name,products.status ,products.product_image,product_slug,MIN(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
+            ->selectRaw('products.product_id,products.product_name,products.status ,products.product_image,product_slug,Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
             ->groupBy('products.product_id', 'products.product_name', 'products.status', 'products.product_image', 'product_slug')
             ->orderBy('product_id', 'desc')
             ->get();
@@ -389,11 +390,22 @@ class ProductController extends Controller
     {
         if (isset($request->delete) && isset($request->variant_id)) {
             foreach ($request['variant_id'] as $item) {
+                $check = Count(ProductVariant::where('product_id',$request->product_id)->get());
                 $variant = ProductVariant::find($item);
-                $variant->delete();
+                $cart = CartDetail::where('product_variant_id',$variant->product_variant_id)->get();
+                foreach($cart as $itemCart){
+                    CartDetail::where('cart_detail_id',$itemCart->cart_detail_id)->delete();
+                }
+                if($check == 1){
+                    return redirect()->back()->with('error', 'Không thể xóa toàn bộ biến thể ');
+                }else{
+                    $variant->delete();
+                }
             }
             return redirect()->back()->with('message', 'Xóa biến thể thành công');
         } else {
+            unset($_SESSION['error']);
+            $error = [];
             for ($i = 0; $i < count($request->variant_id_update); $i++) {
                 $data = [
                     'size_id' => $request->size_id[$i],
@@ -402,22 +414,38 @@ class ProductController extends Controller
                     'sale_price' => $request->sale_price[$i],
                     'quantity' => $request->quantity[$i],
                 ];
-                $check = ProductVariant::find($request->variant_id_update[$i]);
+                if($request->price[$i] < 0 || $request->sale_price[$i]<0 || $request->quantity[$i]<0){
+                    return redirect()->back()->with('error',"Giá , giá khuyến mãi và số lượng không được nhỏ hơn 0");
+                }
+                $check  = ProductVariant::
+                join('sizes', 'product_variant.size_id', '=', 'sizes.size_id')
+                ->join('colors', 'product_variant.color_id', '=', 'colors.color_id')
+                ->where('product_variant.product_variant_id','=',$request->variant_id_update[$i])
+                ->first();
+                // dd($check);
+                //lấy id biến thể được update rồi so sánh với tất cả biến thể trừ id biến thể được lấy
+                // dd($check);
                 $check1 = ProductVariant::join('sizes', 'product_variant.size_id', '=', 'sizes.size_id')
                 ->join('colors', 'product_variant.color_id', '=', 'colors.color_id')
-                ->where('product_variant.size_id', $request->size_id[$i])->where('product_variant.color_id', $request->color_id[$i])
-                ->where('product_variant.product_id', $request->product_id)->get();
-                // dd($check,$check1);
-                foreach ($check1 as $checkItem) {
-                    if ($check->product_varian_id != $checkItem->product_variant_id) {
-                        $size = $checkItem->size_name;
-                        $color = $checkItem->color_name;
-                        return redirect()->back()->with('error', "Bạn đã cập nhật 1 biến thể khác vào 1 biến thể đã tồn tại có size là $size và màu là $color đã tồn tại vui lòng kiểm tra lại!");
-                    }
+                ->where('product_variant.size_id', $request->size_id[$i])
+                ->where('product_variant.color_id', $request->color_id[$i])
+                ->where('product_variant.product_id', $request->product_id)
+                ->where('product_variant.product_variant_id','!=',$request->variant_id_update[$i])
+                ->first();
+                if ($check1 != null) {
+                    $size = $check->size_name;
+                    $color = $check->color_name;
+                    $error[] = " size: $size, màu: $color thành size: $check1->size_name, màu: $check1->color_name";
+                }else{
+                    $check->update($data);
                 }
-                $check->update($data);
             }
-            return redirect()->back()->with('message', 'Cập nhật biến thể thành công');
+            if(empty($error)){
+                return redirect()->back()->with('message', 'Cập nhật biến thể thành công');
+            }else{
+                $_SESSION['error'] = $error;
+                return redirect()->back();
+            }
         }
     }
 

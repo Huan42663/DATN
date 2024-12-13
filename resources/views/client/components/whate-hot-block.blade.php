@@ -68,24 +68,13 @@
             <div class="product-infor mt-4 lg:mb-7">
                 <div class="text-title duration-300">{{$product->product_name}}</div>
                 <div class="flex items-center gap-2 flex-wrap mt-1 duration-300 relative z-[1]">
-                    <div class=" text-title">
+                    <div class="product-price text-title">
                         @if ($product->minPrice > 0)
-                            {{number_format($product->minPrice, 0, ',', '.') . ' VNĐ';}}
+                            {{number_format($product->minPrice, 0, ',', '.') . 'VNĐ'."  -  ".number_format($product->maxPrice, 0, ',', '.') . 'VNĐ';}}
                         @else
-                            {{number_format($product->maxPrice, 0, ',', '.') . ' VNĐ';}}
+                            {{number_format($product->maxPrice, 0, ',', '.') . 'VNĐ';}}
                         @endif
                     </div>
-                    <div class="product-origin-price caption1 text-secondary2"><del>
-                        @if ($product->minPrice > 0)
-                            {{number_format($product->maxPrice, 0, ',', '.') . ' VNĐ';}}
-                        @endif
-                        </del>
-                    </div>
-                    @if ($product->minPrice > 0 && $product->maxPrice >0)
-                        <div class="product-sale caption1 font-medium bg-green px-3 py-0.5 inline-block rounded-full">
-                            {{round(($product->maxPrice - $product->minPrice)/$product->maxPrice * 100,0) .'%' }}
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>

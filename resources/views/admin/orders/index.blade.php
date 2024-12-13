@@ -54,11 +54,11 @@
                                 @elseif($value->status == "confirmed")
                                     <span class="badge bg-soft-success text-success">Đã Xác Nhận</span>
                                 @elseif($value->status == "shipping")
-                                    <span class="badge bg-soft-success text-success">Đang Vận Chuyển</span>
+                                    <span class="badge bg-soft-primary text-primary">Đang Vận Chuyển</span>
                                 @elseif($value->status == "delivered")
-                                    <span class="badge bg-soft-success text-success">Đã Giao Đến Khách Hàng</span>
+                                    <span class="badge bg-soft-info text-info">Đã Giao Đến Khách Hàng</span>
                                 @elseif($value->status == "received")
-                                    <span class="badge bg-soft-warning text-warning">Đã Xác Nhận Nhận Hàng</span>
+                                    <span class="badge bg-soft-success text-success">Đã Xác Nhận Nhận Hàng</span>
                                 @elseif($value->status == "canceled")
                                      <span class="badge bg-soft-danger text-danger">Hủy</span>
                                 @elseif($value->status == "return")

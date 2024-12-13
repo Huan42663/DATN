@@ -36,4 +36,12 @@ class Order extends Model
     public function orderDetail(){
         return $this->hasMany(OrderDetail::class,'order_id','order_id');
     }
+    // function checkRate($order_id,$product_id,$size,$color){
+        
+    //     if($check != null){
+    //         return false;
+    //     }else{
+    //         return true;
+    //     }
+    // }
 }

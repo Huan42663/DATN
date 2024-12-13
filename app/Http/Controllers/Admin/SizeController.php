@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Admin\PostController;
 use App\Models\Size;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -36,7 +37,14 @@ class SizeController extends Controller
             ]
             );
             $data=['size_name'=>$request['size_name']];
+            $checkText = new PostController;
+            $check = $checkText->ValidateText($request['size_name']);
+            if($check == false){
+                $_SESSION['size'] = $request['size_name'];
+                return redirect()->back()->with('size','tên của size không được chứa kí tự đặc biệt');
+            }
             Size::create($data);
+            unset($_SESSION['data']);
             return redirect()->back()->with("success","Thêm Size Thành Công");
     }
 
@@ -74,7 +82,14 @@ class SizeController extends Controller
             "size_name.required" => "Không được bỏ trống"
         ]) ;
             $data=['size_name'=>$request['size_name']];
+            $checkText = new PostController;
+            $check = $checkText->ValidateText($request['size_name']);
+            if($check == false){
+                $_SESSION['size'] = $request['size_name'];
+                return redirect()->back()->with('size','tên của size không được chứa kí tự đặc biệt');
+            }
             $size->update($data);
+            unset($_SESSION['data']);
             return redirect()->route('Administration.sizes.list')->with('success','Sửa Size Thành Công');;
         }
 

@@ -1,15 +1,15 @@
 @extends('admin.master')
 
-@section('title', 'Colors')
+@section('title', 'Màu')
 @section('page-header')
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Colors</h5>
+                <h5 class="m-b-10">Màu</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">List</li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang Chủ</a></li>
+                <li class="breadcrumb-item">Danh sách</li>
             </ul>
         </div>
     </div>
@@ -58,7 +58,9 @@
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="color_name" name="color_name"
                                             placeholder="Tên Màu" 
-                                            @if(isset($ColorInfo) && !empty($ColorInfo)) 
+                                            @if(isset($_SESSION['color']))
+                                                value="{{$_SESSION['color']}}"
+                                            @elseif(isset($ColorInfo) && !empty($ColorInfo)) 
                                                 value="{{$ColorInfo[0]->color_name}}"
                                             @else
                                                 value="{{old('color_name')}}"
@@ -68,6 +70,9 @@
                                     @error('color_name')
                                         <span class="text-danger">{{$message}}</span>
                                     @enderror
+                                    @if(session('color'))
+                                        <span class="text-danger">{{session('color')}}</span>
+                                    @endif
                                     @if(isset($error))
                                         <span class="text-danger">{{$error}}</span>
                                     @endif

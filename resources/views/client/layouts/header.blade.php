@@ -38,7 +38,7 @@
                 <div class="left flex items-center gap-16"><a
                         class="flex items-center max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2"
                         href="{{ route('Client.Home') }}">
-                        <div class="heading4">JS STORE</div>
+                        <div class="heading4">JSTORE</div>
                     </a>
                     <div class="menu-main h-full max-lg:hidden">
                         <ul class="flex items-center gap-8 h-full">
@@ -116,7 +116,7 @@
                             </li>
                             <li class="h-full relative">
                                 <a class="text-button-uppercase duration-300 h-full flex items-center justify-center "
-                                    href="#!">Event</a>
+                                    href="#!">Sự Kiện</a>
                                 @if (isset($Event) && count($Event))
                                     <div class="sub-menu py-3 px-5 -left-10 absolute bg-white rounded-b-xl">
                                         <ul class="w-full">
@@ -173,24 +173,24 @@
                                 @auth
                                     @if (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')
                                         <!-- Kiểm tra nếu người dùng là admin -->
-                                        <li><a class="dropdown-item" href="{{ route('Administration.Home') }}">Admin</a>
+                                        <li><a class="dropdown-item" href="{{ route('Administration.Home') }}">Quản Trị</a>
                                         </li>
                                     @endif
                                 @endauth
 
                                 @guest
                                     <li><a class="dropdown-item"
-                                            href="{{ route('Client.account.showLoginForm') }}">Login</a></li>
+                                            href="{{ route('Client.account.showLoginForm') }}">Đăng Nhập</a></li>
                                     <li><a class="dropdown-item"
-                                            href="{{ route('Client.account.showRegisterForm') }}">Register</a></li>
+                                            href="{{ route('Client.account.showRegisterForm') }}">Đăng Ký</a></li>
                                 @endguest
 
                                 @auth
-                                    <li><a class="dropdown-item" href="{{ route('Client.cart.list') }}">Cart</a>
-                                    <li><a class="dropdown-item" href="{{ route('Client.orders.list') }}">Order</a>
-                                    <li><a class="dropdown-item" href="{{ route('Client.account.logout') }}">Logout</a>
+                                    <li><a class="dropdown-item" href="{{ route('Client.cart.list') }}">Giỏ Hàng</a>
+                                    <li><a class="dropdown-item" href="{{ route('Client.orders.list') }}">Đơn Hàng</a>
+                                    <li><a class="dropdown-item" href="{{ route('Client.account.logout') }}">Đăng Xuất</a>
                                     </li>
-                                    <li><a class="dropdown-item" href="{{ route('Client.account.show') }}">Account</a>
+                                    <li><a class="dropdown-item" href="{{ route('Client.account.show') }}">Tài Khoản</a>
                                     </li>
                                 @endauth
                             </ul>

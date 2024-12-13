@@ -10,7 +10,6 @@
             </div>
             <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang Chủ</a></li>
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang Chủ</a></li>
                 <li class="breadcrumb-item">Chi Tiết Đơn Hàng</li>
             </ul>
         </div>
@@ -28,7 +27,7 @@
                         <div class="card-body">
                             <div class="d-sm-flex justify-content-between">
                                 <div class="col-lg-4 proposal-from">
-                                    <h4 class="fw-bold mb-4">From:</h4>
+                                    <h4 class="fw-bold mb-4">Thông tin người gửi:</h4>
                                     <div class="fs-13 text-muted lh-lg">
                                         <div>
                                             <span class="fw-semibold text-dark border-bottom border-bottom-dashed">Số Điện Thoại:</span>
@@ -63,7 +62,7 @@
                                 </div>
                                 <hr class="d-md-none">
                                 <div class="row col-lg-8 proposal-to">
-                                    <h4 class="fw-bold mb-4">To:</h4>
+                                    <h4 class="fw-bold mb-4">Thông tin người nhận:</h4>
                                     <div class="col-5 fs-13 lh-lg">
                                         <div>
                                             <span class="fw-semibold text-dark border-bottom border-bottom-dashed">Mã Đơn Hàng:</span>
@@ -119,7 +118,7 @@
                 </div>
             </div>
         </div>
-        @if(isset($bill) && count($bill)>0)
+        @if($bill != null)
         <div class="row">
             <div class="col-xl-12">
                 <div class="card stretch stretch-full">
@@ -128,10 +127,12 @@
                             <div class="col-md-8 mb-4">
                                 <h4>Hóa Đơn Thanh Toán</h4>
                                 <br>
-                                <p><span class="fs-6 fw-bold">Mã Hóa Đơn : </span>{{$bill->bill_code}}</p>
-                                <p><span class="fs-6 fw-bold">Mã Đơn Hàng : </span>{{$bill[0]->order_code}}</p>
-                                <p><span class="fs-6 fw-bold">Số Tiền : </span>{{$bill[0]->amount}}</p>
-                                <p><span class="fs-6 fw-bold">Thời Gian Giao Dịch: </span>{{$bill[0]->created_at}}</p>
+                                <p><span class="fs-6 fw-bold">Mã ngân hàng : </span>{{$bill->bank_code}}</p>
+                                <p><span class="fs-6 fw-bold">Mã giao dịch : </span>{{$bill->bank_tranno}}</p>
+                                <p><span class="fs-6 fw-bold">Số Tiền : </span>{{$bill->amount}}</p>
+                                <p><span class="fs-6 fw-bold">Loại thẻ : </span>{{$bill->card_type}}</p>
+                                <p><span class="fs-6 fw-bold">Mã giao dịch VnPay : </span>{{$bill->vnpay_transactionno}}</p>
+                                <p><span class="fs-6 fw-bold">Thời gian giao dịch : </span>{{$bill->created_at}}</p>
                             </div>
                         </div>
                     </div>
@@ -150,26 +151,28 @@
                             <div class="col-md-4 mb-4 d-flex justify-content-start">
                                 <label class="form-label mt-1 me-2">Trạng Thái Đơn Hàng : </label>
                                 @if ($infoOrder[0]->status == "unconfirm")
-                                <span class="badge bg-soft-warning text-warning  me-2" style="height: 30px;padding:10px">Chờ Xác Nhận</span>
+                                    <span class="badge bg-soft-warning text-warning me-2" style="padding:10px">Chờ Xác Nhận</span>
+                                @elseif($infoOrder[0]->status == "confirmed")   
+                                    <span class="badge bg-soft-success text-success me-2" style="padding:10px">Đã Xác Nhận</span>
+                                @elseif($infoOrder[0]->status == "shipping")
+                                    <span class="badge bg-soft-primary text-primary me-2" style="padding:10px">Đang Vận Chuyển</span>
+                                @elseif($infoOrder[0]->status == "delivered")
+                                    <span class="badge bg-soft-info text-info me-2" style="padding:10px">Đã Giao Đến Khách Hàng</span>
+                                @elseif($infoOrder[0]->status == "received")
+                                    <span class="badge bg-soft-success text-success me-2" style="padding:10px">Đã Xác Nhận Nhận Hàng</span>
+                                @elseif($infoOrder[0]->status == "canceled")
+                                        <span class="badge bg-soft-danger text-danger me-2" style="padding:10px">Hủy</span>
+                                @elseif($infoOrder[0]->status == "return")
+                                    <span class="badge bg-soft-dark text-dark me-2" style="padding:10px">Trả Hàng</span>
+                                @endif
+                                @if ($infoOrder[0]->status != "delivered" && $infoOrder[0]->status != "received")
                                 <form action="{{route('Administration.orders.update', $infoOrder[0]->order_id )}}" method="post" class="d-flex">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="order_id" value="{{$infoOrder[0]->status}}">
                                     <input type="hidden" name="order_status" value="{{$infoOrder[0]->order_id}}">
-                                    <button class="btn btn-success" style="height: 30px;">Cập Nhật</button>
+                                    <button class="btn btn-success" style="height: 35px;">Cập Nhật</button>
                                 </form>
-                                @elseif($infoOrder[0]->status == "confirmed")   
-                                    <span class="badge bg-soft-success text-success me-2" style="padding:10px">Đã Xác Nhận</span>
-                                @elseif($infoOrder[0]->status == "shipping")
-                                    <span class="badge bg-soft-success text-success me-2" style="padding:10px">Đang Vận Chuyển</span>
-                                @elseif($infoOrder[0]->status == "delivered")
-                                    <span class="badge bg-soft-success text-success me-2" style="padding:10px">Đã Giao Đến Khách Hàng</span>
-                                @elseif($infoOrder[0]->status == "received")
-                                    <span class="badge bg-soft-warning text-warning me-2" style="padding:10px">Đã Xác Nhận Nhận Hàng</span>
-                                @elseif($infoOrder[0]->status == "canceled")
-                                        <span class="badge bg-soft-danger text-danger me-2" style="padding:10px">Hủy</span>
-                                @elseif($infoOrder[0]->status == "return")
-                                    <span class="badge bg-soft-dark text-dark me-2" style="padding:10px">Trả Hàng</span>
                                 @endif
                             </div>
                             <div class="col-md-12 mb-4">
@@ -226,13 +229,31 @@
                                                             <td></td>
                                                             <td></td>
                                                             <td></td>
-                                                            <td><h6>Tổng Tiền :</h6> </td>
+                                                            <td></td>
                                                             <td>
+                                                                <span  class="d-block mb-1 text-secondary fs-6 fw-bold" >{{"Giá gốc: ".number_format($infoOrder[0]->total - 30000, 0, ',', '.') . ' VNĐ';}}</span>
+                                                                <span  class="d-block mb-1 text-secondary fs-6 fw-bold" >{{ "Phí vận chuyển: ".number_format(30000, 0, ',', '.') . ' VNĐ';}}</span>
                                                                 @if($infoOrder[0]->total > $infoOrder[0]->total_discount && $infoOrder[0]->total_discount !=null )
-                                                                    <span class="d-block mb-1 text-danger fs-5 fw-bold">{{number_format($infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ';}}</span>
-                                                                    <del class="text-secondary fs-6 fw-bold">{{number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ';}}</del>
-                                                                @else
-                                                                <span  class="d-block mb-1 text-danger fs-5 fw-bold" >{{number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ';}}</span>
+                                                                    <span class="text-secondary fs-6 fw-bold">{{"Giá khuyến mãi: -".number_format( $infoOrder[0]->total - $infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ';}}</span>
+                                                                    <br>
+                                                                        @if($bill != null)
+                                                                        <span class="text-danger fs-4 fw-bold">{{"Tổng : ".number_format($infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ';}}</span>
+                                                                        <span class="badge bg-soft-success text-success">Đã Thanh Toán</span>
+                                                                        <span class="text-danger fs-4 fw-bold">Số tiền cần thu : 0 VNĐ</span>
+                                                                        @else
+                                                                        <span class="text-danger fs-4 fw-bold">{{"Tổng : ".number_format($infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ';}}</span>
+                                                                        <span class="text-danger fs-4 fw-bold">{{"Số tiền cần thu : ".number_format($infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ';}}</span>
+                                                                        @endif
+                                                                    @else
+                                                                        @if($bill != null)
+                                                                        <span class="text-danger fs-4 fw-bold">{{"Tổng : ".number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ';}}</span>
+                                                                        <span class="badge bg-soft-success text-success">Đã Thanh Toán</span>
+                                                                        <span class="text-danger fs-4 fw-bold">Số tiền cần thu : 0 VNĐ</span>
+                                                                        @else
+                                                                        <span class="text-danger fs-4 fw-bold">{{"Tổng : ".number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ';}}</span>
+                                                                        <span class="text-danger fs-4 fw-bold">{{"Số tiền cần thu : ".number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ';}}</span>
+                                                                        @endif
+                                                                    @endif
                                                                 @endif
                                                                 <br>
                                                             </td>

@@ -24,62 +24,70 @@ class CartController extends Controller
         return View('client.cart',compact('cart'));
     }
     public function store(Request $request){
-        $cart_id = Cart::query()->where('user_id',Auth::user()->user_id)->get();
+        $cart_id = Cart::query()->where('user_id',Auth::user()->user_id)->firstOrFail();
         $product = ProductVariant::query()
-                //    ->leftJoin('sizes','product_variant.size_id','=','sizes.size_id')
-                //    ->leftJoin('colors','product_variant.color_id','=','colors.color_id')
                    ->where('product_variant.product_id',$request->product_id)
                    ->where('product_variant.size_id',$request->size_id)
                    ->where('product_variant.color_id',$request->color_id)
-                   ->get();
-        if(empty($product)){
-            return response()->json("Sản phẩm bạn vừa thêm không có vui lòng kiểm tra lại",Response::HTTP_NOT_FOUND);  
+                   ->first();
+        if(!isset($product)){
+            return response()->json(["data"=>"Sản phẩm bạn vừa thêm không có vui lòng kiểm tra lại"],Response::HTTP_NOT_FOUND);  
         }
-        if(!empty($product) && $product[0]->quantity < $request['quantity']){
-            return response()->json("Số lượng sản phẩm bạn vừa thêm vào giỏ hàng đã quá số lượng chúng tôi có!",Response::HTTP_BAD_REQUEST);  
+        if(isset($product) && $product->quantity < $request['quantity']){
+            return response()->json(["data"=>"Số lượng sản phẩm bạn vừa thêm vào giỏ hàng đã quá số lượng chúng tôi có là ". $product->quantity],Response::HTTP_BAD_REQUEST);  
         }
         $data = 
         [
-           "cart_id"            =>$cart_id[0]->cart_id,
-           "product_variant_id" =>$product[0]->product_variant_id,
+           "cart_id"            =>$cart_id->cart_id,
+           "product_variant_id" =>$product->product_variant_id,
            "quantity"           =>$request->quantity
         ];
         $cart = CartDetail::query()
                             ->join('product_variant','cart_detail.product_variant_id','=','product_variant.product_variant_id')
-                            ->where('cart_detail.cart_id',$cart_id[0]->cart_id)
-                            ->where('cart_detail.product_variant_id',$product[0]->product_variant_id)
+                            ->where('cart_detail.cart_id',$cart_id->cart_id)
+                            ->where('cart_detail.product_variant_id',$product->product_variant_id)
                             ->select('cart_detail.product_variant_id','cart_detail.quantity as cartQuantity')
-                            ->get();
-        if(count($cart) <= 0){
+                            ->first();
+        if(!isset($cart)){
             CartDetail::create($data);
         }
         else{
-            $data['quantity'] = $cart[0]->cartQuantity + $request['quantity'];
-            if($data['quantity'] > $product[0]->quantity){
-                return response()->json("Số lượng sản phẩm bạn vừa thêm vào giỏ hàng đã quá số lượng chúng tôi có!",Response::HTTP_BAD_REQUEST);  
+            $data['quantity'] = $cart->cartQuantity + $request['quantity'];
+            if($data['quantity'] > $product->quantity){
+                return response()->json(["data"=>"Số lượng sản phẩm bạn vừa thêm vào giỏ hàng và số lượng sản phẩm bạn có trong giỏ hàng đã quá số lượng chúng tôi có là ".$cart->cartQuantity],Response::HTTP_BAD_REQUEST);  
              }
             else{
-                CartDetail::query()->where('cart_detail.cart_id',$cart_id[0]->cart_id)
-                            ->where('cart_detail.product_variant_id',$product[0]->product_variant_id)
+                CartDetail::query()->where('cart_detail.cart_id',$cart_id->cart_id)
+                            ->where('cart_detail.product_variant_id',$product->product_variant_id)
                             ->update($data);
             }
         }
-        return response()->json("Thêm sản phẩm vào giỏ hàng thành công",Response::HTTP_CREATED);  
+        return response()->json(["data"=>"Thêm sản phẩm vào giỏ hàng thành công"],Response::HTTP_CREATED);  
 
     }
     public function UpdateCartDetail(Request $request)
     {
         $check = CartDetail::query()->where('cart_detail_id',$request->cart_detail_id)->get();
         if(!$check){
-            return response()->json(['error' => 'cant not product variant'],404);
+            return response()->json(['data' => 'không tìm thấy sản phẩm'],404);
         }else{
-            $data =[
-                'cart_detail_id' =>$request->cart_detail_id,
-                'quantity'       =>$request->quantity
-            ];
-            CartDetail::query()->where('cart_detail_id',$request->cart_detail_id)->update($data);
+            $check1 = ProductVariant::where('product_variant_id',$check[0]->product_variant_id)->get();
+            if(!$check1){
+                return response()->json(['data'=>"Không tìm thấy sản phẩm của bạn",'status' => false],404);
+            }else{
+                $data =[
+                    'cart_detail_id' =>$request->cart_detail_id,
+                    'quantity'       =>$request->quantity
+                ];
+                if($check1[0]->quantity >= $request->quantity){
+                    CartDetail::query()->where('cart_detail_id',$request->cart_detail_id)->update($data);
+                    return response()->json(['success' => true],200);
+                }else{
+                    return response()->json(['status' => false,'check'=>$check1[0]->quantity],Response::HTTP_BAD_REQUEST);
+                }
+                
+            }
             
-            return response()->json(['success' => true],200);
         }
     }
     public function DestroyCart(Request $request)

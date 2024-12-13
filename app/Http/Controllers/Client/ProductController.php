@@ -47,31 +47,50 @@ class ProductController extends Controller
     {
         // lấy ra thông tin của sản phẩm
         $product = Products::query()
+            ->join('product_variant','products.product_id','=','product_variant.product_id')
             ->where('product_slug', $slug)
-            ->select(
-                'product_image',
-                'product_name',
-                'description',
-                'product_id'
-            )
+            ->select('products.*')
             ->first();
-
+        $product1 = ProductVariant::query()
+            ->where('product_id', $product->product_id)->sum('quantity');
         // kiểm tra sản phẩm có tồn tại hay không
         if (empty($product)) {
             return view('error-404');
         } else {
-
             // lấy ra giá nhỏ nhất
             $product['min_price'] = Products::query()
                 ->where('product_slug', "=", $slug)
                 ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
-                ->min('product_variant.price');
+                ->min('product_variant.sale_price');
 
             // lấy ra giá lớn nhất
             $product['max_price'] = Products::query()
                 ->where('product_slug', "=", $slug)
                 ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
+                ->max('product_variant.sale_price');
+            if( $product['min_price'] >=0 && $product['min_price'] == $product['max_price']){
+                $product['max_price'] = Products::query()
+                ->where('product_slug', "=", $slug)
+                ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
                 ->max('product_variant.price');
+            }
+            else if($product['min_price'] == 0 || $product['min_price'] == null){
+                $product['min_price'] = Products::query()
+                ->where('product_slug', "=", $slug)
+                ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
+                ->min('product_variant.price');
+
+            // lấy ra giá lớn nhất
+                $product['max_price'] = Products::query()
+                ->where('product_slug', "=", $slug)
+                ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
+                ->max('product_variant.price');
+            }
+
+            $product['sale_price_check'] = Products::query()
+            ->where('product_slug', "=", $slug)
+            ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
+            ->max('product_variant.price');
 
             // lấy ra biến thể của sản phẩm
             $product_variant = Products::query()
@@ -107,6 +126,7 @@ class ProductController extends Controller
                 ->join('categories', 'category_product.category_id', '=', 'categories.category_id')
                 ->select(
                     'category_name',
+                    'categories.category_slug',
                     'categories.category_id'
                 )
                 ->get();
@@ -123,7 +143,7 @@ class ProductController extends Controller
                     ->join('product_variant', 'product_variant.product_id', '=', 'products.product_id')
                     ->join('categories', 'category_product.category_id', '=', 'categories.category_id')
                     ->selectRaw(
-                        'products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.price) as minPrice'
+                        'products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice'
                     )
                     ->groupBy('products.product_id', 'products.product_name', 'products.product_image', 'product_slug')
                     ->limit(8)
@@ -132,37 +152,36 @@ class ProductController extends Controller
             }
 
             // // lấy ra danh sách đánh giá
-            // $rates = Products::query()
-            //     ->where('product_slug', $slug)
-            //     ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
-            //     ->join('rates', 'product_variant.product_variant_id', '=', 'rates.product_variant_id')
-            //     ->join('users', 'rates.user_id', '=', 'users.user_id')
-            //     ->select(
-            //         'star',
-            //         'content',
-            //         'fullName'
-            //     )
-            //     ->get();
-
+            $rates = Products::query()
+                ->where('product_slug', $slug)
+                ->join('rates', 'products.product_id', '=', 'rates.product_id')
+                ->join('users', 'rates.user_id', '=', 'users.user_id')
+                ->selectRaw(
+                    'rate_id ,star,content,fullName'
+                )
+                ->groupBy('rate_id')
+                ->paginate(8);
+                // dd($rates);
             // // lấy ra danh sách ảnh của đánh giá
-            // $rate_images = Products::query()
-            //     ->where('product_slug', $slug)
-            //     ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
-            //     ->join('rates', 'product_variant.product_variant_id', '=', 'rates.product_variant_id')
-            //     ->join('rate_image', 'rates.rate_id', '=', 'rate_image.rate_id')
-            //     ->select(
-            //         'image_name'
-            //     )
-            //     ->get();
-
-            // dd($related_products);
+            $rate_images = Products::query()
+                ->where('product_slug', $slug)
+                ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
+                ->join('rates', 'product_variant.product_variant_id', '=', 'rates.product_variant_id')
+                ->join('rate_image', 'rates.rate_id', '=', 'rate_image.rate_id')
+                ->selectRaw(
+                    'image_name,rates.rate_id as rate_id'
+                )
+                ->get();
+                
+                // dd($related_products);
             return view('client.product-detail', compact(
                 'product',
                 'product_variant',
                 'related_products',
                 'product_images',
-                // 'rates',
-                // 'rate_images'
+                'product1',
+                'rates',
+                'rate_images'
             ));
 
             //  trả về dữ liệu dưới dạng json
@@ -175,7 +194,7 @@ class ProductController extends Controller
             $product = Products::query()
                 ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
                 ->where('products.status', 1)
-                ->selectRaw('products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
+                ->selectRaw('products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
                 ->groupBy('products.product_id', 'products.product_name', 'products.product_image', 'product_slug')
                 ->orderBy('products.product_id', 'desc')
                 ->paginate(12);
@@ -184,7 +203,7 @@ class ProductController extends Controller
             $product = Products::query()
                 ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
                 ->where('products.status', 1)
-                ->selectRaw('products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
+                ->selectRaw('products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
                 ->groupBy('products.product_id', 'products.product_name', 'products.product_image', 'product_slug')
                 ->havingRaw("maxPrice >= $minPrice AND maxPrice <= $maxPrice")
                 // ->having("maxPrice"," <= ",$maxPrice)
@@ -196,7 +215,7 @@ class ProductController extends Controller
                 ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
                 ->where('products.status', 1)
                 ->where('products.product_name', 'LIKE', "%" . $keyword . "%")
-                ->selectRaw('products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
+                ->selectRaw('products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
                 ->groupBy('products.product_id', 'products.product_name', 'products.product_image', 'product_slug')
                 ->orderBy('products.product_id', 'desc')
                 ->paginate(12);
@@ -206,7 +225,7 @@ class ProductController extends Controller
                 ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
                 ->where('products.status', 1)
                 ->where('products.product_name', 'LIKE', "%" . $keyword . "%")
-                ->selectRaw('products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
+                ->selectRaw('products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
                 ->groupBy('products.product_id', 'products.product_name', 'products.product_image', 'product_slug')
                 ->havingRaw("maxPrice >= $minPrice AND maxPrice <= $maxPrice")
                 // ->having("maxPrice"," <= ",$maxPrice)
@@ -214,5 +233,33 @@ class ProductController extends Controller
                 ->paginate(12);
         }
         return $product;
+    }
+    public function getQuantity(Request $request){
+        if($request->size_id != null && $request->color_id == null){
+            $quantity = ProductVariant::where('product_id',$request->product_id)->where('size_id',$request->size_id)->selectRaw('sale_price, price, SUM(quantity) as quantity')->groupBy('sale_price','price')->first();
+            if($quantity != null){
+                return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là : ".$quantity->quantity,"quantity"=>$quantity,"price"=>$quantity->price,"sale_price"=>$quantity->sale_price],200);
+                // return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là : ".$quantity->quantity,"quantity"=>$quantity->quantity,"price"=>$quantity->price,"sale_price"=>$quantity->sale_price],200);
+            }else{
+                return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là  : 0"],404);
+            }
+        }
+        else if($request->size_id == null && $request->color_id != null){
+            $quantity = ProductVariant::where('product_id',$request->product_id)->where('color_id',$request->color_id)->selectRaw('sale_price, price, SUM(quantity)')->first();
+            if($quantity != null){
+                return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là  : ".$quantity->quantity,"quantity"=>$quantity,"price"=>$quantity->price,"sale_price"=>$quantity->sale_price],200);
+            }else{
+                return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là  : 0"],404);
+            }
+            // return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là  : ".$quantity->quantity,"quantity"=>$quantity,"price"=>$quantity->price,"sale_price"=>$quantity->sale_price],200);
+        }
+        else if($request->size_id != null && $request->color_id != null){
+            $quantity = ProductVariant::where('product_id',$request->product_id)->where('size_id',$request->size_id)->where('color_id',$request->color_id)->selectRaw('sale_price, price, quantity')->first();
+            if($quantity != null){
+                return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là  : ".$quantity->quantity,"quantity"=>$quantity,"price"=>$quantity->price,"sale_price"=>$quantity->sale_price],200);
+            }else{
+                return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là  : 0"],404);
+            }
+        }
     }
 }

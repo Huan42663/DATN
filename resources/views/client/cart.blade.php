@@ -4,10 +4,10 @@
 
 @section('content')
 
+<div class="fs-3 fw-bold text-center mb-3 mt-5">
+    GIỎ HÀNG
+</div>
 <div class="cart-block md:py-10 py-10" style="background-color:white">
-    <div class="heading5 text-center">
-        GIỎ HÀNG
-    </div>
     <div class="container mt-3">
         <div class="content-main flex justify-between max-xl:flex-col gap-y-8">
             <div class="xl:w-2/3 xl:pr-3 w-full">
@@ -30,7 +30,7 @@
                             <tbody id ="product-list">
                                 @foreach($cart['Cart'] as $item)
                                 <tr>
-                                    <th scope="row"><input type="checkbox" name="cart_variant_id[]" id ="cart_variant_id{{$item->cart_detail_id}}" value="{{$item->cart_detail_id}}" data-price ={{$item->total}} ></th>
+                                    <th scope="row"><input type="checkbox" name="cart_variant_id[]" id ="cart_variant_id{{$item->cart_detail_id}}" value="{{$item->cart_detail_id}}" data-price={{$item->total}} ></th>
                                     <td>
                                         <div class="d-flex">
                                             <a href="{{route('Client.product.detail',$item->product_slug)}}"><img class="me-3" src="{{asset('storage/'.$item->product_image)}}" alt="" width="100"/></a>
@@ -43,7 +43,7 @@
                                     <td >
                                         <div class="input-group mb-3 text-center" style="width: 140px;">
                                             <button class="btn btn-outline-secondary" type="button" id="decrement">-</button>
-                                            <input type="text" id="{{"quantity_".$item->cart_detail_id}}" class="form-control text-center" value="{{$item->quantity}}" aria-label="Recipient's username" aria-describedby="button-addon2" disabled>
+                                            <input type="text" min ="1" id="{{"quantity_".$item->cart_detail_id}}" class="form-control text-center" value="{{$item->quantity}}" aria-label="Recipient's username" aria-describedby="button-addon2" disabled>
                                             <span class="{{"quantity_".$item->cart_detail_id}}" hidden>{{$item->Instock}}</span>
                                             <button class="btn btn-outline-secondary" id="increment" type="button">+</button>
                                         </div>
@@ -100,12 +100,12 @@
                         </div>
                     </div>
                     <div class="block-button flex flex-col items-center gap-y-4 mt-5 ">
-                        <form action="{{route('Client.orders.orderCart')}}" method="get" id="checkout" onsubmit="return Checkout()">
-                            @csrf
+                        {{-- <form action="{{route('Client.orders.orderCart')}}" method="POST" id="checkout" onsubmit="return Checkout()">
+                            @csrf  --}}
                             <input type="hidden" id="product" name="product[]">
-                            <button class="checkout-btn button-main text-center w-full bg-black text-white" type="submit">Đặt Hàng</button>
-                        </form>
-                        <a class="text-button hover-underline" href="{{route('Client.Home')}}">Continue shopping</a>
+                            <button class="checkout-btn button-main text-center w-full bg-black text-white" id ="order">Đặt Hàng</button>
+                        {{-- </form> --}}
+                        <a class="text-button hover-underline" href="{{route('Client.Home')}}">Tiếp tục mua sắm</a>
                     </div>
                 </div>
             </div>
@@ -116,20 +116,58 @@
     <input type="hidden" id="error" value="{{session('error')}}">
 @endif
 <script>
+    $('#order').click(function() {
+        const product_id = $('#product').val();
+            if(product_id == ""){
+                swal({
+                    icon: "error",
+                    title: "Vui lòng chọn sản phẩm",
+                    })
+            }else{
+                // const product_id1 = $('#product').val();
+                $.ajax({
+                    url: "{{route('Client.orders.orderCart1')}}", // Đường dẫn đến controller
+                    type: 'POST',
+                    data: {
+                            _token : $('meta[name="csrf-token"]').attr('content'),
+                            "product_id" : product_id,
+                        },
+                    success: function(response) {
+                        window.location.href = "{{route('Client.orders.orderCart')}}";
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        swal({
+                        icon: "error",
+                        title: jqXHR.responseJSON.data,
+                        }.then(()=>{
+                            if(jqXHR.responseJSON.route != ""){
+                                window.location.href = "{{route('Client.cart.list')}}";
+                            }
+                        }));
+                    }
+                });
+            }
+        console.log(product_id);
+    })
+
+
     const error = document.getElementById('error');
     if(error){
         if(error.value !=""){
-        alert(error.value);
+            swal({
+                icon: "error",
+                title: error.value,
+            });
     }
     }
-    function Checkout() {
-        const cart_detail_id = document.getElementById('product').value;
-        if (cart_detail_id == "") {
-            alert("Vui lòng chọn sản phẩm");
-            return false; 
-        }
-        return true;
-    }
+    // function Checkout() {
+    //     const cart_detail_id = document.getElementById('product').value;
+    //     if (cart_detail_id == "") {
+    //         alert("Vui lòng chọn sản phẩm");
+    //         return false; 
+    //     }
+    //     return true;
+    // }
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     const totalElement = document.getElementById('totalPrice');
 
@@ -176,20 +214,11 @@
             },
             dataType: "json",
             success: function(data) {
-                if(responseData){
-                    quantityElement.value= parseInt(quantityElement.value) + 1;
-                  
-                }else{
-                    quantityElement.value= parseInt(quantityElement.value) - 1;
-                }
-                const totalPrice = (parseInt(price.innerHTML) *  quantityElement.value);
-                total.innerHTML =  `${Intl.NumberFormat('vi').format(totalPrice)} VNĐ `;
-                const productElement = document.getElementById(`cart_variant_id${cart_detail_id}`);
-                productElement.dataset.price = totalPrice;
+                // const totalPrice = (parseInt(price.innerHTML) *  quantityElement.value);
+                // total.innerHTML =  `${Intl.NumberFormat('vi').format(totalPrice)} VNĐ `;
+                // const productElement = document.getElementById(`cart_variant_id${cart_detail_id}`);
+                // productElement.dataset.price = totalPrice;
             },
-            error: function(){
-                alert("Lỗi Vui lòng thử lại")
-            }
         })
     }
     const productList = document.getElementById('product-list');
@@ -201,8 +230,10 @@
             
             // Lấy ID của phần tử span chứa số lượng tương ứng với nút được click
             const quantityId = button.parentElement.querySelector('input').id;
+            console.log(quantityId);
             // // Lấy phần tử span đó
             const quantityElement = document.getElementById(quantityId);
+            console.log(quantityElement.value);
             const quantityElement1 = document.querySelector(`span.${quantityId}`);
             const IdCart_detail = quantityId.split('_');
             const id =parseInt(IdCart_detail[1]) ;
@@ -211,9 +242,18 @@
             var total = document.getElementById(`total_${id}`);
             // // // Tăng giá trị số lượng lên 1
             if(parseInt(quantityElement1.textContent) > quantityElement.value ){
-                edit_data(id,(parseInt(quantityElement.value) + 1),quantityElement,responseData,price,total); 
+                quantityElement.value = parseInt(quantityElement.value) + 1;
+                var check = quantityElement.value;
+                edit_data(id,check,quantityElement,responseData,price,total); 
+                const totalPrice = (parseInt(price.innerHTML) *  quantityElement.value);
+                total.innerHTML =  `${Intl.NumberFormat('vi').format(totalPrice)} VNĐ `;
+                const productElement = document.getElementById(`cart_variant_id${id}`);
+                productElement.dataset.price = totalPrice;
+
                 const checkboxes = document.getElementsByName("cart_variant_id[]");
                 checkboxes.forEach(checkbox => checkbox.checked = false);
+                $('#product').val("");
+                totalElement.innerHTML = "0 VNĐ"
             }
             
         });
@@ -232,10 +272,19 @@
             var total = document.getElementById(`total_${id}`);
             // // // Tăng giá trị số lượng lên 1
             var responseData = false;
-            if(quantityElement.value >1){
-                edit_data(id,(parseInt(quantityElement.value) - 1),quantityElement,responseData,price,total); 
+            if(quantityElement.value > 1){
+                quantityElement.value = parseInt(quantityElement.value) - 1;
+                var check = quantityElement.value;
+                edit_data(id,check,quantityElement,responseData,price,total); 
+                const totalPrice = (parseInt(price.innerHTML) *  quantityElement.value);
+                total.innerHTML =  `${Intl.NumberFormat('vi').format(totalPrice)} VNĐ `;
+                const productElement = document.getElementById(`cart_variant_id${id}`);
+                productElement.dataset.price = totalPrice;
+
                 const checkboxes = document.getElementsByName("cart_variant_id[]");
                 checkboxes.forEach(checkbox => checkbox.checked = false);
+                $('#product').val("");
+                totalElement.innerHTML = "0 VNĐ"
             }
         });
     });

@@ -10,7 +10,7 @@
             </div>
             <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">create</li>
+                <li class="breadcrumb-item">Thêm mới</li>
             </ul>
         </div>
     </div>

@@ -2,14 +2,14 @@
     <div class="footer-main bg-surface">
         <div class="container">
             <div class="content-footer py-[60px] flex justify-between flex-wrap gap-y-8">
-                <div class="company-infor basis-1/4 max-lg:basis-full pr-7"><a class="logo" href="index.html">
-                        <div class="heading4">JS STORE</div>
+                <div class="company-infor basis-1/4 max-lg:basis-full pr-7"><a class="logo" href="{{route('Client.Home')}}">
+                        <div class="heading4">JSTORE</div>
                     </a>
                     <div class="flex gap-3 mt-3">
                         <div class="flex flex-col "><span class="text-button">Mail:</span><span
                                 class="text-button mt-3">Phone:</span><span class="text-button mt-3">Address:</span>
                         </div>
-                        <div class="flex flex-col "><span class="">jsstore@gmail.com</span><span
+                        <div class="flex flex-col "><span class="">jstore@gmail.com</span><span
                                 class="mt-3">0987654321</span><span class="mt-3 pt-px">549 Oak St.Crystal
                                 Lake,
                                 IL 60014</span></div>

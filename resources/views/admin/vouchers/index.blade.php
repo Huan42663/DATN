@@ -75,7 +75,7 @@
                                     <td>
                                         <span  class="d-block mb-1">
                                             @if ($value->value > 100 )
-                                                {{$value->value."VND"}}
+                                                {{number_format($value->value, 0, ',', '.') . 'VNĐ';}}
                                             @else
                                                 {{$value->value."%"}}
                                             @endif

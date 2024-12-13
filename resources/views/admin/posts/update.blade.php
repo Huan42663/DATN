@@ -44,13 +44,21 @@
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="title" name="title"
                                                 placeholder="Title vd: Hello World I'am JS Store" 
-                                                @if (old('title'))
+                                                @if (isset($_SESSION['data']['title']))
+                                                    value = "{{$_SESSION['data']['title']}}"
+                                                @elseif (old('title'))
                                                     value="{{old('title')}}"
                                                 @else
                                                     value="{{$post[0]->title}}"
                                                 @endif
                                                 >
                                         </div>
+                                        @error('title')
+                                        <span class="text-danger">{{$message}}</span>
+                                        @enderror
+                                        @if(session('title'))
+                                        <span class="text-danger">{{session('title')}}</span>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="row mb-4 align-items-center">
@@ -62,7 +70,9 @@
                                             <select name="category_post_id" class="form-control" id="">
                                                 @foreach ($categoryPost as $value)
                                                     <option value="{{$value->category_post_id}}"
-                                                        @if (old('category_post_id'))
+                                                        @if(isset($_SESSION['data']['category_post_id']))
+                                                            @selected($value->category_post_id == $_SESSION['data']['category_post_id'])
+                                                        @elseif (old('category_post_id'))
                                                             @selected($value->category_post_id == old('category_post_id'))
                                                         @else
                                                             @selected($value->category_post_id == $post[0]->category_post_id)
@@ -71,6 +81,9 @@
                                                 @endforeach
                                             </select>
                                         </div>
+                                        @error('category_post_id')
+                                        <span class="text-danger">{{$message}}</span>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="row mb-4 align-items-center">
@@ -104,8 +117,11 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <textarea name="short_description" id="short_description" cols="10" rows="3"  class="form-control">@if(!empty(old('short_description'))){{old('short_description')}}@else{{$post[0]->short_description}} @endif</textarea>
+                                            <textarea name="short_description" id="short_description" cols="10" rows="3"  class="form-control">@if(isset($_SESSION['data']['short_description'])) {{$_SESSION['data']['short_description']}} @elseif(!empty(old('short_description'))){{old('short_description')}}@else{{$post[0]->short_description}} @endif</textarea>
                                         </div>
+                                        @error('short_description')
+                                        <span class="text-danger">{{$message}}</span>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="row mb-4 align-items-center">
@@ -114,8 +130,11 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <textarea name="content" id="editor" cols="30" rows="10" class="form-control">@if(!empty(old('content'))){{old('content')}}@else{{$post[0]->content}} @endif</textarea>
+                                            <textarea name="content" id="editor" cols="30" rows="10" class="form-control">@if(isset($_SESSION['data']['content'])) {{$_SESSION['data']['content']}} @elseif(!empty(old('content'))){{old('content')}}@else{{$post[0]->content}} @endif</textarea>
                                         </div>
+                                        @error('content')
+                                        <span class="text-danger">{{$message}}</span>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="d-flex">

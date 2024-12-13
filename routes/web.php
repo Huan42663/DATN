@@ -208,8 +208,10 @@ Route::prefix('/')->group(function () {
     // ROUTE PRODUCT
     Route::get('products', [CLientProductController::class, 'index'])->name('Client.product.list');
     Route::get('products/search', [CLientProductController::class, 'index'])->name('Client.product.search');
-    Route::get('products/{slug}', [CLientProductController::class, 'index'])->name('Client.product.category');
+    Route::get('category-{slug}', [CategoryController::class, 'show'])->name('Client.product.category');
     Route::get('products/detail/{slug}', [CLientProductController::class, 'productDetail'])->name('Client.product.detail');
+    Route::post('products/getQuantity', [CLientProductController::class, 'getQuantity'])->name('Client.product.getQuantity');
+
 
     // ROUTE CART
     Route::middleware('auth')->group(function () {
@@ -245,25 +247,35 @@ Route::prefix('/')->group(function () {
 
     Route::get('posts/{slug}', [ClientPostController::class, 'detail'])->name('Client.posts.detail');
 
+    Route::get('thankyou', [ClientOrderController::class, 'thank'])->name('Client.orders.thank');
+
     Route::middleware('auth')->group(function () {
         // ROUTE ORDER
         Route::get('orders', [ClientOrderController::class, 'index'])->middleware('auth')->name('Client.orders.list');
         // Route::post('orders/create', [ClientOrderController::class, 'create'])->name('Client.orders.create');
+        Route::post('orders/cart', [ClientOrderController::class, 'orderCart1'])->name('Client.orders.orderCart1');
         Route::get('orders/create', [ClientOrderController::class, 'orderCart'])->name('Client.orders.orderCart');
+        Route::post('orders/voucher', [ClientOrderController::class, 'voucher'])->name('Client.orders.voucher');
         Route::post('orders', [ClientOrderController::class, 'store'])->name('Client.orders.store');
         Route::get('orders/{order_code}/{order_id}', [ClientOrderController::class, 'show'])->middleware('auth')->name('Client.orders.show');
         Route::put('orders/{order}', [ClientOrderController::class, 'show'])->name('Client.orders.update');
-        Route::post('order/{order_code}/{order_id}', [CLientOrderController::class, 'cancel'])->middleware('auth')->name('Client.orders.cancel');
-        Route::post('order/{order_code}/{order_id}/confirmDelivered', [CLientOrderController::class, 'confirmDelivered'])->middleware('auth')->name('Client.orders.confirmDelivered');
+        Route::post('order/cancel', [CLientOrderController::class, 'cancel'])->middleware('auth')->name('Client.orders.cancel');
+        Route::post('order/confirmDelivered', [CLientOrderController::class, 'confirmDelivered'])->middleware('auth')->name('Client.orders.confirmDelivered');
+        Route::post('order/return', [CLientOrderController::class, 'return'])->middleware('auth')->name('Client.orders.return');
+
+        Route::get('/vnpay_payment',[CLientOrderController::class, 'vnpay_payment'])->middleware('auth')->name('Client.orders.vnpay_payment');
     });
 
     // ROUTE RATE
     Route::get('rate/{product_id}/{order_code}', [ClientOrderController::class, 'rates'])->name('Client.rate');
     Route::post('order/rate', [ClientOrderController::class, 'CreateRate'])->name('Client.orders.createRate');
 
-    Route::get('category-{slug}', [CategoryController::class, 'show'])->name('Client.product.category');
 
     // ROUTE EVENT
     Route::get('events/', [ClientEventController::class, 'index'])->name('Client.events.list');
     Route::get('events/show-{slug}', [ClientEventController::class, 'show'])->name('Client.events.show');
 })->name('Client');
+
+Route::fallback(function () {
+    return redirect()->back();
+});

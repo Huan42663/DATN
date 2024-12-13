@@ -3,7 +3,7 @@
 
 @section('content')
     <!-- Nút quay lại -->
-    <div style="margin: 20px 0 0 250px; display: flex; align-items: center; gap: 10px;">
+    <div class="container mt-5" style=" display: flex; align-items: center; gap: 10px;">
         <a href="{{ route('Client.orders.list') }}"
             style="text-decoration: none; color: #0b2c50; font-weight: bold; transition: color 0.3s ease;"
             onmouseover="this.style.color='#0056b3'" onmouseout="this.style.color='#007bff'">
@@ -134,18 +134,41 @@
                             <span style="text-align: left; padding-left: 10px; font-weight: bold; color: #2c3e50;">
                                 {{ $detail->product->product_name ?? 'Không tồn tại' }}
                             </span>
-                            <span style="text-align: center; color: #16a085; font-weight: bold;">
-                                {{ number_format($detail->price, 0, ',', '.') }} đ
+                            <span style="text-align: left; padding-left: 10px; font-size:14px;">
+                                @if($detail->sale_price !=null || $detail->sale_price > 0)
+                                    <span  class="d-block text-danger" style="font-size:14px; font-weight: 700">{{number_format($detail->sale_price, 0, ',', '.') . ' VNĐ';}}</span> 
+                                    <del class="text-secondary">{{number_format($detail->price, 0, ',', '.') . ' VNĐ';}}</del>
+                                @else
+                                    <span  class="d-block mb-1 text-danger">{{number_format($detail->price, 0, ',', '.') . ' VNĐ';}}</span>
+                                @endif
                             </span>
-                            <span style="text-align: center; color: #7f8c8d;">
-                                {{ $detail->size ?? 'Không có' }}
-                            </span>
-                            <span style="text-align: center; color: #7f8c8d;">
-                                {{ $detail->color ?? 'Không có' }}
-                            </span>
-                            <span style="text-align: center; font-weight: bold; color: #2c3e50;">
-                                {{ $detail->quantity }}
-                            </span>
+                            {{-- <span style="text-align: center;">
+                                {{ number_format($detail->sale_price, 0, ',', '.') ." VNĐ"}} 
+                            </span> --}}
+
+                            <span style="text-align: center;">{{ $detail->size ?? 'Không có' }}</span>
+                            <span style="text-align: center;">{{ $detail->color ?? 'Không có' }}</span>
+                            <span style="text-align: center;">{{ $detail->quantity }}</span>
+                            @if($order->status == "received")
+                                @php
+                                    $check = (new App\Models\Rate)::query()->join('products','rates.product_id','=','products.product_id')
+                                            ->leftJoin('product_variant','rates.product_variant_id','=','product_variant.product_variant_id')
+                                            ->leftJoin('sizes','product_variant.size_id','=','sizes.size_id')
+                                            ->leftJoin('colors','product_variant.color_id','=','colors.color_id')
+                                            ->where('rates.order_id',$order->order_id)
+                                            ->where('rates.product_id',$detail->product_id)
+                                            ->where('sizes.size_name',$detail->size)
+                                            ->where('colors.color_name',$detail->color)->first();
+                                @endphp
+                                @if($check == null)
+                                    <a href="{{ route('Client.rate', ['product_id'=>$detail->product_id,'order_code'=>$order->order_code]) }}"
+                                        >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen-fill" viewBox="0 0 16 16">
+                                            <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001"/>
+                                        </svg>
+                                    </a>
+                                @endif
+                            @endif
                         </div>
                     @endforeach
 
@@ -154,46 +177,158 @@
 
                 <!-- Tổng Tiền -->
                 <div
-                    style="display: flex; justify-content: space-between; align-items: center; background-color: #476889; color: #ffffff; padding: 15px 20px; margin-top: 20px; font-size: 18px; font-weight: bold; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                    <strong>Tổng Tiền:</strong>
-                    <span style="font-size: 20px; color: #f1c40f;">{{ number_format($order->total, 0, ',', '.') }}
-                        đ</span>
+                    style="border: 1px solid #e0e0e0; padding: 15px; margin-top: 20px; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="color: #333;">Tổng Tiền:</strong>
+                    <span style="color: #f44336;">{{ number_format($order->total_discount, 0, ',', '.') }} đ</span>
                 </div>
-
 
                 <!-- Nút hành động -->
                 <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                    <input type="hidden" id="order_code" value="{{$order->order_code}}">
                     <!-- Hủy đơn hàng -->
                     @if ($order->status == 'unconfirm')
-                        <form action="{{ route('Client.orders.cancel', [$order->order_code, $order->order_id]) }}"
-                            method="POST" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
-                            @csrf
-                            @method('POST')
-                            <input type="hidden" name="cancleShow" value="cancleShow">
-                            <button type="submit"
-                                style="background-color: #ff5722; color: white; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
-                                Hủy Đơn Hàng
-                            </button>
-                        </form>
+                        <button type="button" id="cancel"   onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này không')"
+                            style="width: 260px; max-width: 260px; padding: 10px 15px; font-size: 15px; background-color: #e74c3c; color: white; border-radius: 5px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center;">
+                            Hủy đơn hàng
+                        </button>
                     @endif
 
                     <!-- Xác nhận đã nhận hàng -->
                     @if ($order->status == 'delivered')
-                        <form
-                            action="{{ route('Client.orders.confirmDelivered', [$order->order_code, $order->order_id]) }}"
-                            method="POST" onsubmit="return confirm('Bạn đã nhận đơn hàng này?')">
-                            @csrf
-                            @method('POST')
-                            <input type="hidden" name="delivereShow" value="delivereShow">
-                            <button type="submit"
-                                style="background-color: #10b848; color: white; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
-                                Xác Nhận Đã Nhận Hàng
-                            </button>
-                        </form>
+                        <button type="submit" id="confirm" 
+                            style="width: 260px; max-width: 260px; padding: 10px 15px; font-size: 15px; background-color: #28a745; color: white; border-radius: 5px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center;">
+                            Xác nhận đã nhận hàng
+                        </button>
+                        <button type="submit" id="return" onclick="return confirm('Bạn có chắc muốn trả đơn hàng này không')"
+                            style="width: 260px; max-width: 260px; padding: 10px 15px; font-size: 15px; background-color: black; color: white; border-radius: 5px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center;">
+                            Trả hàng
+                        </button>
                     @endif
                 </div>
             </div>
+            <script>
+                $('#cancel').click(function(){
+                    var order_code = $('#order_code').val();
+                    const route = "{{route('Client.orders.cancel')}}"
+                    $.ajax({
+                        url: route ,
+                        method: "POST",
+                        data: {
+                            _token : $('meta[name="csrf-token"]').attr('content'),
+                            order_code: order_code,
+                        },
+                        dataType: "json",
+                        success: function(response) {
+                            swal({
+                                icon: "success",
+                                title:response.data,
+                            }).then(()=>{
+                                $('#order_status').html(`<span class="badge bg-soft-danger text-danger">Hủy</span>`)
+                                $('#cancel').addClass('d-none')
+                            });
+                        },
+                        error: function(error){
+                            swal({
+                                icon: "error",
+                                title: error.responseJSON.data,
+                            }.then(()=>{
+                            if (error.responseJSON.order_status == 'unconfirm'){
+                                $('#order_status').html(` <span class="badge bg-warning text-dark">Chờ Xác Nhận</span>`)
+                            }
+                            else if (error.responseJSON.order_status == 'confirmed'){
+                                $('#order_status').html(`<span class="badge bg-success text-light">Đã Xác Nhận</span>`)
+                                 $('#cancel').addClass('d-none')
+                            }
+                            else if (error.responseJSON.order_status == 'shipping'){
+                                $('#order_status').html(` <span class="badge bg-info text-dark">Đang Vận Chuyển</span>`)
+                                 $('#cancel').addClass('d-none')
+                            }
+                            else if (error.responseJSON.order_status == 'delivered'){
+                                $('#order_status').html(`<span class="badge bg-success text-light">Đã Giao Đến Khách Hàng</span>`)
+                                 $('#cancel').addClass('d-none')
+                            }
+                            else if (error.responseJSON.order_status == 'received'){
+                                $('#order_status').html(`<span class="badge bg-success text-light">Đã Xác Nhận Nhận Hàng</span>`)
+                                 $('#cancel').addClass('d-none')
+                            }
+                            else if (error.responseJSON.order_status == 'canceled'){
+                                $('#order_status').html(`<span class="badge bg-danger text-light">Hủy</span>`)
+                            }
+                            else if (error.responseJSON.order_status == 'return'){
+                                $('#order_status').html(`<span class="badge bg-dark text-light">Trả Hàng</span>`)
+                                 $('#cancel').addClass('d-none')
+                            }
+                               
+                            }))
+                        }
+                    });
+                    
+                });
+            
+                $('#confirm').click(function(){
+                    var order_code = $('#order_code').val();
+                    const route = "{{route('Client.orders.confirmDelivered')}}"
+                    $.ajax({
+                        url: route ,
+                        method: "POST",
+                        data: {
+                            _token : $('meta[name="csrf-token"]').attr('content'),
+                            order_code: order_code,
+                        },
+                        dataType: "json",
+                        success: function(response) {
+                            swal({
+                                icon: "success",
+                                title:response.data,
+                            }).then(()=>{
+                                $('#order_status').html(`<span class="badge bg-soft-success text-success">Đã Xác Nhận Nhận Hàng</span>`)
+                                $('#confirm').addClass('d-none')
+                                $('#return').addClass('d-none')
+                            });
+                        },
+                        error: function(error){
+                            swal({
+                                icon: "error",
+                                title: error.responseJSON.data,
+                            })
+                        }
+                    });
+                    
+                });
 
+                $('#return').click(function(){
+                    var order_code = $('#order_code').val();
+                    const route = "{{route('Client.orders.return')}}"
+                    $.ajax({
+                        url: route ,
+                        method: "POST",
+                        data: {
+                            _token : $('meta[name="csrf-token"]').attr('content'),
+                            order_code: order_code,
+                        },
+                        dataType: "json",
+                        success: function(response) {
+                            swal({
+                                icon: "success",
+                                title:response.data,
+                            }).then(()=>{
+                                $('#order_status').html(`<span class="badge bg-dark text-light">Trả hàng</span>`)
+                                $('#confirm').addClass('d-none')
+                                $('#return').addClass('d-none')
+                            });
+                        },
+                        error: function(error){
+                            swal({
+                                icon: "error",
+                                title: error.responseJSON.data,
+                            })
+                        }
+                    });
+                    
+                });
+            
+            
+            </script>
             <!-- Phần bên phải: Bill hóa đơn -->
             <div
                 style="flex: 1; max-width: 450px; border: 1px solid #dcdcdc; border-radius: 10px; padding: 30px; background: #ffffff; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
@@ -243,23 +378,66 @@
                         <span
                             style="color: #444; font-weight: bold;">{{ number_format($ship, 0, ',', '.') . ' VNĐ' }}</span>
                     </div>
-                    <div
-                        style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; line-height: 1.5;">
-                        <strong style="color: #333;">Tiền được giảm:</strong>
-                        <span style="color: #007bff; font-weight: bold;">
-                            {{ number_format($giamGia, 0, ',', '.') . ' VNĐ' }}
-                        </span>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>Ngày đặt hàng:</strong> <span>{{ $order->created_at }}</span>
                     </div>
-                    <div
-                        style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 18px; line-height: 1.5; font-weight: bold; border-top: 1px dashed #e0e0e0; padding-top: 15px;">
-                        <strong style=" font-size: 16px;">Tổng thanh toán:
-                        </strong>
-                        <strong >
-                            <span style="color: #f41808; font-size: 20px;" >{{ number_format($order->total_discount, 0, ',', '.') . ' VNĐ' }}</span>
-                        </strong>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>Tổng giá trị sản phẩm:</strong><span>{{number_format($order->total-30000, 0, ',', '.') . ' VNĐ';}}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>Phí vận chuyển:</strong><span>{{number_format(30000, 0, ',', '.') . ' VNĐ';}}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>Khuyến mãi:</strong><span>{{number_format($order->total - $order->total_discount, 0, ',', '.') . ' VNĐ';}}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>Tổng Tiền:</strong>
+                        @if($order->total > $order->total_discount && $order->total_discount !=null )
+                            <span class="text-danger">{{number_format($order->total_discount, 0, ',', '.') . ' VNĐ';}}</span>
+                        @else
+                            <span class="text-danger">{{number_format($order->total, 0, ',', '.') . ' VNĐ';}}</span>
+                        @endif
                     </div>
 
-
+                    @if($orderBill != null)
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;" class="mt-1">
+                        <strong class="fs-bold fw-5">Thông tin giao dịch</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>Mã ngân hàng:</strong><span>{{$orderBill->bank_code}}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>Mã giao dịch:</strong><span>{{$orderBill->bank_tranno}}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>Số tiền giao dịch:</strong><span>{{number_format($orderBill->amount, 0, ',', '.') . ' VNĐ';}}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>Loại thẻ:</strong><span>{{$orderBill->card_type}}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>Mã giao dịch VnPay:</strong><span>{{$orderBill->vnpay_transactionno}}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>Thời gian giao dịch</strong><span>{{$orderBill->created_at}}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>Tổng Tiền Cần Thu:</strong>
+                            <span class="text-danger"> 0 VNĐ</span>
+                    </div>
+                    @if($order->method_payment == "banking")
+                        @if($order->status == 'return' && $order->status == 'canceled')
+                        <div style="display: flex; justify-content: end; margin-bottom: 10px;">
+                            <span class="badge bg-soft-success text-success fs-6">Đã Hoàn Trả</span>
+                        </div>
+                        @else
+                        <div style="display: flex; justify-content: end; margin-bottom: 10px;">
+                            <span class="badge bg-soft-success text-success fs-6">Đã Thanh Toán</span>
+                        </div>
+                        @endif
+                    @endif
+                    @endif
+                   
                 </div>
 
                 <!-- Thông điệp cảm ơn -->
@@ -271,8 +449,10 @@
                 <!-- Thương hiệu -->
                 <div style="text-align: center; margin-top: 30px;">
                     <h1
-                        style="font-size: 36px; color: #486078; font-family: 'Georgia', serif; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px;">
-                        JS Store
+                        style="font-size: 50px; color: #333; font-family: 'Georgia', serif; font-weight: 600; letter-spacing: 2px; 
+                    text-transform: uppercase; 
+                    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);">
+                        JSTORE
                     </h1>
                     <p style="font-size: 16px; color: #7f8c8d; font-style: italic;">Chất lượng và uy tín cho mọi sản phẩm
                     </p>
@@ -280,7 +460,12 @@
             </div>
 
         </div>
-
+        @if (session('message'))
+            <input type="hidden" id="messagecheck" value="{{session('message')}}">
+        @endif
+        @if (session('status'))
+            <input type="hidden" id="statuscheck" value="{{session('status')}}">
+        @endif
         <style>
             /* Thương hiệu với text-shadow nhẹ */
             @keyframes glowing {
@@ -329,8 +514,27 @@
             </div>
         </div>
     </div>
-
+       
     <script>
+
+        const check = document.getElementById('messagecheck');
+        const check1 = document.getElementById('statuscheck');
+
+        if(check != null && check1 != null){
+            if(check1.value == "false"){
+                    swal({
+                    icon: "error",
+                    title: check.value,
+                });
+            }
+            else{
+                swal({
+                icon: "success",
+                title: check.value,
+            });
+            }
+        }
+
         // Hiển thị tooltip khi di chuột qua biểu tượng
         const supportIcon = document.getElementById('support-icon');
         const tooltip = document.getElementById('tooltip');
@@ -374,8 +578,8 @@
 
 
 @endsection
-<!-- Bootstrap CSS -->
+{{-- <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- Bootstrap JS (đặt trước </body>) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> --}}
