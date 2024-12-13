@@ -75,19 +75,20 @@
                     <div class="row">
                         <p class="fs-1">Sự Kiện: {{ $event->event_name }}</p>
                     </div>
-                    <div class="whate-new-block">
-                        <div class="container">
-                            <div
-                                class="list-product hide-product-sold grid lg:grid-cols-4 grid-cols-2 sm:gap-[30px] gap-[20px] md:mt-10 mt-6">
-        
-                                @if ($products != [])
+                    @if ($products != [])
+                        <div class="whate-new-block">
+                            <div class="container">
+                                <div
+                                    class="list-product hide-product-sold grid lg:grid-cols-4 grid-cols-2 sm:gap-[30px] gap-[20px] md:mt-10 mt-6">
+
                                     @foreach ($products as $product)
                                         @include('client.components.whate-block', ['product' => $product])
                                     @endforeach
-                                @endif
+                                </div>
+                                <div class="d-flex justify-content-center">{{ $products->links()}}</div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>

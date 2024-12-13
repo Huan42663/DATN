@@ -1,4 +1,4 @@
-<a class="banner-item relative block overflow-hidden duration-500" href="{{route('events.show',$event->slug)}}">
+<a class="banner-item relative block overflow-hidden duration-500" href="{{route('Client.events.show',$event->slug)}}">
     <div class="banner-img"><img alt="banner1" fetchPriority="high" width="2000" height="1300"
             decoding="async" data-nimg="1" class="duration-1000" style="color:transparent"
             srcSet="{{asset('storage/'.$event->banner)}} 1x, {{asset('storage/'.$event->banner)}} 2x"
