@@ -3,138 +3,195 @@
 
 @section('content')
 
-    <div class="order-tracking py-10 bg-light" style="background-color: #f8f9fa; padding: 40px 0;">
-        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 15px;">
-            <div class="content-main">
-                <h4 class="fancy-title">Đơn hàng của bạn</h4>
+<div class="order-tracking py-10 bg-light">
+    <div class="container">
+        <div class="content-main" style="margin-top: 70px">
+            <h4 class="fancy-title">Đơn hàng của bạn</h4>
 
-                <style>
-                    .fancy-title {
-                        font-size: 25px;
-                        font-weight: bold;
-                        color: #333;
-                        margin-bottom: 30px;
-                        text-align: center;
-                        text-transform: uppercase;
-                        position: relative;
-                        display: inline-block;
-                        padding-bottom: 10px;
-                    }
-
-                    .fancy-title::after {
-                        content: '';
-                        position: absolute;
-                        bottom: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 3px;
-                        background-color: #15375c;
-                        transform: scaleX(0);
-                        transform-origin: bottom right;
-                        transition: transform 0.4s ease-out;
-                    }
-
-                    .fancy-title:hover {
-                        color: #548ec8;
-                    }
-
-                    .fancy-title:hover::after {
-                        transform: scaleX(1);
-                        transform-origin: bottom left;
-                    }
-                </style>
-
-
-                <div class="order-list"
-                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; max-width: 100%; margin: 0;">
-                    @forelse ($orders as $order)
-                        <div class="order-item"
-                            style="background-color: #ffffff; border-radius: 15px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); overflow: hidden; transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;">
-                            <!-- Thông tin đơn hàng -->
-                            <div class="order-info" style="margin-bottom: 20px; padding: 20px;">
-                                <h5 class="order-code"
-                                    style="font-size: 20px; font-weight: bold; color: #57b269; margin-bottom: 10px;">
-                                    #{{ $order->order_code }}</h5>
-                                    <input type="hidden" id="{{"order_code".$order->order_code}}" value="{{$order->order_code}}">
-                                    <span class="{{"order_code".$order->order_code}}" hidden></span>
-                                <p class="order-date" style="font-size: 14px; color: #777; margin-bottom: 15px;">Ngày đặt:
-                                    {{ $order->created_at->format('d/m/Y H:i') }}</p>
-                                <div class="order-status mb-3">
-                                    <span style="font-size: 14px; color: #777; margin-bottom: 15px;">Trạng thái:</span>
-                                    <span class="badge"
-                                        style="font-size: 0.875rem; padding: 8px 15px; border-radius: 20px; 
-                                background-color: #f2eeee;" id="order_status">
-
-                                        @if ($order->status == 'unconfirm')
-                                            <span class="badge bg-soft-warning text-warning">Chờ Xác Nhận</span>
-                                        @elseif($order->status == 'confirmed')
-                                            <span class="badge bg-soft-success text-success">Đã Xác Nhận</span>
-                                        @elseif($order->status == 'shipping')
-                                            <span class="badge bg-soft-info text-info">Đang Vận Chuyển</span>
-                                        @elseif($order->status == 'delivered')
-                                            <span class="badge bg-soft-primary text-primary">Đã Giao Đến Khách Hàng</span>
-                                        @elseif($order->status == 'received')
-                                            <span class="badge bg-soft-success text-success">Đã Xác Nhận Nhận Hàng</span>
-                                        @elseif($order->status == 'canceled')
-                                            <span class="badge bg-soft-danger text-danger">Hủy</span>
-                                        @elseif($order->status == 'return')
-                                            <span class="badge bg-soft-dark text-dark">Trả Hàng</span>
-                                        @endif
-                                    </span>
-                                </div>
-                                <div class="order-total" style="font-size: 1.25rem; font-weight: bold; color: #333; margin-bottom: 15px;">
-                                    @if($order->total >= $order->total_discount && $order->total_discount != null)
-                                        <span style="color: #000;">{{"Tổng tiền: ". number_format($order->total_discount, 0, ',', '.') .' VNĐ'}}</span>
-                                    @else
-                                        <span style="color: #000;">{{"Tổng tiền: ". number_format($order->total, 0, ',', '.') .' VNĐ'}}</span>
+            <div class="order-list">
+                @forelse ($orders as $order)
+                    <div class="order-item">
+                        <!-- Thông tin đơn hàng -->
+                        <div class="order-info">
+                            <h5 class="order-code">#{{ $order->order_code }}</h5>
+                            <input type="hidden" id="{{"order_code".$order->order_code}}" value="{{$order->order_code}}">
+                            <span class="{{"order_code".$order->order_code}}" hidden></span>
+                            <p class="order-date">Ngày đặt: {{ $order->created_at->format('d/m/Y H:i') }}</p>
+                            <div class="order-status mb-3">
+                                <span>Trạng thái:</span>
+                                <span class="badge">
+                                    @if ($order->status == 'unconfirm')
+                                        <span class="badge bg-soft-warning text-warning">Chờ Xác Nhận</span>
+                                    @elseif($order->status == 'confirmed')
+                                        <span class="badge bg-soft-success text-success">Đã Xác Nhận</span>
+                                    @elseif($order->status == 'shipping')
+                                        <span class="badge bg-soft-info text-info">Đang Vận Chuyển</span>
+                                    @elseif($order->status == 'delivered')
+                                        <span class="badge bg-soft-primary text-primary">Đã Giao Đến Khách Hàng</span>
+                                    @elseif($order->status == 'received')
+                                        <span class="badge bg-soft-success text-success">Đã Xác Nhận Nhận Hàng</span>
+                                    @elseif($order->status == 'canceled')
+                                        <span class="badge bg-soft-danger text-danger">Hủy</span>
+                                    @elseif($order->status == 'return')
+                                        <span class="badge bg-soft-dark text-dark">Trả Hàng</span>
                                     @endif
-                                    <br>
-                                    @if($order->method_payment == "banking")
-                                        <span class="text-success">Đã Thanh Toán</span>
-                                    @else
-                                        <span style="color:white">Đã Thanh Toán</span>
-                                    @endif
-                                </div>
+                                </span>
                             </div>
+                            <div class="order-total">
+                                @if($order->total >= $order->total_discount && $order->total_discount != null)
+                                    <span>Tổng tiền: {{ number_format($order->total_discount, 0, ',', '.') }} VNĐ</span>
+                                @else
+                                    <span>Tổng tiền: {{ number_format($order->total, 0, ',', '.') }} VNĐ</span>
+                                @endif
+                                <br>
+                                @if($order->method_payment == "banking")
+                                    <span class="text-success">Đã Thanh Toán</span>
+                                @else
+                                    <span>Đã Thanh Toán</span>
+                                @endif
+                            </div>
+                        </div>
 
                         <!-- Phần nút hành động -->
-                        <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 15px;">
-                            <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}"
-                                style="padding: 8px 15px; background-color: #ffffff; border: 1px solid #57b269; color: #57b269; border-radius: 5px; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.3s;">
-                                Xem chi tiết
-                            </a>
-
-                                @if ($order->status == 'unconfirm')
-                                    <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}"
-                                        style="width: 260px; max-width: 260px; padding: 10px 15px; font-size: 15px; background-color: #e74c3c; color: white; border-radius: 5px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center;">
-                                        Hủy đơn hàng
-                                    </a>
-                                        
-                                @endif
-
-                                @if ($order->status == 'delivered')
-                                <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}"
-                                    style="width: 260px; max-width: 260px; padding: 10px 15px; font-size: 15px; background-color: #28a745; color: white; border-radius: 5px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center;">
-                                    Xác nhận đã nhận hàng
-                                </a>
-                                <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}"
-                                    style="width: 260px; max-width: 260px; padding: 10px 15px; font-size: 15px; background-color: black; color: white; border-radius: 5px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center;">
-                                    Trả hàng
-                                </a>
-                                    
-                                @endif
-                            </div>
+                        <div class="order-actions">
+                            <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}" class="btn btn-detail">Xem chi tiết</a>
+                            @if ($order->status == 'unconfirm')
+                                <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}" class="btn btn-cancel">Hủy đơn hàng</a>
+                            @endif
+                            @if ($order->status == 'delivered')
+                                <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}" class="btn btn-confirm">Xác nhận đã nhận hàng</a>
+                                <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}" class="btn btn-return">Trả hàng</a>
+                            @endif
                         </div>
-                    @empty
-                        <div class="alert alert-warning" role="alert"
-                            style="padding: 15px; background-color: #fff3cd; color: #856404; border-radius: 5px; text-align: center;">
-                            Không có đơn hàng nào.
-                        </div>
-                    @endforelse
-                </div>
+                    </div>
+                @empty
+                    <div class="alert alert-warning">Không có đơn hàng nào.</div>
+                @endforelse
             </div>
         </div>
     </div>
+</div>
+
+<style>
+    .order-tracking {
+        padding: 40px 0;
+        background-color: #f8f9fa;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+    .fancy-title {
+        font-size: 25px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 30px;
+        text-align: center;
+        text-transform: uppercase;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 10px;
+    }
+    .fancy-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #15375c;
+        transform: scaleX(0);
+        transform-origin: bottom right;
+        transition: transform 0.4s ease-out;
+    }
+    .fancy-title:hover {
+        color: #548ec8;
+    }
+    .fancy-title:hover::after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+    }
+    .order-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 30px;
+    }
+    .order-item {
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+        overflow: hidden;
+    }
+    .order-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    .order-info {
+        padding: 20px;
+    }
+    .order-code {
+        font-size: 20px;
+        font-weight: bold;
+        color: #57b269;
+        margin-bottom: 10px;
+    }
+    .order-date {
+        font-size: 14px;
+        color: #777;
+        margin-bottom: 15px;
+    }
+    .order-status span {
+        font-size: 14px;
+        color: #777;
+    }
+    .order-total {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 15px;
+    }
+    .order-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        padding: 15px;
+    }
+    .btn {
+        padding: 10px 15px;
+        font-size: 14px;
+        font-weight: bold;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+    .btn-detail {
+        background-color: #fff;
+        color: #57b269;
+        border: 1px solid #57b269;
+    }
+    .btn-cancel {
+        background-color: #e74c3c;
+        color: #fff;
+    }
+    .btn-confirm {
+        background-color: #28a745;
+        color: #fff;
+    }
+    .btn-return {
+        background-color: black;
+        color: #fff;
+    }
+    .alert {
+        padding: 15px;
+        background-color: #fff3cd;
+        color: #856404;
+        border-radius: 5px;
+        text-align: center;
+    }
+</style>
 
 <script>
     // $('#cancel').click(function(){
