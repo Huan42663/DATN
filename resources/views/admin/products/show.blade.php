@@ -123,7 +123,7 @@
                                                             <select name="size_id[]" id="" class="form-control">
                                                                 @foreach ($data4 as $item)
                                                                     <option value="{{ $item->size_id }}"
-                                                                        @selected($item->size_name == $variant->size_name)>{{ $item->size_name }}
+                                                                        @selected($item->size_id == $variant->size_id)>{{ $item->size_name }}
                                                                     </option>
                                                                 @endforeach
                                                             </select>

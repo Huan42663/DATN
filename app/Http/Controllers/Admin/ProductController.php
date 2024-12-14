@@ -906,8 +906,8 @@ class ProductController extends Controller
         // dd($data2);
         $data3 = ImageColor::where('product_id',  $data1[0]->product_id)->get();
 
-        $data4 = Size::query()->get();
-        $data5 = Color::query()->get();
+        $data4 = Size::query()->withTrashed()->get();
+        $data5 = Color::query()->withTrashed()->get();
         // dd($data2);
 
         $_SESSION['product_id'] = $data1[0]->product_id;

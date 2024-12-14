@@ -43,40 +43,43 @@
                         </thead>
                         <tbody>
                             @foreach ($users as $user)
-                                <tr>
-                                    <td>{{ $user->fullName }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td>{{ $user->phone }}</td>
-                                    <td><img src="{{ asset('storage/' . $user->avatar) }}" alt=""></td>
-                                    <td>{{ $user->role }}</td>
-                                    <td>
-                                        @if ($user->status == 1)
-                                            <span class="badge bg-soft-success text-success">Hoạt Động</span>
-                                        @elseif ($user->status == 0)
-                                            <span class="badge bg-soft-danger text-danger">Ngừng Hoạt Động</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-end">
-                                        <div class="hstack gap-2 justify-content-end">
-                                            @if ($user->status > 0)
-                                                <form action="{{ route('Administration.users.destroy', $user) }}"
-                                                    method="POST">
-                                                    @method('PUT')
-                                                    @csrf
-                                                    <button onclick="return confirm('bạn có muốn ngừng hoạt động tài khoản này ?') "
-                                                        class="avatar-text avatar-md">
-                                                        <i class="feather-alert-circle">
-                                                        </i>
-                                                    </button>
-                                                </form>
+                                @if ($user->role < Auth::user()->role)
+                                    <tr>
+                                        <td>{{ $user->fullName }}</td>
+                                        <td>{{ $user->email }}</td>
+                                        <td>{{ $user->phone }}</td>
+                                        <td><img src="{{ asset('storage/' . $user->avatar) }}" alt=""></td>
+                                        <td>{{ $user->role }}</td>
+                                        <td>
+                                            @if ($user->status == 1)
+                                                <span class="badge bg-soft-success text-success">Hoạt Động</span>
+                                            @elseif ($user->status == 0)
+                                                <span class="badge bg-soft-danger text-danger">Ngừng Hoạt Động</span>
                                             @endif
-                                            <a href="{{ route('Administration.users.show', $user) }}"
-                                            class="avatar-text avatar-md">
-                                            <i class="feather-edit"></i>
-                                        </a>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="hstack gap-2 justify-content-end">
+                                                @if ($user->status > 0)
+                                                    <form action="{{ route('Administration.users.destroy', $user) }}"
+                                                        method="POST">
+                                                        @method('PUT')
+                                                        @csrf
+                                                        <button
+                                                            onclick="return confirm('bạn có muốn ngừng hoạt động tài khoản này ?') "
+                                                            class="avatar-text avatar-md">
+                                                            <i class="feather-alert-circle">
+                                                            </i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                <a href="{{ route('Administration.users.show', $user) }}"
+                                                    class="avatar-text avatar-md">
+                                                    <i class="feather-edit"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endif
                             @endforeach
                         </tbody>
                     </table>
