@@ -47,7 +47,8 @@ class OrderController extends Controller
     public function vnpay_payment(){
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
         $_SESSION['thankyou'] = "Dặt hàng thành công";
-        $vnp_Returnurl = "http://127.0.0.1:8000/";
+        $full_url = "http://" . $_SERVER['HTTP_HOST'];
+        $vnp_Returnurl = $full_url;
         $vnp_TmnCode = "KOFSYQXY";//Mã website tại VNPAY 
         $vnp_HashSecret = "UO4KD2T4UW40OS06GPZTCYD58Z15PU4P"; //Chuỗi bí mật
         
@@ -201,6 +202,11 @@ class OrderController extends Controller
             foreach($product_variant as $item){
                 $check = ProductVariant::where('product_variant_id',$product[0]->product_variant_id)->get();
                 if($product[0]->quantity > $check[0]->quantity){
+                    $update = CartDetail::where('product_variant_id', $product[0]->product_variant_id)->get();
+                    foreach($update as $checkupdate){
+                        $checkupdate->quantity =$check[0]->quantity;
+                        $checkupdate->save();
+                    }
                     return response()->json(['data'=>"Số lượng sản phẩm bạn muốn đặt hàng đã vượt quá số lượng của chúng tôi có là" .$check[0]->quantity,'route'=>"reload"],404);
                 }
             }
@@ -292,6 +298,12 @@ class OrderController extends Controller
             ];
             // $_SESSION['infoOrder'] = $data1;
             // dd($_SESSION['infoOrder']);
+            if(isset($_SESSION['voucher'])){
+                if($_SESSION['voucher']->quantity == 0 ||  $_SESSION['voucher']->date_start <= Carbon::now() ||  $_SESSION['voucher']->date_end >=Carbon::now()  ){
+                    unset($_SESSION['voucher']);
+                    return redirect()->back()->with('error_voucher12','Voucher không khả dụng');
+                } 
+            }
             $cart = new CartController();
             $data = $cart->showCart(Auth()->user()->user_id);
             $_SESSION['listCart'] = $data['Cart'];

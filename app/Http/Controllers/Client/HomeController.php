@@ -38,6 +38,7 @@ class HomeController extends Controller
     }
     public function index()
     {
+        
         if(isset($_GET['vnp_ResponseCode']) && $_GET['vnp_ResponseCode'] != 00){
             return redirect()->route('Client.orders.orderCart');
         }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Admin\PostController;
 use App\Models\Size;
+use App\Models\ProductVariant;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -101,6 +102,8 @@ class SizeController extends Controller
         if(isset($request->size_id) && !empty($request->size_id)){
             foreach($request->size_id as $item){
                 $size =Size::query()->find($item);
+                $data = ['quantity'=>0];
+                ProductVariant::where('size_id',$item)->update($data);
                 $size->delete();
             }
             return redirect()->route('Administration.sizes.list')->with('success','Xóa size thành công');

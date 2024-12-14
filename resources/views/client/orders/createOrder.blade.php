@@ -98,7 +98,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleFormControlInput1" class="form-label">Đường</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput1" name="street"
+                                    <input type="text" class="form-control" id="exampleFormControlInput1" name="street" placeholder="Đường (Lưu ý: chỉ được dùng kí hiệu khoảng trắng)"
                                     @if(isset($_SESSION['dataInfo']))
                                         value="{{$_SESSION['dataInfo']['street']}}"
                                     @else
@@ -117,7 +117,7 @@
                                 <input type="hidden" name="ward" id="ward"/>
                                 <div class="mb-3">
                                     <label for="exampleFormControlInput1" class="form-label">Địa Chi Cụ Thể</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput1" name="address"placeholder="Số nhà - đường - thôn/tổ dân phố" 
+                                    <input type="text" class="form-control" id="exampleFormControlInput1" name="address" placeholder="Số nhà  đường  thôn/tổ dân phố (Lưu ý: chỉ được dùng kí hiệu khoảng trắng)" 
                                     @if(isset($_SESSION['dataInfo']))
                                         value="{{$_SESSION['dataInfo']['address']}}"
                                     @else
@@ -133,7 +133,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleFormControlInput1" class="form-label">Note</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput1" name="note" 
+                                    <input type="text" class="form-control" id="exampleFormControlInput1" name="note" placeholder="(Lưu ý: chỉ được dùng kí hiệu khoảng trắng)"
                                     @if(isset($_SESSION['dataInfo']['note']))
                                         value="{{$_SESSION['dataInfo']['note']}}"
                                     @else
@@ -324,6 +324,9 @@
         </div>
     </form>
 </div>
+@if(session('error_voucher12'))
+<input type="hidden" name="error_voucher12" id="error_voucher12" value="{{session('error_voucher12')}}">
+@endif
 @php
     if(isset($_SESSION['voucher'])){
         $_SESSION['check'] = "hello";
@@ -338,6 +341,14 @@
     }
 @endphp
 <script>
+    const error_voucher = document.getElementById('error_voucher12')
+    if(error_voucher != null){
+        // console.log(object);
+        swal({
+            icon: "error",
+            title: error_voucher.value,
+        });
+    }
     const check2 = "{{$_SESSION['check1']}}";
     if(check2 == "false"){
         window.location.href = "{{route('Client.Home')}}";
