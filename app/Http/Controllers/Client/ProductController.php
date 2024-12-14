@@ -238,16 +238,16 @@ class ProductController extends Controller
         if($request->size_id != null && $request->color_id == null){
             $quantity = ProductVariant::where('product_id',$request->product_id)->where('size_id',$request->size_id)->selectRaw('sale_price, price, SUM(quantity) as quantity')->groupBy('sale_price','price')->first();
             if($quantity != null){
-                return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là : ".$quantity->quantity,"quantity"=>$quantity,"price"=>$quantity->price,"sale_price"=>$quantity->sale_price],200);
+                return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là : ".$quantity->quantity,"quantity"=>$quantity->quantity,"price"=>$quantity->price,"sale_price"=>$quantity->sale_price],200);
                 // return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là : ".$quantity->quantity,"quantity"=>$quantity->quantity,"price"=>$quantity->price,"sale_price"=>$quantity->sale_price],200);
             }else{
                 return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là  : 0"],404);
             }
         }
         else if($request->size_id == null && $request->color_id != null){
-            $quantity = ProductVariant::where('product_id',$request->product_id)->where('color_id',$request->color_id)->selectRaw('sale_price, price, SUM(quantity)')->first();
+            $quantity = ProductVariant::where('product_id',$request->product_id)->where('color_id',$request->color_id)->selectRaw('sale_price, price, SUM(quantity) as quantity')->groupBy('sale_price','price')->groupBy('sale_price','price')->first();
             if($quantity != null){
-                return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là  : ".$quantity->quantity,"quantity"=>$quantity,"price"=>$quantity->price,"sale_price"=>$quantity->sale_price],200);
+                return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là  : ".$quantity->quantity,"quantity"=>$quantity->quantity,"price"=>$quantity->price,"sale_price"=>$quantity->sale_price],200);
             }else{
                 return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là  : 0"],404);
             }
@@ -256,7 +256,7 @@ class ProductController extends Controller
         else if($request->size_id != null && $request->color_id != null){
             $quantity = ProductVariant::where('product_id',$request->product_id)->where('size_id',$request->size_id)->where('color_id',$request->color_id)->selectRaw('sale_price, price, quantity')->first();
             if($quantity != null){
-                return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là  : ".$quantity->quantity,"quantity"=>$quantity,"price"=>$quantity->price,"sale_price"=>$quantity->sale_price],200);
+                return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là  : ".$quantity->quantity,"quantity"=>$quantity->quantity,"price"=>$quantity->price,"sale_price"=>$quantity->sale_price],200);
             }else{
                 return response()->json(["data"=>"Số lượng sản phẩm còn trong kho là  : 0"],404);
             }

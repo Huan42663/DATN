@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Color;
+use App\Models\ProductVariant;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -101,6 +102,8 @@ class ColorController extends Controller
         if (isset($request->color_id) && !empty($request->color_id)) {
             foreach ($request->color_id as $item) {
                 $color = Color::query()->find($item);
+                $data = ['quantity'=>0];
+                ProductVariant::where('color_id',$item)->update($data);
                 $color->delete();
             }
             return redirect()->route('Administration.colors.list')->with('success', 'Xóa màu thành công');

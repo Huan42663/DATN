@@ -186,7 +186,11 @@
                                     @elseif($infoOrder[0]->status == 'return')
                                         <span class="badge bg-soft-dark text-dark me-2" style="padding:10px">Trả Hàng</span>
                                     @endif
-                                    @if ($infoOrder[0]->status != 'delivered' && $infoOrder[0]->status != 'received')
+                                    @if (
+                                        $infoOrder[0]->status != 'delivered' &&
+                                            $infoOrder[0]->status != 'received' &&
+                                            $infoOrder[0]->status != 'canceled' &&
+                                            $infoOrder[0]->status != 'return')
                                         <form action="{{ route('Administration.orders.update', $infoOrder[0]->order_id) }}"
                                             method="post" class="d-flex">
                                             @csrf
@@ -258,56 +262,51 @@
                                                                     </td>
                                                                 </tr>
                                                             @endforeach
-                                                            <tr>
-                                                                <td></td>
-                                                                <td></td>
-                                                                <td></td>
-                                                                <td></td>
-                                                                <td></td>
-                                                                <td>
-                                                                    <span
-                                                                        class="d-block mb-1 text-secondary fs-6 fw-bold">{{ 'Giá gốc: ' . number_format($infoOrder[0]->total - 30000, 0, ',', '.') . ' VNĐ' }}</span>
-                                                                    <span
-                                                                        class="d-block mb-1 text-secondary fs-6 fw-bold">{{ 'Phí vận chuyển: ' . number_format(30000, 0, ',', '.') . ' VNĐ' }}</span>
-                                                                    @if ($infoOrder[0]->total > $infoOrder[0]->total_discount && $infoOrder[0]->total_discount != null)
-                                                                        <span
-                                                                            class="text-secondary fs-6 fw-bold">{{ 'Giá khuyến mãi: -' . number_format($infoOrder[0]->total - $infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ' }}</span>
-                                                                        <br>
-                                                                        @if ($bill != null)
-                                                                            <span
-                                                                                class="text-danger fs-4 fw-bold">{{ 'Tổng : ' . number_format($infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ' }}</span>
-                                                                            <span
-                                                                                class="badge bg-soft-success text-success">Đã
-                                                                                Thanh Toán</span>
-                                                                            <span class="text-danger fs-4 fw-bold">Số tiền
-                                                                                cần thu : 0 VNĐ</span>
-                                                                        @else
-                                                                            <span
-                                                                                class="text-danger fs-4 fw-bold">{{ 'Tổng : ' . number_format($infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ' }}</span>
-                                                                            <span
-                                                                                class="text-danger fs-4 fw-bold">{{ 'Số tiền cần thu : ' . number_format($infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ' }}</span>
-                                                                        @endif
-                                                                    @else
-                                                                        @if ($bill != null)
-                                                                            <span
-                                                                                class="text-danger fs-4 fw-bold">{{ 'Tổng : ' . number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ' }}</span>
-                                                                            <span
-                                                                                class="badge bg-soft-success text-success">Đã
-                                                                                Thanh Toán</span>
-                                                                            <span class="text-danger fs-4 fw-bold">Số tiền
-                                                                                cần thu : 0 VNĐ</span>
-                                                                        @else
-                                                                            <span
-                                                                                class="text-danger fs-4 fw-bold">{{ 'Tổng : ' . number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ' }}</span>
-                                                                            <span
-                                                                                class="text-danger fs-4 fw-bold">{{ 'Số tiền cần thu : ' . number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ' }}</span>
-                                                                        @endif
-                                                                    @endif
-                                                                    <br>
-                                                                </td>
-                                                            </tr>
+
                                                         </tbody>
-                                                    </table>
+
+                                                    </table><br>
+                                                    <div style="text-align: center">
+                                                        <td>
+                                                            <span
+                                                                class="d-block mb-1 text-secondary fs-6 fw-bold">{{ 'Giá gốc: ' . number_format($infoOrder[0]->total - 30000, 0, ',', '.') . ' VNĐ' }}</span>
+                                                            <span
+                                                                class="d-block mb-1 text-secondary fs-6 fw-bold">{{ 'Phí vận chuyển: ' . number_format(30000, 0, ',', '.') . ' VNĐ' }}</span>
+                                                            @if ($infoOrder[0]->total > $infoOrder[0]->total_discount && $infoOrder[0]->total_discount != null)
+                                                                <span
+                                                                    class="text-secondary fs-6 fw-bold">{{ 'Giá khuyến mãi: -' . number_format($infoOrder[0]->total - $infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ' }}</span>
+                                                                <br>
+                                                                @if ($bill != null)
+                                                                    <span
+                                                                        class="text-danger fs-4 fw-bold">{{ 'Tổng : ' . number_format($infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ' }}</span>
+                                                                    <span class="badge bg-soft-success text-success">Đã
+                                                                        Thanh Toán</span>
+                                                                    <span class="text-danger fs-4 fw-bold">Số tiền
+                                                                        cần thu : 0 VNĐ</span>
+                                                                @else
+                                                                    <span
+                                                                        class="text-danger fs-4 fw-bold">{{ 'Tổng : ' . number_format($infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ' }}</span>
+                                                                    <span
+                                                                        class="text-danger fs-4 fw-bold">{{ 'Số tiền cần thu : ' . number_format($infoOrder[0]->total_discount, 0, ',', '.') . ' VNĐ' }}</span>
+                                                                @endif
+                                                            @else
+                                                                @if ($bill != null)
+                                                                    <span
+                                                                        class="text-danger fs-4 fw-bold">{{ 'Tổng : ' . number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ' }}</span>
+                                                                    <span class="badge bg-soft-success text-success">Đã
+                                                                        Thanh Toán</span>
+                                                                    <span class="text-danger fs-4 fw-bold">Số tiền
+                                                                        cần thu : 0 VNĐ</span>
+                                                                @else
+                                                                    <span
+                                                                        class="text-danger fs-4 fw-bold">{{ 'Tổng : ' . number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ' }}</span>
+                                                                    <span
+                                                                        class="text-danger fs-4 fw-bold">{{ 'Số tiền cần thu : ' . number_format($infoOrder[0]->total, 0, ',', '.') . ' VNĐ' }}</span>
+                                                                @endif
+                                                            @endif
+                                                            <br>
+                                                        </td>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

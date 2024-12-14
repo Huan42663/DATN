@@ -469,7 +469,7 @@ class ProductController extends Controller
                 ],
 
                 'price' => 'required|numeric|min:1|max:100000000',
-                'sale_price' => 'numeric|min:0|lte:price',
+                'sale_price' => 'nullable|numeric|min:0|lte:price',
                 'quantity' => 'required|integer|min:1|max:1000',
                 'weight' => 'required|numeric|min:0.1|max:500',
                 'status' => 'required|in:1,2',
@@ -946,7 +946,7 @@ class ProductController extends Controller
                 ],
                 'description' => 'required|string|min:10|max:5000',
                 'status' => 'required|in:1,2',
-                'product_image' => 'nullable|image|mimes:jpeg,png,jpg',
+                'product_image' => 'nullable|image|mimes:jpeg,webp,png,jpg',
             ],
             [
                 'product_name.required' => 'Tên sản phẩm không được để trống',

@@ -125,7 +125,7 @@
                                                                    @checked($item->product_id == $product->product_id) @endforeach
                                                                 value="{{ $product->product_id }}" id=""></td>
                                                         <td>{{ $product->product_name }}</td>
-                                                        <td><img src="{{ asset('storage/' . $product->product_image) }}"
+                                                        <td><img width="150px" src="{{ asset('storage/' . $product->product_image) }}"
                                                                 alt=""></td>
                                                     </tr>
                                                 @endforeach

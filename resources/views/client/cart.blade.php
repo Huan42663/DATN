@@ -139,11 +139,12 @@
                         swal({
                         icon: "error",
                         title: jqXHR.responseJSON.data,
-                        }.then(()=>{
+                        })
+                        .then(()=>{
                             if(jqXHR.responseJSON.route != ""){
                                 window.location.href = "{{route('Client.cart.list')}}";
                             }
-                        }));
+                        })
                     }
                 });
             }

@@ -120,7 +120,7 @@ class BannerController extends Controller
         // Validate input
         $request->validate(
             [
-                'image_name' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'image_name' => 'nullable|image|mimes:jpeg,webp,png,jpg,gif|max:2048',
                 'event_id' => [
                     'nullable',
                     'exists:events,event_id',

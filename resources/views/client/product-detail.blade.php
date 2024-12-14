@@ -29,6 +29,7 @@
         $listColorNew = collect($listColor)->unique('color_id')->all();
         $listSizeNew = collect($listSize)->unique('size_id')->all();
     @endphp
+    
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-7">
