@@ -88,7 +88,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:5',
+            'password' => 'required|min:6',
         ]);
 
         // Lấy thông tin người dùng qua email
@@ -97,14 +97,14 @@ class AuthController extends Controller
         if (!$user) {
             // Tài khoản không tồn tại
             return back()->withErrors([
-                'email' => 'The account does not exist.',
+                'email' => __('auth.account_not_exist'),
             ])->withInput();
         }
 
         // Kiểm tra nếu người dùng đang đăng nhập
         if ($user->status == 2) {
             return back()->withErrors([
-                'email' => 'This account is already logged in from another session.',
+                'email' => __('auth.already_logged_in'),
             ])->withInput();
         }
 
@@ -120,7 +120,7 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'Invalid email or password.',
+            'email' => __('auth.invalid_credentials'),
         ])->withInput();
     }
 
@@ -156,7 +156,7 @@ class AuthController extends Controller
                 'user_id' => $user->user_id,
             ]);
 
-            return redirect()->route('Client.account.showLoginForm')->with('success', 'Account created successfully. Please log in.');
+            return redirect()->route('Client.account.showLoginForm')->with('success', 'Đăng kí thành công ! Vui lòng đăng nhập.');
         } catch (\Exception $e) {
             // Log lỗi và hiển thị thông báo
             Log::error('Registration Error: ' . $e->getMessage());
@@ -164,23 +164,6 @@ class AuthController extends Controller
         }
     }
 
-    // public function verifyEmail($token){
-    //     $user = User::where('email_verified_token', $token)->first();
-    //     if($user){
-    //         $user->email_verified_at = now();
-    //         $user->email_verified_token = null;
-    //         $user->save();
-    //         return redirect()->route('Client.account.showLoginForm')->with('success', 'Email verified successfully.');
-    //     }
-    //     return redirect()->route('login')->with('error', 'Invalid or expired token.');
-    // }
-    // public function verifyPassword($token){
-    //     $user = User::where('password_reset_token', $token)->first();
-    //     if($user){
-    //         return view('auth.passwords.reset', compact('user'));
-    //     }
-    //     return redirect()->route('login')->with('error', 'Invalid or expired token.');
-    // }
     public function update(Request $request)
     {
         // Lấy thông tin người dùng hiện tại

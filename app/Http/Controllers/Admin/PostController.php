@@ -37,19 +37,19 @@ class PostController extends Controller
         $request['slug'] = Str::slug($request['title']);
         $request-> validate(
             [
-                'title' => 'required|max:255|unique:posts,title|regex:/^[a-zA-Z0-9\s]+$/',
-                'short_description' => 'nullable',
+                'title' => 'required|max:50|unique:posts,title|regex:/^[\p{L}\p{N}\p{P}\p{Zs}]+$/u',
+                'short_description' => 'nullable|max:100', 
                 'content' => 'required',
                 'category_post_id' => 'required'
-
             ],
             [
                 'title.required' => 'title bài viết không được để trống',
                 'title.unique' => 'title bài viết đã bị trùng',
-                'title.max' => 'title bài viết không được quá 255 kí tự',
-                'title.regex' => 'title bài viết không được chứa kí tự đặc biệt',
-                'content.required' => 'Nội dung  không được để trống',
-                'category_post_id.required' => 'danh mục không được để trống',
+                'title.max' => 'title bài viết không được quá 55 kí tự',
+                'short_description.max' => 'Mô tả ngắn không được vượt quá 100 ký tự.', 
+                'title.regex' => 'title bài viết không được chứa ký tự không hợp lệ',
+                'content.required' => 'Nội dung không được để trống',
+                'category_post_id.required' => 'Danh mục không được để trống',
             ]
         );
       

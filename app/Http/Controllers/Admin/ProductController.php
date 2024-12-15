@@ -390,15 +390,15 @@ class ProductController extends Controller
     {
         if (isset($request->delete) && isset($request->variant_id)) {
             foreach ($request['variant_id'] as $item) {
-                $check = Count(ProductVariant::where('product_id',$request->product_id)->get());
+                $check = Count(ProductVariant::where('product_id', $request->product_id)->get());
                 $variant = ProductVariant::find($item);
-                $cart = CartDetail::where('product_variant_id',$variant->product_variant_id)->get();
-                foreach($cart as $itemCart){
-                    CartDetail::where('cart_detail_id',$itemCart->cart_detail_id)->delete();
+                $cart = CartDetail::where('product_variant_id', $variant->product_variant_id)->get();
+                foreach ($cart as $itemCart) {
+                    CartDetail::where('cart_detail_id', $itemCart->cart_detail_id)->delete();
                 }
-                if($check == 1){
+                if ($check == 1) {
                     return redirect()->back()->with('error', 'Không thể xóa toàn bộ biến thể ');
-                }else{
+                } else {
                     $variant->delete();
                 }
             }
@@ -414,35 +414,34 @@ class ProductController extends Controller
                     'sale_price' => $request->sale_price[$i],
                     'quantity' => $request->quantity[$i],
                 ];
-                if($request->price[$i] < 0 || $request->sale_price[$i]<0 || $request->quantity[$i]<0){
-                    return redirect()->back()->with('error',"Giá , giá khuyến mãi và số lượng không được nhỏ hơn 0");
+                if ($request->price[$i] < 0 || $request->sale_price[$i] < 0 || $request->quantity[$i] < 0) {
+                    return redirect()->back()->with('error', "Giá , giá khuyến mãi và số lượng không được nhỏ hơn 0");
                 }
-                $check  = ProductVariant::
-                join('sizes', 'product_variant.size_id', '=', 'sizes.size_id')
-                ->join('colors', 'product_variant.color_id', '=', 'colors.color_id')
-                ->where('product_variant.product_variant_id','=',$request->variant_id_update[$i])
-                ->first();
+                $check  = ProductVariant::leftJoin('sizes', 'product_variant.size_id', '=', 'sizes.size_id')
+                    ->leftJoin('colors', 'product_variant.color_id', '=', 'colors.color_id')
+                    ->where('product_variant.product_variant_id', '=', $request->variant_id_update[$i])
+                    ->first();
                 // dd($check);
                 //lấy id biến thể được update rồi so sánh với tất cả biến thể trừ id biến thể được lấy
                 // dd($check);
-                $check1 = ProductVariant::join('sizes', 'product_variant.size_id', '=', 'sizes.size_id')
-                ->join('colors', 'product_variant.color_id', '=', 'colors.color_id')
-                ->where('product_variant.size_id', $request->size_id[$i])
-                ->where('product_variant.color_id', $request->color_id[$i])
-                ->where('product_variant.product_id', $request->product_id)
-                ->where('product_variant.product_variant_id','!=',$request->variant_id_update[$i])
-                ->first();
+                $check1 = ProductVariant::leftJoin('sizes', 'product_variant.size_id', '=', 'sizes.size_id')
+                    ->leftJoin('colors', 'product_variant.color_id', '=', 'colors.color_id')
+                    ->where('product_variant.size_id', $request->size_id[$i])
+                    ->where('product_variant.color_id', $request->color_id[$i])
+                    ->where('product_variant.product_id', $request->product_id)
+                    ->where('product_variant.product_variant_id', '!=', $request->variant_id_update[$i])
+                    ->first();
                 if ($check1 != null) {
                     $size = $check->size_name;
                     $color = $check->color_name;
                     $error[] = " size: $size, màu: $color thành size: $check1->size_name, màu: $check1->color_name";
-                }else{
+                } else {
                     $check->update($data);
                 }
             }
-            if(empty($error)){
+            if (empty($error)) {
                 return redirect()->back()->with('message', 'Cập nhật biến thể thành công');
-            }else{
+            } else {
                 $_SESSION['error'] = $error;
                 return redirect()->back();
             }
@@ -885,8 +884,8 @@ class ProductController extends Controller
             ->get();
         $data2 = Products::query()
             ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
-            ->join('sizes', 'product_variant.size_id', '=', 'sizes.size_id')
-            ->join('colors', 'product_variant.color_id', '=', 'colors.color_id')
+            ->leftJoin('sizes', 'product_variant.size_id', '=', 'sizes.size_id')
+            ->leftJoin('colors', 'product_variant.color_id', '=', 'colors.color_id')
             ->select(
                 'product_variant.product_variant_id',
                 'product_variant.size_id',
@@ -903,7 +902,6 @@ class ProductController extends Controller
             ->orderBy('sizes.size_name', 'asc')
             // ->whereNull('product_variant.deleted_at')
             ->get();
-        // dd($data2);
         $data3 = ImageColor::where('product_id',  $data1[0]->product_id)->get();
 
         $data4 = Size::query()->withTrashed()->get();
@@ -925,12 +923,12 @@ class ProductController extends Controller
         $productVariants = ProductVariant::where('product_id', $product->product_id)->get();
         $sizes = Size::all();
         $colors = Color::all();
-        $data6 = CategoryProduct::where('product_id',$product->product_id)->get();
+        $data6 = CategoryProduct::where('product_id', $product->product_id)->get();
         // dd($data6);
         $categories = Category::query()->where('category_parent_id', null)->get();
         $cate_children = Category::query()->get();
 
-        return view('admin.products.update', compact('product', 'productVariants', 'sizes', 'colors','data6','categories','cate_children'));
+        return view('admin.products.update', compact('product', 'productVariants', 'sizes', 'colors', 'data6', 'categories', 'cate_children'));
     }
 
     public function update(Request $request, $product_slug)
@@ -970,26 +968,25 @@ class ProductController extends Controller
             'status' => $request->status,
         ];
         // dd(isset($request->category_id));
-        if(!isset($request->category_id)){
-            $count = CategoryProduct::query()->where('product_id',$product->product_id)->get();
-            foreach($count as $item){
-                CategoryProduct::query()->where('category_product_id',$item->category_product_id)->delete();
+        if (!isset($request->category_id)) {
+            $count = CategoryProduct::query()->where('product_id', $product->product_id)->get();
+            foreach ($count as $item) {
+                CategoryProduct::query()->where('category_product_id', $item->category_product_id)->delete();
             }
-        }
-        else{
-            foreach($request->category_id as $category){
-                $count = CategoryProduct::query()->where('product_id',$product->product_id)->get();
-                foreach($count as $item){
-                    CategoryProduct::query()->where('category_product_id',$item->category_product_id)->delete();
+        } else {
+            foreach ($request->category_id as $category) {
+                $count = CategoryProduct::query()->where('product_id', $product->product_id)->get();
+                foreach ($count as $item) {
+                    CategoryProduct::query()->where('category_product_id', $item->category_product_id)->delete();
                 }
                 foreach ($request['category_id'] as $item) {
                     CategoryProduct::create(
                         ['category_id' => $item, 'product_id' => $product->product_id,]
                     );
                 }
-                }
             }
-       
+        }
+
         // Xử lý ảnh sản phẩm
         if ($request->hasFile('product_image')) {
             $image = $request->file('product_image');
@@ -1051,19 +1048,21 @@ class ProductController extends Controller
         }
     }
 
-    public function listProductDelete(){
+    public function listProductDelete()
+    {
         $products = Products::query()
-        ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
-        ->where('products.status', 1)
-        ->selectRaw('products.product_id,products.product_name,products.status ,products.product_image,product_slug,MIN(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
-        ->groupBy('products.product_id', 'products.product_name', 'products.status', 'products.product_image', 'product_slug')
-        ->orderBy('product_id', 'desc')
-        ->onlyTrashed()->get();
+            ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
+            ->where('products.status', 1)
+            ->selectRaw('products.product_id,products.product_name,products.status ,products.product_image,product_slug,MIN(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
+            ->groupBy('products.product_id', 'products.product_name', 'products.status', 'products.product_image', 'product_slug')
+            ->orderBy('product_id', 'desc')
+            ->onlyTrashed()->get();
 
         return View('admin.products.listDelete', compact('products'));
     }
 
-    public function restoreProduct(Request $request){
+    public function restoreProduct(Request $request)
+    {
         if (isset($request->product_id) && !empty($request->product_id)) {
             $products = Products::withTrashed()->where('product_id', $request->product_id);
             $products->restore();

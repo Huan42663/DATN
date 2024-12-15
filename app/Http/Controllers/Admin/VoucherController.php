@@ -26,7 +26,7 @@ class VoucherController extends Controller
     {
         $data = Voucher::query()->orderByDesc("voucher_id")->get();
         foreach ($data as $key) {
-            if ($key->type == 1) {
+            if ($key->type == 0) {
                 $key->type = "Giảm theo %";
             } else {
                 $key->type = "Giảm theo giá tiền";

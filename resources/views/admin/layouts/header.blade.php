@@ -65,7 +65,7 @@
                         </a>
                     </div>
                     @php
-                        $order = (new App\Models\Order())::query()->where('status','unconfirm')->get();
+                        $order = (new App\Models\Order())::query()->where('status','unconfirm')->limit(8)->orderBy('order_id', 'DESC')->get();
                     @endphp
                     <div class="dropdown nxl-h-item">
                         <a class="nxl-head-link me-3" data-bs-toggle="dropdown" href="#" role="button"

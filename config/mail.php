@@ -109,7 +109,7 @@ return [
 
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'emxin9lit@gmail.com'),
-        'name' => 'test order',
+        'name' => 'JStore',
     ],
 
     /*

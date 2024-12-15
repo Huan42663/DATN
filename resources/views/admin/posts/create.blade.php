@@ -98,8 +98,13 @@
                                         <div class="input-group">
                                             <textarea name="short_description"  cols="10" rows="3"  class="form-control" >@if(isset($_SESSION['data']['short_description'])) {{$_SESSION['data']['short_description']}} @else {{old('short_description')}} @endif</textarea>
                                         </div>
+                                        @error('short_description')
+                                        <span class="text-danger">{{$message}}</span>
+                                        @enderror
                                     </div>
+                                    
                                 </div>
+                               
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
                                         <label for="fullnameInput" class="fw-semibold">Nội Dung </label>
