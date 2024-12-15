@@ -49,9 +49,10 @@ class HomeController extends Controller
             ->join('order_detail', 'products.product_id', '=', 'order_detail.product_id')
             ->join('orders', 'order_detail.order_id', '=', 'orders.order_id')
             ->where('products.status', 1)
-            ->selectRaw('products.product_name, products.product_image,product_slug,COUNT(products.product_id) as quantityProduct,Max(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
+            ->selectRaw('products.product_name, products.product_image,product_slug,COUNT(products.product_id) as quantityProduct,Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
             ->groupBy('products.product_name', 'products.product_image', 'product_slug')
             ->having('quantityProduct', '>', 0)
+            ->orderBy('quantityProduct','desc')
             ->limit(10)
             ->get();
         //Lấy Doanh thu các tháng trong năm
@@ -63,33 +64,37 @@ class HomeController extends Controller
         }
         $totalMonthInYear = Order::query()
             ->selectRaw('YEAR(created_at) as year , MONTH(created_at) as month, SUM(total) as total')
-            ->whereRaw("YEAR(created_at) = $year")
+            ->whereRaw("YEAR(created_at) = $year AND status = 'delivered' OR status = 'received' ")
             ->groupByRaw('YEAR(created_at), MONTH(created_at)')
             ->get();
 
         $YearTotal = [];
-        for($i = 1; $i<=12;$i++){
-           foreach ($totalMonthInYear as $key ) {
-                if($i == $key->month){
-                    $YearTotal[$i] = $key->total;
-                    break;
-                }else{
-                    $YearTotal[$i] = 0;
-                    break;
-                }
-           }
+        $j =0;
+        for($i = 1; $i<13;$i++){
+           
+            if($i == $totalMonthInYear[$j]->month){
+                array_push($YearTotal, $totalMonthInYear[$j]->total);
+                $j++;
+            }else{
+                array_push($YearTotal, $i);
+            }
         }
         $json_array = json_encode($YearTotal);
+        // dd($json_array,$totalMonthInYear , $YearTotal);
         //Lấy Sản Phẩm Mới trong tháng
         $month = Carbon::now()->month;
         $productNew = Products::query()
         ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
         ->where('products.status',1)
-        ->selectRaw('products.product_name, products.product_image,product_slug,Max(product_variant.price) as maxPrice , Max(product_variant.sale_price) as minPrice')
-        ->groupBy('products.product_name', 'products.product_image', 'product_slug')
+        ->selectRaw('products.product_name, products.product_image,product_slug,Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
+        ->groupBy('products.product_id','products.product_name', 'products.product_image', 'product_slug')
+        ->orderBy('products.product_id','desc')
         ->limit(10)
         ->get();
         $orderUnconfirm = Count(Order::query()->where('status', 'unconfirm')->get());
+        $orderCancel = Count(Order::query()->where('status', 'canceled')->get());
+        $orderReturn = Count(Order::query()->where('status', 'return')->get());
+        $orderReceived = Count(Order::query()->where('status', 'received')->get());
         $orderConfirm = Count(Order::query()->where('status', 'confirm')->get());
         $orderShip = Count(Order::query()->where('status', 'shipping')->get());
         $orderDelivered = Count(Order::query()->where('status', 'delivered')->get());
@@ -106,6 +111,6 @@ class HomeController extends Controller
             'json_array1',
             'json_array2',
             'orderUnconfirm',
-            'orderConfirm','orderShip','orderDelivered'));
+            'orderConfirm','orderShip','orderDelivered','orderReturn','orderReceived','orderCancel'));
     }
 }

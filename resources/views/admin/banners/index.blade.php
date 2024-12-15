@@ -10,7 +10,7 @@
             </div>
             <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">List</li>
+                <li class="breadcrumb-item">Danh sách</li>
             </ul>
         </div>
     </div>
@@ -27,15 +27,16 @@
                 <div class="table-responsive">
                     <a href="{{ route('Administration.banners.create') }}" class=" btn btn-primary">
                         <i class="feather-plus me-2"></i>
-                        <span>Tạo sự kiện</span>
+                        <span>Tạo banner</span>
                     </a>
+
                     <table id="example" class="table table-hover mb-0">
                         <thead>
                             <tr>
                                 {{-- <th>ID</th> --}}
                                 <th>Banner Image</th>
                                 <th>Event</th>
-                                <th>Status</th>
+                                {{-- <th>Status</th> --}}
                                 <th>Product</th>
                                 <th class="text-end">Hành động</th>
                                 {{-- <th>Link</th> --}}
@@ -57,13 +58,13 @@
                                     <td>
                                         <span class="d-block mb-1">{{ $banner->event_name }}</span>
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         @if ($banner->status == '1')
                                             <span class="badge bg-soft-primary text-primary"> Đang hoạt động</span>
                                         @elseif ($banner->status == '0')
                                             <span class="badge bg-soft-danger text-danger"> Ngừng hoạt động</span>
                                         @endif
-                                    </td>
+                                    </td> --}}
                                     <td>
                                         <span class="d-block mb-1">{{ $banner->product_name }}</span>
                                     </td>

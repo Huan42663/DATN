@@ -3,7 +3,7 @@
 
 @section('content')
     <!-- Nút quay lại -->
-    <div style="margin: 20px 0 0 250px; display: flex; align-items: center; gap: 10px;">
+    <div class="container mt-5" style=" display: flex; align-items: center; gap: 10px;">
         <a href="{{ route('Client.orders.list') }}"
             style="text-decoration: none; color: #0b2c50; font-weight: bold; transition: color 0.3s ease;"
             onmouseover="this.style.color='#0056b3'" onmouseout="this.style.color='#007bff'">
@@ -24,176 +24,482 @@
                 style="flex: 1; max-width: 760px;  border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
 
                 <h2
-                    style="text-align: center; font-size: 26px; font-weight: bold; color: #4caf50; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 20px;">
-                    Chi tiết đơn hàng
+                    style="text-align: center; font-size: 24px; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #bdc3c7; padding-bottom: 15px;margin-top: 10px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px;">
+                    THÔNG TIN ĐƠN HÀNG
                 </h2>
 
                 <!-- Thông tin đơn hàng -->
-                <div style="padding: 25px; line-height: 1.8; font-size: 16px; color: #555;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong style="color: #333;">Mã đơn hàng:</strong> <span>{{ $order->order_code }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong style="color: #333;">Ngày đặt:</strong>
-                        <span>{{ $order->created_at->format('d/m/Y H:i') }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong style="color: #333;">Trạng thái:</strong>
-                        @if ($order->status == 'unconfirm')
-                            <span class="badge bg-soft-warning text-warning">Chờ Xác Nhận</span>
-                        @elseif($order->status == 'confirmed')
-                            <span class="badge bg-soft-success text-success">Đã Xác Nhận</span>
-                        @elseif($order->status == 'shipping')
-                            <span class="badge bg-soft-success text-success">Đang Vận Chuyển</span>
-                        @elseif($order->status == 'delivered')
-                            <span class="badge bg-soft-success text-success">Đã Giao Đến Khách Hàng</span>
-                        @elseif($order->status == 'received')
-                            <span class="badge bg-soft-warning text-warning">Đã Xác Nhận Nhận Hàng</span>
-                        @elseif($order->status == 'canceled')
-                            <span class="badge bg-soft-danger text-danger">Hủy</span>
-                        @elseif($order->status == 'return')
-                            <span class="badge bg-soft-dark text-dark">Trả Hàng</span>
-                        @endif
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong style="color: #333;">Phương thức thanh toán:</strong>
-                        <span>{{ $order->method_payment }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong style="color: #333;">Người nhận:</strong> <span>{{ $order->fullname }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong style="color: #333;">Số điện thoại:</strong> <span>{{ $order->phone }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong style="color: #333;">Địa chỉ giao hàng:</strong> <span>{{ $order->address }}</span>
+                <div
+                    style="font-size: 16px; color: #333; line-height: 1.8; max-width: 680px; margin: 20px auto; padding: 20px; border: 1px solid #dcdcdc; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); background-color: #ffffff; font-family: Arial, sans-serif;">
+
+                    <div style="margin: 20px;">
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 5px 0; border-bottom: 1px solid #f1f1f1;">
+                            <strong style="color: #555;">Mã đơn hàng:</strong>
+                            <span style="font-weight: bold;">{{ $order->order_code }}</span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 5px 0; border-bottom: 1px solid #f1f1f1;">
+                            <strong style="color: #555;">Ngày đặt:</strong>
+                            <span>{{ $order->created_at->format('d/m/Y H:i') }}</span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 5px 0; border-bottom: 1px solid #f1f1f1;">
+                            <strong style="color: #555;">Trạng thái:</strong>
+                            <span style="font-weight: bold;" id="order_status">
+                                @if ($order->status == 'unconfirm')
+                                    <span
+                                        style="color: #ff9800; background-color: #fff3cd; padding: 5px 10px; border-radius: 5px;">Chờ
+                                        Xác Nhận</span>
+                                @elseif($order->status == 'confirmed')
+                                    <span
+                                        style="color: #008805; background-color: #e8f5e9; padding: 5px 10px; border-radius: 5px;">Đã
+                                        Xác Nhận</span>
+                                @elseif($order->status == 'shipping')
+                                    <span
+                                        style="color: #0059fe; background-color: #e8f5e9; padding: 5px 10px; border-radius: 5px;">Đang
+                                        Vận Chuyển</span>
+                                @elseif($order->status == 'delivered')
+                                    <span
+                                        style="color: #009cda; background-color: #e8f5e9; padding: 5px 10px; border-radius: 5px;">Đã
+                                        Giao Đến Khách Hàng</span>
+                                @elseif($order->status == 'received')
+                                    <span
+                                        style="color: #017e12; background-color: #fff3cd; padding: 5px 10px; border-radius: 5px;">Đã
+                                        Xác Nhận Nhận Hàng</span>
+                                @elseif($order->status == 'canceled')
+                                    <span
+                                        style="color: #f44336; background-color: #fce4ec; padding: 5px 10px; border-radius: 5px;">Hủy
+                                        Đơn </span>
+                                @elseif($order->status == 'return')
+                                    <span
+                                        style="color: #565656; background-color: #eeeeee; padding: 5px 10px; border-radius: 5px;">Trả
+                                        Hàng</span>
+                                @endif
+                            </span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 5px 0; border-bottom: 1px solid #f1f1f1;">
+                            <strong style="color: #555;">Phương thức thanh toán:</strong>
+                            <span>{{ $order->method_payment }}</span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 5px 0; border-bottom: 1px solid #f1f1f1;">
+                            <strong style="color: #555;">Người nhận:</strong>
+                            <span>{{ $order->fullname }}</span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 5px 0; border-bottom: 1px solid #f1f1f1;">
+                            <strong style="color: #555;">Số điện thoại:</strong>
+                            <span>{{ $order->phone }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 5px 0;">
+                            <strong style="color: #555;">Địa chỉ giao hàng:</strong>
+                            <span>{{ $order->address . ',' . $order->street . ', ' . $order->ward . ', ' . $order->district . ', ' . $order->province }}</span>
+                        </div>
                     </div>
                 </div>
 
+
                 <!-- Danh sách sản phẩm -->
                 <h3
-                    style="font-size: 22px; font-weight: bold; color: #333; margin-top: 30px; border-top: 2px solid #e0e0e0; padding-top: 10px; text-align: center;">
+                    style="font-size: 22px; font-weight: bold; color: #2c3e50; margin-top: 30px; border-top: 3px solid #bdc3c7; padding-top: 15px; text-align: center; text-transform: uppercase; letter-spacing: 1px;">
                     Danh sách sản phẩm
                 </h3>
-                <div class="product-list" style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px;">
 
+                <div class="product-list" style="margin-top: 20px;">
+
+                    <!-- Tiêu đề danh sách -->
                     <div class="product-header"
-                        style="display: grid; grid-template-columns: 5% 30% 15% 15% 15% 20%; font-size: 16px; font-weight: bold; color: #333; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 10px; background-color: #f8f9fa; align-items: center;">
-                        <span style="text-align: center; padding: 8px;">#</span>
+                        style="display: grid; grid-template-columns: 5% 25% 25% 15% 10% 10% 10%; font-size: 16px; font-weight: bold; color: #ffffff; background-color: #476889; padding: 12px; border-radius: 8px;">
+                        <span style="text-align: center;">#</span>
+                        <span style="text-align: center;">Ảnh</span>
                         <span style="text-align: left; padding-left: 10px;">Sản phẩm</span>
                         <span style="text-align: center;">Giá</span>
                         <span style="text-align: center;">Size</span>
                         <span style="text-align: center;">Màu</span>
                         <span style="text-align: center;">Số lượng</span>
                     </div>
+
+                    <!-- Danh sách sản phẩm -->
                     @foreach ($order->orderDetail as $index => $detail)
                         <div class="product-item"
-                            style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); padding: 20px; border: 1px solid rgba(0, 0, 0, 0.1); display: grid; grid-template-columns: 5% 30% 15% 15% 15% 20%; gap: 10px; align-items: center;">
-
-                            <span style="text-align: center;">{{ $index + 1 }}</span>
-
-                            <span style="text-align: left; padding-left: 10px;">
+                            style="display: grid; grid-template-columns: 5% 25% 25% 15% 10% 10% 10%; padding: 15px; background-color: #ffffff; border: 1px solid #bdc3c7; border-radius: 8px; margin-top: 10px; align-items: center; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                            <span style="text-align: center; color: #7f8c8d; font-weight: bold;">{{ $index + 1 }}</span>
+                            <span style="text-align: center;">
+                                <img width="100px" class="img-fluid"
+                                    src="{{ asset('storage/' . $detail->product->product_image) }}"
+                                    alt="{{ $detail->product->product_name ?? 'Không tồn tại' }}"
+                                    style="max-width: 100px; border-radius: 4px;">
+                            </span>
+                            <span style="text-align: left; padding-left: 10px; font-weight: bold; color: #2c3e50;">
                                 {{ $detail->product->product_name ?? 'Không tồn tại' }}
                             </span>
-
-                            <span style="text-align: center;">
-                                {{ number_format($detail->price, 0, ',', '.') }} đ
+                            <span style="text-align: left; padding-left: 10px; font-size:14px;">
+                                @if ($detail->sale_price != null || $detail->sale_price > 0)
+                                    <span class="d-block text-danger"
+                                        style="font-size:14px; font-weight: 700">{{ number_format($detail->sale_price, 0, ',', '.') . ' VNĐ' }}</span>
+                                    <del
+                                        class="text-secondary">{{ number_format($detail->price, 0, ',', '.') . ' VNĐ' }}</del>
+                                @else
+                                    <span
+                                        class="d-block mb-1 text-danger">{{ number_format($detail->price, 0, ',', '.') . ' VNĐ' }}</span>
+                                @endif
                             </span>
+                            {{-- <span style="text-align: center;">
+                                {{ number_format($detail->sale_price, 0, ',', '.') ." VNĐ"}} 
+                            </span> --}}
 
                             <span style="text-align: center;">{{ $detail->size ?? 'Không có' }}</span>
                             <span style="text-align: center;">{{ $detail->color ?? 'Không có' }}</span>
                             <span style="text-align: center;">{{ $detail->quantity }}</span>
+                            @php
+                                $check = (new App\Models\Rate())
+                                    ::query()
+                                    ->join('products', 'rates.product_id', '=', 'products.product_id')
+                                    ->leftJoin(
+                                        'product_variant',
+                                        'rates.product_variant_id',
+                                        '=',
+                                        'product_variant.product_variant_id',
+                                    )
+                                    ->leftJoin('sizes', 'product_variant.size_id', '=', 'sizes.size_id')
+                                    ->leftJoin('colors', 'product_variant.color_id', '=', 'colors.color_id')
+                                    ->where('rates.order_id', $order->order_id)
+                                    ->where('rates.product_id', $detail->product_id)
+                                    ->where('sizes.size_name', $detail->size)
+                                    ->where('colors.color_name', $detail->color)
+                                    ->first();
+                            @endphp
+
                         </div>
+
+                        <a style="text-align: end" href="{{ route('Client.rate', ['product_id' => $detail->product_id, 'order_code' => $order->order_code]) }}"
+                            class="mt-2 @if ($order->status != 'received' || $check != null) d-none @elseif($order->status == 'received' && $check == null) d-block @endif"
+                            id="rate_check">
+                            <button style="text-align: end" class="btn btn-primary" style=" width: 100px;">Đánh Giá</button>
+                        </a>
                     @endforeach
 
                 </div>
 
+
                 <!-- Tổng Tiền -->
-                <div
-                    style="border: 1px solid #e0e0e0; padding: 15px; margin-top: 20px; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
-                    <strong style="color: #333;">Tổng Tiền:</strong>
-                    <span style="color: #f44336;">{{ number_format($order->total_discount, 0, ',', '.') }} đ</span>
-                </div>
 
                 <!-- Nút hành động -->
                 <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                    <input type="hidden" id="order_code" value="{{ $order->order_code }}">
                     <!-- Hủy đơn hàng -->
                     @if ($order->status == 'unconfirm')
-                        <form action="{{ route('Client.orders.cancel', [$order->order_code, $order->order_id]) }}"
-                            method="POST" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
-                            @csrf
-                            @method('POST')
-                            <input type="hidden" name="cancleShow" value="cancleShow">
-                            <button type="submit"
-                                style="background-color: #ff5722; color: white; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
-                                Hủy Đơn Hàng
-                            </button>
-                        </form>
+                        <button type="button" id="cancel"
+                            onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này không')"
+                            style="width: 260px; max-width: 260px; padding: 10px 15px; font-size: 15px; background-color: #e74c3c; color: white; border-radius: 5px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center;">
+                            Hủy đơn hàng
+                        </button>
                     @endif
 
                     <!-- Xác nhận đã nhận hàng -->
                     @if ($order->status == 'delivered')
-                        <form
-                            action="{{ route('Client.orders.confirmDelivered', [$order->order_code, $order->order_id]) }}"
-                            method="POST" onsubmit="return confirm('Bạn đã nhận đơn hàng này?')">
-                            @csrf
-                            @method('POST')
-                            <input type="hidden" name="delivereShow" value="delivereShow">
-                            <button type="submit"
-                                style="background-color: #10b848; color: white; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
-                                Xác Nhận Đã Nhận Hàng
-                            </button>
-                        </form>
+                        <button type="submit" id="confirm"
+                            style="width: 260px; max-width: 260px; padding: 10px 15px; font-size: 15px; background-color: #28a745; color: white; border-radius: 5px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center;">
+                            Xác nhận đã nhận hàng
+                        </button>
+                        <button type="submit" id="return"
+                            onclick="return confirm('Bạn có chắc muốn trả đơn hàng này không')"
+                            style="width: 260px; max-width: 260px; padding: 10px 15px; font-size: 15px; background-color: black; color: white; border-radius: 5px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center;">
+                            Trả hàng
+                        </button>
                     @endif
                 </div>
             </div>
+            <script>
+                $('#cancel').click(function() {
+                    var order_code = $('#order_code').val();
+                    const route = "{{ route('Client.orders.cancel') }}"
+                    $.ajax({
+                        url: route,
+                        method: "POST",
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            order_code: order_code,
+                        },
+                        dataType: "json",
+                        success: function(response) {
+                            swal({
+                                icon: "success",
+                                title: response.data,
+                            }).then(() => {
+                                $('#order_status').html(
+                                    `<span style="color: #f44336; background-color: #fce4ec; padding: 5px 10px; border-radius: 5px;">Hủy Đơn </span>`
+                                )
+                                $('#cancel').addClass('d-none')
+                                $('#return_banking').removeClass().addClass('d-block')
+                                $('#payment_banking').removeClass().addClass('d-none')
+                            });
+                        },
+                        error: function(error) {
+                            swal({
+                                icon: "error",
+                                title: error.responseJSON.data,
+                            });
 
+                            if (error.responseJSON.order_status == 'unconfirm') {
+                                $('#order_status').html(
+                                    `style="color: #ff9800; background-color: #fff3cd; padding: 5px 10px; border-radius: 5px;">Chờ Xác Nhận</span>`
+                                )
+                            } else if (error.responseJSON.order_status == 'confirmed') {
+                                $('#order_status').html(
+                                    ` <span style="color: #008805; background-color: #e8f5e9; padding: 5px 10px; border-radius: 5px;">Đã Xác Nhận</span>`
+                                )
+                                $('#cancel').addClass('d-none')
+                            } else if (error.responseJSON.order_status == 'shipping') {
+                                $('#order_status').html(
+                                    ` <span style="color: #0059fe; background-color: #e8f5e9; padding: 5px 10px; border-radius: 5px;">Đang Vận Chuyển</span>`
+                                )
+                                $('#cancel').addClass('d-none')
+                            } else if (error.responseJSON.order_status == 'delivered') {
+                                $('#order_status').html(
+                                    `<span style="color: #009cda; background-color: #e8f5e9; padding: 5px 10px; border-radius: 5px;">Đã Giao Đến Khách Hàng</span>`
+                                )
+                                $('#cancel').addClass('d-none')
+                                $('#confirm').removeClass().addClass('d-block')
+                                $('#return').removeClass().addClass('d-block')
+                            } else if (error.responseJSON.order_status == 'received') {
+                                $('#order_status').html(
+                                    `<span style="color: #73ff00; background-color: #fff3cd; padding: 5px 10px; border-radius: 5px;">Đã Xác Nhận Nhận Hàng</span>`
+                                )
+                                $('#cancel').addClass('d-none')
+                            } else if (error.responseJSON.order_status == 'canceled') {
+                                $('#order_status').html(
+                                    `<span style="color: #f44336; background-color: #fce4ec; padding: 5px 10px; border-radius: 5px;">Hủy Đơn </span>`
+                                )
+                            } else if (error.responseJSON.order_status == 'return') {
+                                $('#order_status').html(
+                                    ` <span style="color: #565656; background-color: #eeeeee; padding: 5px 10px; border-radius: 5px;">Trả Hàng</span>`
+                                )
+                                $('#cancel').addClass('d-none')
+                            }
+
+
+                        }
+                    });
+
+                });
+
+                $('#confirm').click(function() {
+                    var order_code = $('#order_code').val();
+                    const route = "{{ route('Client.orders.confirmDelivered') }}"
+                    $.ajax({
+                        url: route,
+                        method: "POST",
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            order_code: order_code,
+                        },
+                        dataType: "json",
+                        success: function(response) {
+                            swal({
+                                icon: "success",
+                                title: response.data,
+                            }).then(() => {
+                                $('#order_status').html(
+                                    `<span style="color: #017e12; background-color: #fff3cd; padding: 5px 10px; border-radius: 5px;">Đã Xác Nhận Nhận Hàng</span>`
+                                )
+                                $('#confirm').addClass('d-none')
+                                $('#return').addClass('d-none')
+                                var elements = document.querySelectorAll('#rate_check');
+                                elements.forEach(element => {
+                                    element.classList.remove('d-none');
+                                    element.classList.add('d-block');
+                                });
+
+                            });
+                        },
+                        error: function(error) {
+                            swal({
+                                icon: "error",
+                                title: error.responseJSON.data,
+                            })
+                        }
+                    });
+
+                });
+
+                $('#return').click(function() {
+                    var order_code = $('#order_code').val();
+                    const route = "{{ route('Client.orders.return') }}"
+                    $.ajax({
+                        url: route,
+                        method: "POST",
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            order_code: order_code,
+                        },
+                        dataType: "json",
+                        success: function(response) {
+                            swal({
+                                icon: "success",
+                                title: response.data,
+                            }).then(() => {
+                                $('#order_status').html(
+                                    `<span style="color: #565656; background-color: #eeeeee; padding: 5px 10px; border-radius: 5px;">Trả Hàng</span>`
+                                )
+                                $('#confirm').addClass('d-none')
+                                $('#return').addClass('d-none')
+                                $('#return_banking').removeClass().addClass('d-block')
+                                $('#payment_banking').removeClass().addClass('d-none')
+                            });
+                        },
+                        error: function(error) {
+                            swal({
+                                icon: "error",
+                                title: error.responseJSON.data,
+                            })
+                        }
+                    });
+
+                });
+            </script>
             <!-- Phần bên phải: Bill hóa đơn -->
             <div
-                style="flex: 1; max-width: 450px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 25px; background: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+                style="flex: 1; max-width: 450px; border: 1px solid #dcdcdc; border-radius: 10px; padding: 30px; background: #ffffff; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
                 <h2
-                    style="text-align: center; font-size: 26px; font-weight: bold; color: #f44336; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 20px;">
+                    style="text-align: center; font-size: 24px; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #bdc3c7; padding-bottom: 15px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px;">
                     Hóa đơn của bạn
                 </h2>
 
-                <div style="font-size: 16px; color: #333; line-height: 1.8;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Người nhận:</strong> <span>{{ $order->fullname }}</span>
+                <div
+                    style="margin-top: 20px; padding: 20px; border: 2px solid #e0e0e0; border-radius: 12px; background-color: #fafafa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <!-- Thông tin người nhận -->
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <strong style="color: #444;">Người nhận:</strong>
+                        <span>{{ $order->fullname }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <strong style="color: #444;">Số điện thoại:</strong>
+                        <span>{{ $order->phone }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <strong style="color: #444;">Địa chỉ giao hàng:</strong>
+                        <span>{{ $order->address }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <strong style="color: #444;">Ngày đặt hàng:</strong>
+                        <span>{{ $order->created_at->format('d/m/Y') }}</span>
+                    </div>
+
+                    <!-- Chi tiết thanh toán -->
+                    @php
+                        $ship = 0;
+                        $giamGia = 0;
+                        if (isset($order)) {
+                            $ship = 30000;
+                            $giamGia = $order->total - $order->total_discount;
+                        }
+                    @endphp
+                    <div
+                        style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; line-height: 1.5;">
+                        <strong style="color: #333;">Tổng tiền:</strong>
+                        <span
+                            style="color: #444; font-weight: bold;">{{ number_format($order->total, 0, ',', '.') . ' VNĐ' }}</span>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; line-height: 1.5;">
+                        <strong style="color: #333;">Phí ship:</strong>
+                        <span
+                            style="color: #444; font-weight: bold;">{{ number_format($ship, 0, ',', '.') . ' VNĐ' }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Số điện thoại:</strong> <span>{{ $order->phone }}</span>
+                        <strong>Ngày đặt hàng:</strong> <span>{{ $order->created_at }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Địa chỉ giao hàng:</strong> <span>{{ $order->address }}</span>
+                        <strong>Tổng giá trị sản
+                            phẩm:</strong><span>{{ number_format($order->total - 30000, 0, ',', '.') . ' VNĐ' }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Ngày đặt hàng:</strong> <span>{{ $order->created_at->format('d/m/Y') }}</span>
+                        <strong>Phí vận chuyển:</strong><span>{{ number_format(30000, 0, ',', '.') . ' VNĐ' }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Tổng tiền:</strong> <span>{{ number_format($order->total, 0, ',', '.') }} đ</span>
+                        <strong>Khuyến
+                            mãi:</strong><span>{{ number_format($order->total - $order->total_discount, 0, ',', '.') . ' VNĐ' }}</span>
                     </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>Tổng Tiền:</strong>
+                        @if ($order->total > $order->total_discount && $order->total_discount != null)
+                            <span
+                                class="text-danger">{{ number_format($order->total_discount, 0, ',', '.') . ' VNĐ' }}</span>
+                        @else
+                            <span class="text-danger">{{ number_format($order->total, 0, ',', '.') . ' VNĐ' }}</span>
+                        @endif
+                    </div>
+
+                    @if ($orderBill != null)
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;" class="mt-1">
+                            <strong class="fs-bold fw-5">Thông tin giao dịch</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Mã ngân hàng:</strong><span>{{ $orderBill->bank_code }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Mã giao dịch:</strong><span>{{ $orderBill->bank_tranno }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Số tiền giao
+                                dịch:</strong><span>{{ number_format($orderBill->amount, 0, ',', '.') . ' VNĐ' }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Loại thẻ:</strong><span>{{ $orderBill->card_type }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Mã giao dịch VnPay:</strong><span>{{ $orderBill->vnpay_transactionno }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Thời gian giao dịch</strong><span>{{ $orderBill->created_at }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Tổng Tiền Cần Thu:</strong>
+                            <span class="text-danger"> 0 VNĐ</span>
+                        </div>
+                        @if ($order->method_payment == 'banking')
+                            <div style="display: flex; justify-content: end; margin-bottom: 10px;" class="d-none"
+                                id="return_banking">
+                                <span class="badge bg-soft-danger text-danger fs-6">Đã Hoàn Trả</span>
+                            </div>
+                            <div style="display: flex; justify-content: end; margin-bottom: 10px;"
+                                class="d-block"id="payment_banking">
+                                <span class="badge bg-soft-success text-success fs-6">Đã Thanh Toán</span>
+                            </div>
+                        @endif
+                    @endif
+
                 </div>
 
-                <div style="margin-top: 20px; border-top: 2px dashed #e0e0e0; padding-top: 20px; text-align: center;">
-                    <p style="font-weight: bold; font-size: 18px; color: #007bff;">Cảm ơn bạn đã mua sắm tại cửa hàng của
+                <!-- Thông điệp cảm ơn -->
+                <div style="margin-top: 20px; text-align: center; border-top: 1px solid #dcdcdc; padding-top: 20px;">
+                    <p style="font-weight: bold; font-size: 18px; color: #16a085;">Cảm ơn bạn đã mua sắm tại cửa hàng của
                         chúng tôi!</p>
                 </div>
 
-                <!-- Thêm Thương Hiệu -->
-                <div style="text-align: center; margin-top: 40px;">
+                <!-- Thương hiệu -->
+                <div style="text-align: center; margin-top: 30px;">
                     <h1
                         style="font-size: 50px; color: #333; font-family: 'Georgia', serif; font-weight: 600; letter-spacing: 2px; 
                     text-transform: uppercase; 
                     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);">
-                        JS STORE
+                        JSTORE
                     </h1>
-                    <p style="font-size: 18px; color: #555; font-style: italic; margin-top: 10px;">Chất lượng và uy tín cho
-                        mọi sản phẩm</p>
+                    <p style="font-size: 16px; color: #7f8c8d; font-style: italic;">Chất lượng và uy tín cho mọi sản phẩm
+                    </p>
                 </div>
-
             </div>
-        </div>
 
+        </div>
+        @if (session('message'))
+            <input type="hidden" id="messagecheck" value="{{ session('message') }}">
+        @endif
+        @if (session('status'))
+            <input type="hidden" id="statuscheck" value="{{ session('status') }}">
+        @endif
         <style>
             /* Thương hiệu với text-shadow nhẹ */
             @keyframes glowing {
@@ -244,6 +550,23 @@
     </div>
 
     <script>
+        const check = document.getElementById('messagecheck');
+        const check1 = document.getElementById('statuscheck');
+
+        if (check != null && check1 != null) {
+            if (check1.value == "false") {
+                swal({
+                    icon: "error",
+                    title: check.value,
+                });
+            } else {
+                swal({
+                    icon: "success",
+                    title: check.value,
+                });
+            }
+        }
+
         // Hiển thị tooltip khi di chuột qua biểu tượng
         const supportIcon = document.getElementById('support-icon');
         const tooltip = document.getElementById('tooltip');
@@ -287,8 +610,8 @@
 
 
 @endsection
-<!-- Bootstrap CSS -->
+{{-- <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- Bootstrap JS (đặt trước </body>) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> --}}

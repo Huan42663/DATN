@@ -98,7 +98,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleFormControlInput1" class="form-label">Đường</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput1" name="street"
+                                    <input type="text" class="form-control" id="exampleFormControlInput1" name="street" placeholder="Đường (Lưu ý: chỉ được dùng kí hiệu khoảng trắng)"
                                     @if(isset($_SESSION['dataInfo']))
                                         value="{{$_SESSION['dataInfo']['street']}}"
                                     @else
@@ -117,7 +117,7 @@
                                 <input type="hidden" name="ward" id="ward"/>
                                 <div class="mb-3">
                                     <label for="exampleFormControlInput1" class="form-label">Địa Chi Cụ Thể</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput1" name="address"placeholder="Số nhà - đường - thôn/tổ dân phố" 
+                                    <input type="text" class="form-control" id="exampleFormControlInput1" name="address" placeholder="Số nhà  đường  thôn/tổ dân phố (Lưu ý: chỉ được dùng kí hiệu khoảng trắng)" 
                                     @if(isset($_SESSION['dataInfo']))
                                         value="{{$_SESSION['dataInfo']['address']}}"
                                     @else
@@ -133,7 +133,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleFormControlInput1" class="form-label">Note</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput1" name="note" 
+                                    <input type="text" class="form-control" id="exampleFormControlInput1" name="note" placeholder="(Lưu ý: chỉ được dùng kí hiệu khoảng trắng)"
                                     @if(isset($_SESSION['dataInfo']['note']))
                                         value="{{$_SESSION['dataInfo']['note']}}"
                                     @else
@@ -150,9 +150,9 @@
                             </div>
                             <div class="heading5">Phương Thức Thanh Toán</div>
                             <div class="deli_type mt-2">
-                                <div class="item flex items-center gap-2 relative px-5 border border-line rounded-t-lg">
+                                <div class="item flex items-center gap-2 relative px-5 border border-line rounded-b-lg">
                                     <input type="radio" id="ship_type" class="cursor-pointer" name="method_payment"
-                                        checked="" value="COD" @checked(old('method_payment') == "COD")><label for="ship_type"
+                                        value="COD" @checked(old('method_payment') == "COD")><label for="ship_type"
                                         class="w-full py-4 cursor-pointer">Thanh Toán khi Nhận Hàng</label><svg
                                         xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
                                         viewBox="0 0 256 256" class="text-xl absolute top-1/2 right-5 -translate-y-1/2">
@@ -162,7 +162,7 @@
                                     </svg></div>
                                 <div class="item flex items-center gap-2 relative px-5 border border-line rounded-b-lg">
                                     <input type="radio" id="store_type" class="cursor-pointer" name="method_payment" value="banking"/><label
-                                        for="store_type" class="w-full py-4 cursor-pointer"  @checked(old('method_payment') == "banking") >Thanh Toán Online</label><svg
+                                        for="store_type" class="w-full py-4 cursor-pointer"  @checked(old('method_payment') == "banking") >Thanh Toán VNPAY</label><svg
                                         xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
                                         viewBox="0 0 256 256" class="text-xl absolute top-1/2 right-5 -translate-y-1/2">
                                         <path
@@ -198,14 +198,17 @@
                                             class="w-full h-full object-cover rounded-lg" /><span
                                             class="quantity flex items-center justify-center absolute -top-3 -right-3 w-7 h-7 rounded-full bg-black text-white">{{$item1->quantity}}</span>
                                     </div>
-                                    <div><strong class="name text-title">{{$item1->product_name}}</strong>
+                                    <div><strong class="name text-title">{{$item1->product_name}}</strong> <br>
+                                        <span class="discount">{{$item1->size ." " . $item1->color}}</span>
                                         <div class="flex items-center gap-2 mt-2"><svg xmlns="http://www.w3.org/2000/svg"
                                                 width="1em" height="1em" fill="currentColor" viewBox="0 0 256 256"
                                                 class="text-secondary">
                                                 <path
                                                     d="M243.31,136,144,36.69A15.86,15.86,0,0,0,132.69,32H40a8,8,0,0,0-8,8v92.69A15.86,15.86,0,0,0,36.69,144L136,243.31a16,16,0,0,0,22.63,0l84.68-84.68a16,16,0,0,0,0-22.63Zm-96,96L48,132.69V48h84.69L232,147.31ZM96,84A12,12,0,1,1,84,72,12,12,0,0,1,96,84Z">
                                                 </path>
-                                            </svg><span class="discount">{{number_format($item1->price - $item1->sale_price, 0, ',', '.') . ' VNĐ';}}</span></span></div>
+                                            </svg>
+                                            <span class="discount">{{number_format($item1->price - $item1->sale_price, 0, ',', '.') . ' VNĐ';}}</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-1">
@@ -228,15 +231,28 @@
                             endforeach;
                         @endphp
                         <div class="form_discount flex gap-3 mt-8">
-                                <input type="text" placeholder="Discount code" class="w-full border border-line rounded-lg px-4" name="voucher_code"/>
-                                <button class="flex-shrink-0 button-main bg-black text-light" type="submit" name="voucher" value="voucher">Áp Dụng</button>
+                                {{-- <input type="text" placeholder="Discount code" class="w-full border border-line rounded-lg px-4" name="voucher_code" id="voucher_code"/> --}}
+                                <select name="voucher_code" id="voucher_code" class="form-control">
+                                    <option value=""></option>
+                                    @if (isset($voucher) && !empty($voucher))
+                                        @foreach ( $voucher as $item )
+                                        <option value="{{$item->voucher_code}}">{{$item->voucher_code . " - " ."Giá trị : " . ($item->type == 0 ? $item->value."%" : number_format($item->value, 0, ',', '.') . ' VNĐ')}} </option>
+                                        {{-- <div class="card col-5 me-1  ">
+                                            <p class="fw-bold">Mã :{{$item->voucher_code}}</p>
+                                            <span>Giá Trị : {{$item->type == 0 ? $item->value."%" : number_format($item->value, 0, ',', '.') . ' VNĐ';}}</span>
+                                        </div> --}}
+                                        @endforeach
+                                    @endif
+                                </select>
+                                <button class="flex-shrink-0 button-main bg-black text-light" type="button" id="voucher">Áp Dụng</button>
                         </div>
+                            <span  class= "text-danger" id="error_voucher"></span>
                         <div class="row">
                             @if (session('error'))
                                 <span class="text-danger">{{session('error')}}</span>
                             @endif
                         </div>
-                        <div class="row flex gap-3 " style="margin-left: 10px;">
+                        {{-- <div class="row flex gap-3 " style="margin-left: 10px;">
                             @if (isset($voucher) && !empty($voucher))
                                 @foreach ( $voucher as $item )
                                 <div class="card col-5 me-1  ">
@@ -245,43 +261,56 @@
                                 </div>
                                 @endforeach
                             @endif
-                        </div>
+                        </div> --}}
+                        @php
+                            // $total = number_format($_SESSION['Total'] , 0, ',', '.') . ' VNĐ';
+                            $totalCheck = $_SESSION['Total'] ;
+                        @endphp
                         <div class="subtotal flex items-center justify-between mt-2"><strong
                                 class="heading6">Thành Tiền</strong><strong class="heading6">{{number_format($_SESSION['Total'], 0, ',', '.') . ' VNĐ';}}</strong></div>
                         <div class="ship-block flex items-center justify-between mt-2"><strong
                                 class="heading6">Phí Ship</strong><span class="body1 text-secondary">{{number_format($_SESSION['ship'], 0, ',', '.') . ' VNĐ';}}</span></div>
-                            <input type="hidden" name="total" value={{$_SESSION['Total'] + $_SESSION['ship']}}>
-                        @if(isset($_SESSION['voucher']))
-                            <div class="ship-block flex items-center justify-between mt-2"><strong
-                                class="heading6">Tiền Được Giảm</strong><span class="body1 text-secondary">
-                                    @if ($_SESSION['voucher'][0]->type ==0)
-                                    {{number_format(round(($_SESSION['Total'] + $_SESSION['ship'])/100 * $_SESSION['voucher'][0]->value), 0, ',', '.') . ' VNĐ';}}
-                                    @else
-                                    {{number_format(($_SESSION['Total'] + $_SESSION['ship']) -$_SESSION['voucher'][0]->value, 0, ',', '.') . ' VNĐ';}}
-                                    @endif</span>
-                            </div>
-                        @endif
+                            <input type="hidden" name="total" id="total" value={{$_SESSION['Total'] + $_SESSION['ship']}}>
+                           
+                                <div class="ship-block flex items-center justify-between mt-2" id="text_voucher" >
+                                    <strong class="heading6">Tiền Được Giảm</strong>
+                                        <span class="body1 text-secondary" id="price_voucher">
+                                            @if(isset($_SESSION['voucher']))
+                                                @if ($_SESSION['voucher']->type ==0)
+                                                    {{number_format(round(($_SESSION['Total'])/100 * $_SESSION['voucher']->value), 0, ',', '.') . ' VNĐ';}}
+                                                    @else
+                                                    {{number_format($_SESSION['voucher']->value, 0, ',', '.') . ' VNĐ';}}
+                                                @endif
+                                            @else
+                                                0 VNĐ
+                                            @endif
+                                        </span>
+                                </div>
+                            
+                        
                         <div class="total-cart-block flex items-center justify-between mt-2"><strong
                                 class="heading6">Tổng Giá Trị Đơn Hàng</strong>
                             <div class="flex items-end gap-2"><strong
-                                    class="heading4"> 
-                                    @if(isset($_SESSION['voucher']))
-                                        @if ($_SESSION['voucher'][0]->type ==0)
-                                        {{number_format(($_SESSION['Total'] + $_SESSION['ship']) - round(($_SESSION['Total'] + $_SESSION['ship'])/100 * $_SESSION['voucher'][0]->value), 0, ',', '.') . ' VNĐ';}}
-                                        <input type="hidden" name="total_discount" value={{($_SESSION['Total'] + $_SESSION['ship']) - round(($_SESSION['Total'] + $_SESSION['ship'])/100 * $_SESSION['voucher'][0]->value)}}>
+                                    class="heading4" id="PriceTotalEnd"> 
+                                    @if(isset($_SESSION['voucher'] ))
+                                        @if ($_SESSION['voucher']->type ==0)
+                                        {{number_format(($_SESSION['Total'] + $_SESSION['ship']) - (round(($_SESSION['Total'])/100 * $_SESSION['voucher']->value)), 0, ',', '.') . ' VNĐ';}}
+                                        <input type="hidden" name="total_discount" id="total_discount" value={{($_SESSION['Total'] + $_SESSION['ship']) - (round(($_SESSION['Total'])/100 * $_SESSION['voucher']->value))}}>
                                         @else
-                                        @if($_SESSION['voucher'][0]->value > $_SESSION['Total'] + $_SESSION['ship'] )
-                                            0.VNĐ
-                                            <input type="hidden" name="total_discount" value='0'>
-                                            @else
-                                            {{number_format((($_SESSION['Total'] + $_SESSION['ship']) - $_SESSION['voucher'][0]->value), 0, ',', '.') . ' VNĐ';}}
-                                            <input type="hidden" name="total_discount" value={{($_SESSION['Total'] + $_SESSION['ship']) - $_SESSION['voucher'][0]->value}}>
+                                            @if($_SESSION['voucher']->value > $_SESSION['Total'] + $_SESSION['ship'] )
+                                                0.VNĐ
+                                                <input type="hidden" name="total_discount" id="total_discount" value='0'>
+                                                @else
+                                                {{number_format((($_SESSION['Total'] + $_SESSION['ship']) - $_SESSION['voucher']->value), 0, ',', '.') . ' VNĐ';}}
+                                                <input type="hidden" name="total_discount" id="total_discount" value={{($_SESSION['Total'] + $_SESSION['ship']) - $_SESSION['voucher']->value}}>
                                             @endif
                                         @endif
                                     @else
                                         {{number_format(($_SESSION['Total'] + $_SESSION['ship']), 0, ',', '.') . ' VNĐ';}}
-                                        <input type="hidden" name="total_discount" value={{($_SESSION['Total'] + $_SESSION['ship'])}}>
-                                    @endif</strong></div>
+                                        <input type="hidden" name="total_discount" id="total_discount" value={{($_SESSION['Total'] + $_SESSION['ship'])}}>
+                                    @endif</strong>
+                                        <div id="price_discount" hidden></div>
+                                </div>
                         </div>
                         <div class="row">
                             <button class="btn btn-dark bg-dark text-light" type="submit" name="order" value="order">Đặt Hàng</button>
@@ -295,7 +324,93 @@
         </div>
     </form>
 </div>
+@if(session('error_voucher12'))
+<input type="hidden" name="error_voucher12" id="error_voucher12" value="{{session('error_voucher12')}}">
+@endif
+@php
+    if(isset($_SESSION['voucher'])){
+        $_SESSION['check'] = "hello";
+    }else{
+         $_SESSION['check'] = null;
+    }
+
+    if(isset($_SESSION['cart'])){
+        $_SESSION['check1'] = "true";
+    }else{
+        $_SESSION['check1'] = "false";
+    }
+@endphp
 <script>
+    const error_voucher = document.getElementById('error_voucher12')
+    if(error_voucher != null){
+        // console.log(object);
+        swal({
+            icon: "error",
+            title: error_voucher.value,
+        });
+    }
+    const check2 = "{{$_SESSION['check1']}}";
+    if(check2 == "false"){
+        window.location.href = "{{route('Client.Home')}}";
+    }
+    const text_voucher = document.getElementById('text_voucher');
+    const price_voucher = document.getElementById('price_voucher');
+   
+    const voucher_check = "{{$_SESSION['check']}}";
+
+    const check  = "{{route('Client.orders.voucher')}}"
+    // console.log(check);
+    if(voucher_check != null){
+        $('#text_voucher').removeClass('d-none');
+    }
+        $('#voucher').click(function(){
+        var voucher_code = $('#voucher_code').val();
+        var ship = "{{$_SESSION['ship']}}"
+        $.ajax({
+            url:check,
+            method: "POST",
+            data: {
+                _token : $('meta[name="csrf-token"]').attr('content'),
+                voucher_code: voucher_code,
+            },
+            dataType: "json",
+            success: function(response) {
+                var totalCheck = "{{$totalCheck}}";
+            
+                var price =0;
+                if( Number(response.value.type) == 1){
+                    if(Number(totalCheck) < Number(response.value.value)){
+                        price=0;
+                    }else{
+                        price = ((Number(totalCheck) + Number(ship)) - Number(response.value.value));
+                    }
+                    $('#price_voucher').html(Intl.NumberFormat('vi').format(Number(response.value.value))+' VNĐ');
+                    $('#PriceTotalEnd').html(Intl.NumberFormat('vi').format(price)+' VNĐ');
+                    
+                }else{
+                    price = (Number(totalCheck) + Number(ship)) - (Number(totalCheck)/100 * Number(response.value.value));
+                    $('#price_voucher').html(Intl.NumberFormat('vi').format(Number(totalCheck)/100 * Number(response.value.value))+' VNĐ');
+                    $('#PriceTotalEnd').html(Intl.NumberFormat('vi').format(price)+' VNĐ');
+                }
+                swal({
+                    icon: "success",
+                    title: "Áp dụng mã giảm giá thành công",
+                    });
+                $('#error_voucher').html("");
+               
+                $('#price_discount').html(`<input type="hidden" name="total_discount" id="total_discount" value="${price}">`);
+            },
+            error: function(error){
+                var totalCheck = "{{$totalCheck}}";
+                    $('#price_voucher').html("0 VNĐ");
+                    console.log(error);
+                    // $('#error_voucher').html(error.responseJSON.data);
+                    $('#PriceTotalEnd').html(Intl.NumberFormat('vi').format(Number(totalCheck)+ Number(ship))+' VNĐ');
+                    $('#price_discount').html(`<input type="hidden" name="total_discount" id="total_discount" value="${totalCheck}">`);
+            }
+        })
+    })
+
 
     const selectElement = document.getElementById('tinh');
     const inputElement = document.getElementById('city');

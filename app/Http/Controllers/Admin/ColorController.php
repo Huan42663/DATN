@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Color;
+use App\Models\ProductVariant;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -36,7 +37,14 @@ class ColorController extends Controller
             ]
         );
         $data = ['color_name' => $request['color_name']];
+        $checkText = new PostController;
+        $check = $checkText->ValidateText($request['color_name']);
+        if($check == false){
+            $_SESSION['color'] = $request['color_name'];
+            return redirect()->back()->with('color','tên của màu không được chứa kí tự đặc biệt');
+        }
         Color::create($data);
+        unset($_SESSION['color']);
         return redirect()->back()->with("success", "Thêm màu Thành Công");
     }
 
@@ -75,7 +83,14 @@ class ColorController extends Controller
             ]
         );
         $data = ['color_name' => $request['color_name']];
+        $checkText = new PostController;
+        $check = $checkText->ValidateText($request['color_name']);
+        if($check == false){
+            $_SESSION['color'] = $request['color_name'];
+            return redirect()->back()->with('color','tên của màu không được chứa kí tự đặc biệt');
+        }
         $color->update($data);
+        unset($_SESSION['color']);
         return redirect()->route('Administration.colors.list')->with('success', 'Sửa Màu Thành Công');;
     }
 
@@ -87,6 +102,8 @@ class ColorController extends Controller
         if (isset($request->color_id) && !empty($request->color_id)) {
             foreach ($request->color_id as $item) {
                 $color = Color::query()->find($item);
+                $data = ['quantity'=>0];
+                ProductVariant::where('color_id',$item)->update($data);
                 $color->delete();
             }
             return redirect()->route('Administration.colors.list')->with('success', 'Xóa màu thành công');

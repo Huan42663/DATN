@@ -9,8 +9,8 @@
                 <h5 class="m-b-10">Banner</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">update</li>
+                <li class="breadcrumb-item"><a href="{{ route('Administration.Home') }}">Trang Chủ</a></li>
+                <li class="breadcrumb-item">Cập Nhật</li>
             </ul>
         </div>
     </div>
@@ -35,7 +35,7 @@
                                 @method('PUT')
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="image_name" class="fw-semibold">Image_name: </label>
+                                        <label for="image_name" class="fw-semibold">Ảnh: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -52,7 +52,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="event_id" class="fw-semibold">Event_id: </label>
+                                        <label for="event_id" class="fw-semibold">Sự Kiện: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <select name="event_id" class="form-control" id="event_id">
@@ -71,7 +71,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="product_id" class="fw-semibold">Product_id: </label>
+                                        <label for="product_id" class="fw-semibold">Sản Phẩm: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <select class="form-control" name="product_id" id="product_id">

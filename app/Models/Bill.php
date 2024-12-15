@@ -11,15 +11,16 @@ class Bill extends Model
     use HasFactory,SoftDeletes;
     protected $table = 'bills';
 
-    protected $fillable = [
-        'bill_id',
-        'bill_code',
-        'order_id',
-        'order_code',
-        'amount'
+    protected $fillable = [			
+        "order_id",
+        "bank_code",	
+        "bank_tranno",	
+        "amount",
+        "card_type",	
+        "vnpay_transactionno",	
     ];
 
-    public function order(){
-        return $this->belongsTo(Order::class,'order_id');
-    }
+    // public function order(){
+    //     return $this->belongsTo(Order::class,'order_id');
+    // }
 }

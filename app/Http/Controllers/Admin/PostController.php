@@ -52,6 +52,7 @@ class PostController extends Controller
                 'category_post_id.required' => 'danh mục không được để trống',
             ]
         );
+      
         $data=[ 
             'title'             =>$request['title'],
             'short_description' => $request['short_description'],
@@ -59,6 +60,11 @@ class PostController extends Controller
             'content'           => $request['content'],
             'category_post_id'  => $request['category_post_id']
         ];
+        $check = $this->ValidateText($request->title);
+        if($check == false){
+            $_SESSION['data'] = $data;
+            return redirect()->back()->with('title','title không được chứa kí tự đặc biệt');
+        }
             $post_id = Post::create($data);
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
@@ -68,7 +74,7 @@ class PostController extends Controller
                     PostImage::create($data);
                 }
             }
-            
+            unset($_SESSION['data']);
             return redirect()->back()->with("success","Thêm Bài Viết Thành Công");
     }
 
@@ -101,7 +107,7 @@ class PostController extends Controller
         else{
             $request-> validate(
                 [
-                    'title' => 'required|max:255|regex:/^[a-zA-Z0-9\s]+$/',
+                    'title' => 'required|max:255',
                     'short_description' => 'nullable',
                     'content' => 'required',
                     'category_post_id' => 'required'
@@ -110,12 +116,12 @@ class PostController extends Controller
                 [
                     'title.required' => 'title bài viết không được để trống',
                     'title.max' => 'title bài viết không được quá 255 kí tự',
-                    'title.regex' => 'title bài viết không được chứa kí tự đặc biệt',
                     'content.required' => 'Nội dung  không được để trống',
                     'category_post_id.required' => 'danh mục không được để trống',
                 ]
     
             );
+               
                 $checkPost = Post::query()->where('post_id','!=',$post->post_id)->get();
                 foreach($checkPost as $key){
                     if($key->category_post_name == $request['title']){
@@ -134,7 +140,11 @@ class PostController extends Controller
                     'content'           => $request['content'],
                     'category_post_id'  => $request['category_post_id']
                 ];
-                
+                $check = $this->ValidateText($request->title);
+                if($check == false){
+                    $_SESSION['data'] = $data;
+                    return redirect()->back()->with('title','title không được chứa kí tự đặc biệt');
+                }
                 $post->update($data);
 
                 if ($request->hasFile('image')) {
@@ -156,6 +166,7 @@ class PostController extends Controller
                     }
                     
                 }
+                unset($_SESSION['data']);
                 return redirect()->route('Administration.posts.show',$request['slug'])->with("success","Sửa Bài Viết Thành Công");
         }
     }
@@ -194,5 +205,21 @@ class PostController extends Controller
         }
         return redirect()->route('Administration.posts.show',$post->slug)->with("success","Xóa Ảnh Bài Viết Thành Công");
 
+    }
+    function ValidateText($string)
+    {
+        // Tạo biểu thức chính quy từ danh sách các ký tự đặc biệt
+        $arrayK = array('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '{', '}', '[', ']', '|', '\\', ':', ';', '"', "'", '<','?');
+        $content = str_split($string);
+        $check = true;
+        foreach ($content as $item) {
+            foreach ($arrayK as $value) {
+                if ($item === $value) {
+                    $check = false;
+                }
+            }
+        }
+        // Kiểm tra xem chuỗi có khớp với biểu thức chính quy hay không
+        return $check;
     }
 }

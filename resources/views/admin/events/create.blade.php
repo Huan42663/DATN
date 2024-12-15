@@ -6,11 +6,11 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Events</h5>
+                <h5 class="m-b-10">Sự kiện</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">create</li>
+                <li class="breadcrumb-item"><a href="{{ route('Administration.Home') }}">Trang chủ</a></li>
+                <li class="breadcrumb-item">Thêm mới</li>
             </ul>
         </div>
     </div>

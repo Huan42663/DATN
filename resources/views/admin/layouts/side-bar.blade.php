@@ -6,8 +6,8 @@
             <a
             class="flex items-center max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2"
             href="{{route('Administration.Home')}}">
-            <div class="fs-3 fw-bold logo logo-lg" >JS STORE</div>
-            <div class="fs-6 fw-bold logo logo-sm" >JS STORE</div>
+            <div class="fs-3 fw-bold logo logo-lg" >JSTORE</div>
+            <div class="fs-6 fw-bold logo logo-sm" >JSTORE</div>
             </a>
             {{-- <a href="index.html" class="b-brand">
                 <!-- ========   change your logo hear   ============ -->
@@ -98,7 +98,7 @@
                 <li class="nxl-item nxl-hasmenu">
                     <a class="nxl-link" href="{{route('Administration.orders.list')}}">
                         <span class="nxl-micon"><i class="bi bi-box-seam"></i></span>
-                        <span class="nxl-mtext">Order</span><span class="nxl-arrow"><i
+                        <span class="nxl-mtext">Đơn hàng</span><span class="nxl-arrow"><i
                                 class="feather-chevron-right"></i></span>
                     </a>
                 </li>
@@ -112,14 +112,14 @@
                 <li class="nxl-item nxl-hasmenu">
                     <a class="nxl-link" href="{{route('Administration.colors.list')}}">
                         <span class="nxl-micon"><i class="bi bi-palette"></i></span>
-                        <span class="nxl-mtext">Color</span><span class="nxl-arrow"><i
+                        <span class="nxl-mtext">Màu</span><span class="nxl-arrow"><i
                                 class="feather-chevron-right"></i></span>
                     </a>
                 </li>
                 <li class="nxl-item nxl-hasmenu">
                     <a href="javascript:void(0);" class="nxl-link">
                         <span class="nxl-micon"><i class="bi bi-postcard"></i></span>
-                        <span class="nxl-mtext">Post</span><span class="nxl-arrow"><i
+                        <span class="nxl-mtext">Bài viết</span><span class="nxl-arrow"><i
                                 class="feather-chevron-right"></i></span>
                     </a>
                     <ul class="nxl-submenu">
@@ -133,7 +133,7 @@
                     <a href="javascript:void(0);" class="nxl-link">
                         <span class="nxl-micon">
                             <i class="bi bi-ticket-detailed"></i></span>
-                        <span class="nxl-mtext">Voucher</span><span class="nxl-arrow"><i
+                        <span class="nxl-mtext">Mã khuyến mãi</span><span class="nxl-arrow"><i
                                 class="feather-chevron-right"></i></span>
                     </a>
                     <ul class="nxl-submenu">

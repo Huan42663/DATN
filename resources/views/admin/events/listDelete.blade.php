@@ -1,16 +1,16 @@
 @extends('admin.master')
 
-@section('title', 'danh sách sự kiện')
+@section('title', 'Thùng rác')
 
 @section('page-header')
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Events</h5>
+                <h5 class="m-b-10">Sự kiện</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">List</li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang chủ</a></li>
+                <li class="breadcrumb-item">Thùng rác</li>
             </ul>
         </div>
     </div>

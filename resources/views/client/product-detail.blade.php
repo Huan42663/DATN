@@ -29,33 +29,114 @@
         $listColorNew = collect($listColor)->unique('color_id')->all();
         $listSizeNew = collect($listSize)->unique('size_id')->all();
     @endphp
+    
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-7">
                 <div class="row">
-                    <img src="{{ asset('storage/' . $product->product_image) }}" alt="{{ $product->product_image }}"
-                        class="">
+                    <div id="carouselExampleIndicators" class="carousel slide">
+                        <div class="carousel-indicators">
+                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                          @if(isset($product_images))
+                            @php
+                                $i=2;
+                                foreach ($product_images as $item ):
+                            @endphp
+                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{$i}}" aria-label="{{Slide." $i"}}"></button>
+                            @php
+                                $i++;
+                                endforeach
+                            @endphp
+                           
+                          @endif
+                          
+                        </div>
+                        <div class="carousel-inner">
+                          <div class="carousel-item active">
+                            <img src="{{ asset('storage/' . $product->product_image) }}" alt="{{ $product->product_image }}" class="d-block w-100" style="width: 200px; height:650px;">
+                          </div>
+                          @if(isset($product_images))
+                          @foreach ($product_images as $item )
+                            <div class="carousel-item">
+                                <img style="width: 200px; height:650px;" src="{{asset('storage/'.$item->image_color_name)}}" class="d-block w-100" alt="...">
+                            </div>
+                          @endforeach
+                          @endif
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Next</span>
+                        </button>
+                      </div>
+                    
                 </div>
                 <div class="row mt-3">
-                    <p class="fs-4">
-                        <b>Mô Tả Sản Phẩm :</b> {!! $product->description !!}
-                    </p>
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link @if(!isset($_GET['page'])) active @endif" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Mô Tả Sản Phẩm</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link  @if(isset($_GET['page']))active @endif" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Đánh giá</button>
+                        </li>
+                    </ul>
+                        <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade @if(!isset($_GET['page']))show active @endif " id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">{!! $product->description !!}</div>
+                        <div class="tab-pane fade @if(isset($_GET['page']))show active @endif " id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
+                            <div class="">
+                                @if(isset($rates))
+                                @foreach ($rates as $item )
+                                <div class="card mt-1">
+                                    <div class="card-header">
+                                        {{"Họ và Tên : ".$item->fullName}}
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title d-flex">
+                                        @for ($i = 0; $i < $item->star; $i++)
+                                            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png " width="15" height="15" alt="" title="" class="img-small me-1">
+                                        @endfor
+                                        @for ($i = 0; $i < 5 -  $item->star; $i++)
+                                            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828970.png " width="15" height="15" alt="" title="" class="img-small me-1">
+                                        @endfor
+                                        </h5>
+                                        <div class="row d-flex ">
+                                            @if(isset($rate_images))
+                                                @foreach ($rate_images as $item1 )
+                                                    @if($item->rate_id == $item1->rate_id )
+                                                        <img src="{{asset('storage/'.$item1->image_name)}}" alt="" title="" class="img-small me-1" style="width:150px ;">
+                                                    @endif
+                                                @endforeach
+                                            @endif
+                                        </div>
+                                        <p class="card-text mt-1">{{"Nội dung :" .$item->content}}</p>
+                                    </div>
+                                    </div>
+                                @endforeach
+                                @endif
+                            </div>
+                            {{$rates->links()}}
+                        </div>
+                    </div>
                 </div>
                 <div class="row mt-5">
-                    <div class="d-flex row justify-content-center text-center">
+                    <div class="d-flex row mb-3">
                         <div class="col-4">
-                            <p class="fs-4">Danh Mục</p>
-                            <hr>
+                            <p class="fw-bold fs-4">Danh Mục</p>
                         </div>
                     </div>
                     <div class="row d-flex justify-content-start">
                         @foreach ($product->categories as $item)
                             <div class="col-1">
-                                <a href="#">
+                                <a href="{{route('Client.product.category',$item->category_slug)}}">
                                     <button>
-                                        <span class="badge bg-opacity-10 text-success bg-success rounded-pill">
-                                            {{ $item->category_name }}
-                                        </span>
+                                        <h5>
+                                            <span class="badge bg-opacity-10 text-success bg-success rounded-pill fs-6">
+                                                {{ $item->category_name }}
+                                            </span>
+                                        </h5>
                                     </button>
                                 </a>
                             </div>
@@ -68,35 +149,68 @@
                     @csrf
                     @method('POST')
                     <input type="hidden" name="product_name" value="{{ $product->product_name }}">
-                    <input type="hidden" name="product_id" value="{{ $product->product_id }}">
+                    <input type="hidden" name="product_id" id="product_id" value="{{ $product->product_id }}">
                     <p class="fs-3 lh-1">{{ $product->product_name }}</p>
-                    <hr>
-                    <h3 class="text-danger">
-                        <span class="fs-5 fw-bold"> {{number_format($product->min_price, 0, ',', '.') . ' VNĐ';}} </span>
+                    <hr class="mt-1">
+                    @if(isset($rates))
+                    @php
+                        $check = 0;
+                        foreach ($rates as $key ) {
+                           $check += $key->star;
+                        }
+                        if($check == 0){
+                            $rate =0;
+                        }else{
+                            $rate = $check/count($rates);
+                        }
+                    @endphp
+                        <div class="sapo-product-reviews-star d-flex mt-2">
+                            @for ($i = 0; $i < $rate; $i++)
+                                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png " width="15" height="15" alt="" title="" class="img-small me-1">
+                            @endfor
+                            @for ($i = 0; $i < 5 -  $rate; $i++)
+                                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828970.png " width="15" height="15" alt="" title="" class="img-small me-1">
+                            @endfor
+                        </div>
+                    @endif
+                    <h3 class=" mt-2" id="price">
+                        @if ($product->min_price == $product->max_price)
+                            <span class="fs-5 fw-bold text-danger"> {{number_format($product->min_price, 0, ',', '.') . ' VNĐ';}} </span>
+                        @else
+                        <span class="fs-5 fw-bold text-danger"> {{number_format($product->min_price, 0, ',', '.') . ' VNĐ';}} </span>
                         <i>-</i>
-                        <span class="fs-5 fw-bold">{{number_format($product->max_price, 0, ',', '.') . ' VNĐ';}}</span>
+                        <span class="fs-5 fw-bold text-danger">{{number_format($product->max_price, 0, ',', '.') . ' VNĐ';}}</span>
+                        @endif
                     </h3>
-                    <p>
+                    <input type="hidden" id="max_price" value="{{$product->max_price}}">
+                    <input type="hidden" id="min_price" value="{{$product->min_price}}">
+                    {{-- @if($product->max_price != $product->sale_price_check)
+                        <h4 class="mt-2">
+                            <del><span class="fs-5 fw-bold"> {{number_format($product->min_price, 0, ',', '.') . ' VNĐ';}} </span></del>
+                        </h4>
+                    @endif --}}
+                    <p class="mt-2">
                         <b>Mô Tả :</b> {!! substr($product->description, 0, 200) !!}
                     </p>
-
-                    <div class="form-group mt-3">
-                        <label for="color">Màu sắc:</label> <br>
-                        @foreach ($listColorNew as $color)
-                            <button type="button" class="btn btn-outline-secondary" name="color_id" id="buttonColor"
-                                value="{{ $color['color_id'] }}"
-                                data-color_id="{{ $color['color_id'] }}">{{ $color['color_name'] }}</button>
-                        @endforeach
-                    </div>
                     <div class="form-group mt-2" id="size-box">
                         <label for="size">Kích thước:</label> <br>
                         @foreach ($listSizeNew as $size)
-                            <button type="button" class="btn btn-outline-secondary" name="size_id" id="button"
+                            <button type="button" class="btn btn-outline-dark" name="size_id" id="button"
                                 value="{{ $size['size_id'] }}"
                                 data-size_id="{{ $size['size_id'] }}">{{ $size['size_name'] }}</button>
                         @endforeach
                     </div>
-                    <div class="row d-flex justify-content-center">
+
+                    <div class="form-group mt-3">
+                        <label for="color">Màu sắc:</label> <br>
+                        @foreach ($listColorNew as $color)
+                            <button type="button" class="btn btn-outline-dark" name="color_id" id="buttonColor"
+                                value="{{ $color['color_id'] }}"
+                                data-color_id="{{ $color['color_id'] }}">{{ $color['color_name'] }}</button>
+                        @endforeach
+                    </div>
+                    
+                    <div class="row d-flex">
                         <div class="mt-2 col-5 ">
                             <div class="input-group quantity">
                                 <button type="button" class="input-group-text" data-type="minus" id="minus">
@@ -109,20 +223,24 @@
                                 </button>
                             </div>
                         </div>
+
+                        <div id="quantityCheck" class="mt-2 mb-2">
+                            <span class="fs-6">Số lượng sản phẩm còn trong kho là : {{$product1}}</span>
+                        </div>
+
                     </div>
                     <input type="hidden" name="size_id" id="size_id" value="">
                     <input type="hidden" name="color_id" id="color_id" value="">
-                    <div class="mt-3 d-flex justify-content-center">
-                        <button type="submit" id="submitBtn" class="btn btn-dark bg-dark">Thêm vào giỏ</button>
+                    <div class="mt-3 d-flex">
+                        <button type="button" id="submitBtn" class="btn btn-primary bg-primary" style="width:100%; height:50px;font-size:20px" >Thêm vào giỏ hàng</button>
                     </div>
                 </form>
             </div>
         </div>
         <div class="mt-5 row">
-            <div class="d-flex row justify-content-center text-center">
+            <div class="d-flex row justify-content-center text-center mb-3">
                 <div class="col-4 mb-4">
-                    <p class="fs-4">Sản phẩm liên quan</p>
-                    <hr>
+                    <p class="fw-bold fs-4 text-capitalize">Sản phẩm liên quan</p>
                 </div>
             </div>
             <div class="whate-new-block">
@@ -132,59 +250,7 @@
 
                         @if ($related_products != [])
                             @foreach ($related_products[0] as $product)
-                                <div class="product-item grid-type style-1">
-                                    <a href="{{ route('Client.product.detail', $product->product_slug) }}">
-                                        <div class="product-main cursor-pointer block">
-                                            <div class="product-thumb bg-white relative overflow-hidden rounded-2xl">
-                                                <div
-                                                    class="product-tag text-button-uppercase bg-green px-3 py-0.5 inline-block rounded-full absolute top-3 left-3 z-[1]">
-                                                    New</div>
-                                                <div class="product-img w-full h-full aspect-[3/4]">
-                                                    <img alt="Raglan Sleeve T-shirt" fetchPriority="high" width="500"
-                                                        height="500" decoding="async" data-nimg="1"
-                                                        class="w-full h-full object-cover duration-700"
-                                                        style="color:transparent"
-                                                        srcSet="{{ asset('storage/' . $product->product_image) }} 1x, {{ asset('storage/' . $product->product_image) }} 2x"
-                                                        src="{{ asset('storage/' . $product->product_image) }}" />
-                                                    <img alt="Raglan Sleeve T-shirt" fetchPriority="high" width="500"
-                                                        height="500" decoding="async" data-nimg="1"
-                                                        class="w-full h-full object-cover duration-700"
-                                                        style="color:transparent"
-                                                        srcSet="{{ asset('storage/' . $product->product_image) }} 1x, {{ asset('storage/' . $product->product_image) }} 2x"
-                                                        src="{{ asset('storage/' . $product->product_image) }}" />
-                                                </div>
-                                                <div
-                                                    class="list-action grid grid-cols-2 gap-3 px-5 absolute w-full bottom-5 max-lg:hidden">
-                                                    <div class="quick-view-btn w-full text-button-uppercase py-2 text-center rounded-full duration-300"
-                                                        style="color:white;background-color:black;padding-top:3px ">
-                                                        <a
-                                                            href="{{ route('Client.product.detail', $product->product_slug) }}">Xem
-                                                            Thêm</a>
-                                                    </div>
-                                                </div>
-                                                <div
-                                                    class="list-action-icon flex items-center justify-center gap-2 absolute w-full bottom-3 z-[1] lg:hidden">
-                                                    <a
-                                                        href="{{ route('Client.product.detail', $product->product_slug) }}">
-                                                        <div
-                                                            class="quick-view-btn w-9 h-9 flex items-center justify-center rounded-lg duration-300 bg-white hover:bg-black hover:text-white">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em"
-                                                                height="1em" fill="currentColor" viewBox="0 0 256 256"
-                                                                class="text-lg">
-                                                                <path
-                                                                    d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z">
-                                                                </path>
-                                                            </svg>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="product-infor mt-4 lg:mb-7">
-                                                <div class=" text-title duration-300">{{ $product->product_name }}</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
+                                @include('client.components.whate-new-block', ['product' => $product])
                             @endforeach
                         @endif
                     </div>
@@ -192,6 +258,7 @@
             </div>
         </div>
     </div>
+    <input type="hidden" id="usercheck" @if(Auth::check()) value = "true" @else value="false" @endif>
     <script>
         const minus = document.querySelector('#minus');
         const plus = document.querySelector('#plus');
@@ -202,6 +269,8 @@
         const inp_size = document.getElementById('size_id');
         const size = [];
         const color = [];
+        const product_id = $('#product_id').val();
+        console.log(product_id);
         minus.addEventListener('click', () => {
             quantity.value = quantity.value - 1;
             if (quantity.value <= 1) {
@@ -225,9 +294,11 @@
                 if (!isButtonActive) {
                     button.classList.add('active');
                     size[0] = button.value;
+                    inp_size.value = size[0];
+                    const size_id = $('#size_id').val();
+                    const color_id = $('#color_id').val();
+                    getQuantity(product_id, size_id, color_id)
                 }
-                inp_size.value = size[0];
-                console.log(inp_size);
             });
         });
         buttonColor.forEach(button => {
@@ -241,30 +312,92 @@
                 if (!isButtonActive) {
                     button.classList.add('active');
                     color[0] = button.value;
+                    inp_color.value = color[0];
+                    const size_id = $('#size_id').val();
+                    const color_id = $('#color_id').val();
+                    getQuantity(product_id, size_id, color_id)
                 }
-                inp_color.value = color[0];
-                console.log(inp_color);
             });
         });
+        url = "{{route('Client.product.getQuantity')}}";
+        function getQuantity(product_id, size_id, color_id){
+            
+                $.ajax({
+                url: url, 
+                type: 'POST',
+                data: {
+                    _token : $('meta[name="csrf-token"]').attr('content'),
+                    product_id: product_id,
+                    size_id:  size_id,
+                    color_id: color_id
+                },
+                success: function(response) {
+                    console.log(response.data);
+                        $('#quantityCheck').html(`<span class="fs-6"> ${response.data}</span>`);
+                        if(response.sale_price == null){
+                            $('#price').html(`<span class="fs-5 fw-bold text-danger">${Intl.NumberFormat('vi').format(response.price)} VNĐ </span>`)
+
+                        }else{
+                            $('#price').html(`<span class="fs-5 fw-bold text-danger">${Intl.NumberFormat('vi').format(response.sale_price)} VNĐ </span> <br> <del> <span class="text-secondary">${Intl.NumberFormat('vi').format(response.price)} VNĐ</del>`)
+                        }
+                        // console.log(response);
+                        if(response.quantity ==0){
+                            $("#submitBtn").prop("disabled", true);
+                        }else{
+                            $("#submitBtn").prop("disabled", false);
+                        }
+                },
+                error: function(error) {
+                    const price = $('#max_price').val();
+                    const sale_price = $('#min_price').val();
+                    // console.log(error.responseJSON.data);
+                    $('#quantityCheck').html(`<span class="fs-6">${error.responseJSON.data}</span>`);
+                    if(Number(price) > Number(sale_price)){
+                        $('#price').html(`<span class="fs-5 fw-bold text-danger"> ${Intl.NumberFormat('vi').format(sale_price)} VNĐ</span><i> - </i><span class="fs-5 fw-bold text-danger">${Intl.NumberFormat('vi').format(price)} VNĐ</span>`);
+                    }else{
+                        $('#price').html(`<span class="fs-5 fw-bold text-danger"> ${Intl.NumberFormat('vi').format(price)} VNĐ</span>`);
+
+                    }
+                    $("#submitBtn").prop("disabled", true);
+
+                }
+            });
+        }
         $(document).ready(function() {
             $('#submitBtn').click(function() {
-                var formData = $('#form-add-cart').serialize(); // Chuyển dữ liệu form thành chuỗi
-                document.getElementById('form-add-cart').addEventListener('submit', function(event) {
-                    event.preventDefault();
-                });
-                $.ajax({
-                    url: '/create/cart', // Đường dẫn đến controller
-                    type: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        alert('Thêm sản phẩm vào giỏ hàng thành công');
-                    },
-                    error: function(error) {
-                        alert('Thêm sản phẩm vào giỏ hàng that bai vui long thu lai');
-                        // Xử lý khi gửi thất bại
-                        console.error(error);
+                const userCheck = $('#usercheck').val();
+                    if(userCheck == "true"){
+                        console.log(userCheck);
+                        var formData = $('#form-add-cart').serialize(); // Chuyển dữ liệu form thành chuỗi
+                        document.getElementById('form-add-cart').addEventListener('submit', function(event) {
+                            event.preventDefault();
+                        });
+                            $.ajax({
+                                url: '/create/cart', // Đường dẫn đến controller
+                                type: 'POST',
+                                data: formData,
+                                success: function(response) {
+                                    swal({
+                                    icon: "success",
+                                    title: response.data,
+                                    });
+                                },
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    swal({
+                                    icon: "error",
+                                    title: jqXHR.responseJSON.data,
+                                    });
+                                    console.log(formData);
+                                }
+                            });
+                        } 
+                    else{
+                        swal({
+                        icon: "error",
+                        title: "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng"
+                        });
+                        console.log(userCheck);
                     }
-                });
             });
         });
     </script>

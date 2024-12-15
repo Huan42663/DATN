@@ -8,8 +8,8 @@
                 <h5 class="m-b-10">Sizes</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">List</li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang Chủ</a></li>
+                <li class="breadcrumb-item">Danh sách</li>
             </ul>
         </div>
     </div>
@@ -58,7 +58,9 @@
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="size_name" name="size_name"
                                             placeholder="Size Name" 
-                                            @if(isset($SizeInfo) && !empty($SizeInfo)) 
+                                            @if(isset($_SESSION['size']))
+                                                value ="{{$_SESSION['size']}}"
+                                            @elseif(isset($SizeInfo) && !empty($SizeInfo)) 
                                                 value="{{$SizeInfo[0]->size_name}}"
                                             @else
                                                 value="{{old('size_name')}}"
@@ -68,6 +70,11 @@
                                     @error('size_name')
                                         <span class="text-danger">{{$message}}</span>
                                     @enderror
+
+                                    @if(session('size'))
+                                    <span class="text-danger">{{session('size')}}</span>
+                                    @endif
+
                                     @if(isset($error))
                                         <span class="text-danger">{{$error}}</span>
                                     @endif

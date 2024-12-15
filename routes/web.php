@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\ProductController as CLientProductController;
 use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\ForgotPasswordController;
 use App\Http\Controllers\Client\CategoryController;
 use App\Http\Controllers\Client\EventController as ClientEventController;
 use App\Http\Controllers\Client\HomeController as CLientHomeController;
@@ -71,15 +72,23 @@ Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function 
     });
 
     // ROUTE POST
+    // Route::prefix('posts')->group(function () {
+    //     Route::get('/', [PostController::class, 'index'])->name('Administration.posts.list');
+    //     Route::get('/create', [PostController::class, 'create'])->name('Administration.posts.create');
+    //     Route::post('/create', [PostController::class, 'store'])->name('Administration.posts.store');
+    //     Route::get('/{slug}', [PostController::class, 'show'])->name('Administration.posts.show');
+    //     Route::put('/{post}', [PostController::class, 'update'])->name('Administration.posts.update');
+    //     Route::delete('/{post}', [PostController::class, 'destroy'])->name('Administration.posts.destroy');
+    // });
     Route::prefix('posts')->group(function () {
         Route::get('/', [PostController::class, 'index'])->name('Administration.posts.list');
         Route::get('/create', [PostController::class, 'create'])->name('Administration.posts.create');
         Route::post('/create', [PostController::class, 'store'])->name('Administration.posts.store');
         Route::get('/{slug}', [PostController::class, 'show'])->name('Administration.posts.show');
         Route::put('/{post}', [PostController::class, 'update'])->name('Administration.posts.update');
-        Route::delete('/{post}', [PostController::class, 'destroy'])->name('Administration.posts.destroy');
+        Route::delete('/', [PostController::class, 'destroy'])->name('Administration.posts.destroy');
+        Route::delete('/{post}', [PostController::class, 'destroyImage'])->name('Administration.posts.destroyImage');
     });
-
     // ROUTE VOUCHER
     Route::prefix('vouchers')->group(function () {
         Route::get('/', [VoucherController::class, 'index'])->name('Administration.vouchers.list');
@@ -118,6 +127,8 @@ Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function 
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('Administration.products.destroy');
         Route::post('/delete-image', [ProductController::class, 'destroyImage'])->name('Administration.products.destroyImage');
         Route::post('/create-list-images', [ProductController::class, 'createListImages'])->name('Administration.products.createListImages');
+        Route::get('/list-delete', [ProductController::class, 'listProductDelete'])->name('Administration.products.listDelete');
+        Route::post('/restore-product', [ProductController::class, 'restoreProduct'])->name('Administration.products.restore');
     });
 
     // ROUTE CATEGORY PRODUCT
@@ -197,8 +208,10 @@ Route::prefix('/')->group(function () {
     // ROUTE PRODUCT
     Route::get('products', [CLientProductController::class, 'index'])->name('Client.product.list');
     Route::get('products/search', [CLientProductController::class, 'index'])->name('Client.product.search');
-    Route::get('products/{slug}', [CLientProductController::class, 'index'])->name('Client.product.category');
+    Route::get('category-{slug}', [CategoryController::class, 'show'])->name('Client.product.category');
     Route::get('products/detail/{slug}', [CLientProductController::class, 'productDetail'])->name('Client.product.detail');
+    Route::post('products/getQuantity', [CLientProductController::class, 'getQuantity'])->name('Client.product.getQuantity');
+
 
     // ROUTE CART
     Route::middleware('auth')->group(function () {
@@ -220,32 +233,49 @@ Route::prefix('/')->group(function () {
     Route::get('register', [AuthController::class, 'showRegisterForm'])->name('Client.account.showRegisterForm');
     Route::post('register', [AuthController::class, 'register'])->name('register');
 
+
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('forgot-password.send');
+    Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('reset-password.form');
+    Route::post('reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('reset-password.update');
+
+
+
     // ROUTE POST
     Route::get('/posts/category-{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');
     // Route::get('client/posts/category/{slug}', [ClientPostController::class, 'index'])->name('Client.posts.category');
 
     Route::get('posts/{slug}', [ClientPostController::class, 'detail'])->name('Client.posts.detail');
 
+    Route::get('thankyou', [ClientOrderController::class, 'thank'])->name('Client.orders.thank');
+
     Route::middleware('auth')->group(function () {
         // ROUTE ORDER
         Route::get('orders', [ClientOrderController::class, 'index'])->middleware('auth')->name('Client.orders.list');
         // Route::post('orders/create', [ClientOrderController::class, 'create'])->name('Client.orders.create');
+        Route::post('orders/cart', [ClientOrderController::class, 'orderCart1'])->name('Client.orders.orderCart1');
         Route::get('orders/create', [ClientOrderController::class, 'orderCart'])->name('Client.orders.orderCart');
+        Route::post('orders/voucher', [ClientOrderController::class, 'voucher'])->name('Client.orders.voucher');
         Route::post('orders', [ClientOrderController::class, 'store'])->name('Client.orders.store');
         Route::get('orders/{order_code}/{order_id}', [ClientOrderController::class, 'show'])->middleware('auth')->name('Client.orders.show');
         Route::put('orders/{order}', [ClientOrderController::class, 'show'])->name('Client.orders.update');
-        Route::post('order/{order_code}/{order_id}', [CLientOrderController::class, 'cancel'])->middleware('auth')->name('Client.orders.cancel');
-        Route::post('order/{order_code}/{order_id}/confirmDelivered', [CLientOrderController::class, 'confirmDelivered'])->middleware('auth')->name('Client.orders.confirmDelivered');
+        Route::post('order/cancel', [CLientOrderController::class, 'cancel'])->middleware('auth')->name('Client.orders.cancel');
+        Route::post('order/confirmDelivered', [CLientOrderController::class, 'confirmDelivered'])->middleware('auth')->name('Client.orders.confirmDelivered');
+        Route::post('order/return', [CLientOrderController::class, 'return'])->middleware('auth')->name('Client.orders.return');
+
+        Route::get('/vnpay_payment',[CLientOrderController::class, 'vnpay_payment'])->middleware('auth')->name('Client.orders.vnpay_payment');
     });
 
     // ROUTE RATE
     Route::get('rate/{product_id}/{order_code}', [ClientOrderController::class, 'rates'])->name('Client.rate');
     Route::post('order/rate', [ClientOrderController::class, 'CreateRate'])->name('Client.orders.createRate');
 
-    Route::get('category-{slug}', [CategoryController::class, 'show'])->name('Client.product.category');
 
     // ROUTE EVENT
     Route::get('events/', [ClientEventController::class, 'index'])->name('Client.events.list');
     Route::get('events/show-{slug}', [ClientEventController::class, 'show'])->name('Client.events.show');
-
 })->name('Client');
+
+Route::fallback(function () {
+    return redirect()->back();
+});

@@ -6,11 +6,11 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Events</h5>
+                <h5 class="m-b-10">Sự kiện</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">update</li>
+                <li class="breadcrumb-item"><a href="{{ route('Administration.Home') }}">Trang chủ</a></li>
+                <li class="breadcrumb-item">Cập nhật</li>
             </ul>
         </div>
     </div>
@@ -125,7 +125,7 @@
                                                                    @checked($item->product_id == $product->product_id) @endforeach
                                                                 value="{{ $product->product_id }}" id=""></td>
                                                         <td>{{ $product->product_name }}</td>
-                                                        <td><img src="{{ asset('storage/' . $product->product_image) }}"
+                                                        <td><img width="150px" src="{{ asset('storage/' . $product->product_image) }}"
                                                                 alt=""></td>
                                                     </tr>
                                                 @endforeach

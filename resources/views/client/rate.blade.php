@@ -38,39 +38,39 @@
 
     <div class="mt-5 bg-white">
         <div class="container w-full mt-5" style="padding-top: 20px">
-            @if(isset($product) && count($product)>0)
+            @if($product != null)
                 <div class="heading bora-4">
                     <form action="{{route('Client.orders.createRate')}}" method="POST" enctype="multipart/form-data">
                         @csrf
                             <div class="row mb-3">
                                 <div class="row d-flex" style="height: 250px">
                                     <div class="col-2 mb-3 me-2">
-                                        <a href="{{route('Client.product.detail',$product[0]->product_name)}}"><img class="me-3" src="{{asset('storage/'.$product[0]->product_image)}}" alt="" style=" width:100%;height:60%;border-radius:10px;"/></a>
+                                        <a href="{{route('Client.product.detail',$product->product_name)}}"><img class="me-3" src="{{asset('storage/'.$product->product_image)}}" alt="" style=" width:100%;height:60%;border-radius:10px;"/></a>
                                     </div>
                                     <div class="col-9 mb-3">
-                                        <p class="fs-5 fw-bold">{{$product[0]->product_name}} x {{$product[0]->quantity}} </p>
-                                        @if($product[0]->size != null || $product[0]->color != null)
-                                            <p class="fw-bold">{{$product[0]->size. '  '. $product[0]->color}} </p>
+                                        <p class="fs-5 fw-bold">{{$product->product_name}} x {{$product->quantity}} </p>
+                                        @if($product->size != null || $product->color != null)
+                                            <p class="fw-bold">{{$product->size. '  '. $product->color}} </p>
                                         @endif
                                         <div class="product[0]s-center gap-2 duration-300 relative z-[1]">
                                             <div class="text-title" style="margin-left: 10px">
-                                                @if ($product[0]->sale_price > 0)
-                                                    {{number_format($product[0]->sale_price, 0, ',', '.') . ' VNĐ';}} <br>
+                                                @if ($product->sale_price > 0)
+                                                    {{number_format($product->sale_price, 0, ',', '.') . ' VNĐ';}} <br>
                                                 @else
-                                                    {{number_format($product[0]->price, 0, ',', '.') . ' VNĐ';}} <br>
+                                                    {{number_format($product->price, 0, ',', '.') . ' VNĐ';}} <br>
                                                 @endif
                                             </div>
                                             <div class="product-origin-price caption1 text-secondary2" style="margin-left: 10px"><del>
-                                                @if ($product[0]->sale_price > 0)
-                                                    {{number_format($product[0]->price, 0, ',', '.') . 'VNĐ';}}
+                                                @if ($product->sale_price > 0)
+                                                    {{number_format($product->price, 0, ',', '.') . 'VNĐ';}}
                                                 @endif
                                                 </del>
                                             </div>
                                         <p class="fs-5 fw-bold">Tổng Tiền :
-                                            @if ($product[0]->sale_price > 0)
-                                                {{number_format($product[0]->sale_price * $product[0]->quantity, 0, ',', '.') . ' VNĐ';}} <br>
+                                            @if ($product->sale_price > 0)
+                                                {{number_format($product->sale_price * $product->quantity, 0, ',', '.') . ' VNĐ';}} <br>
                                             @else
-                                                {{number_format($product[0]->price * $product[0]->quantity, 0, ',', '.') . ' VNĐ';}} <br>
+                                                {{number_format($product->price * $product->quantity, 0, ',', '.') . ' VNĐ';}} <br>
                                             @endif
                                         </p>
                                         </div>

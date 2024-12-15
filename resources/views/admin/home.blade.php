@@ -3,74 +3,74 @@
 @section('title', 'trang chủ')
 
 @section('content')
-<div class="row">
-<div class="col-xxl-3 col-md-6">
-    <div class="card stretch stretch-full">
-        <div class="card-body">
-            <div class="d-flex align-items-start justify-content-between mb-4">
-                <div class="d-flex gap-4 align-items-center">
-                    <div class="avatar-text avatar-lg bg-gray-200">
-                        <i class="feather-dollar-sign"></i>
+<div class="row ">
+    <div class="col-xxl-3 col-md-6 mt-3" >
+        <div class="card stretch stretch-full">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between mb-4">
+                    <div class="d-flex gap-4 align-items-center">
+                        <div class="avatar-text avatar-lg bg-gray-200">
+                            <i class="feather-dollar-sign"></i>
+                        </div>
+                        <div>
+                            <h3 class="fs-13 fw-semibold text-truncate-1-line">Sản Phẩm</h3>
+                            <div class="fs-4 fw-bold text-dark"><span class="counter">{{$product}}</span></div>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="fs-13 fw-semibold text-truncate-1-line">Sản Phẩm</h3>
-                        <div class="fs-4 fw-bold text-dark"><span class="counter">{{$product}}</span></div>
-                    </div>
+                    <a href="javascript:void(0);" class="">
+                        <i class="feather-more-vertical"></i>
+                    </a>
                 </div>
-                <a href="javascript:void(0);" class="">
-                    <i class="feather-more-vertical"></i>
-                </a>
             </div>
         </div>
     </div>
-</div>
-<!-- [Invoices Awaiting Payment] end -->
-<!-- [Converted Leads] start -->
-<div class="col-xxl-3 col-md-6">
-    <div class="card stretch stretch-full">
-        <div class="card-body">
-            <div class="d-flex align-items-start justify-content-between mb-4">
-                <div class="d-flex gap-4 align-items-center">
-                    <div class="avatar-text avatar-lg bg-gray-200">
-                        <i class="feather-cast"></i>
+    <!-- [Invoices Awaiting Payment] end -->
+    <!-- [Converted Leads] start -->
+    <div class="col-xxl-3 col-md-6 mt-3" >
+        <div class="card stretch stretch-full">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between mb-4">
+                    <div class="d-flex gap-4 align-items-center">
+                        <div class="avatar-text avatar-lg bg-gray-200">
+                            <i class="feather-cast"></i>
+                        </div>
+                        <div>
+                            <h3 class="fs-13 fw-semibold text-truncate-1-line">Khách Hàng</h3>
+                            <div class="fs-4 fw-bold text-dark"><span class="counter">{{$user}}</span></div>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="fs-13 fw-semibold text-truncate-1-line">Khách Hàng</h3>
-                        <div class="fs-4 fw-bold text-dark"><span class="counter">{{$user}}</span></div>
-                    </div>
+                    <a href="javascript:void(0);" class="">
+                        <i class="feather-more-vertical"></i>
+                    </a>
                 </div>
-                <a href="javascript:void(0);" class="">
-                    <i class="feather-more-vertical"></i>
-                </a>
             </div>
         </div>
     </div>
-</div>
-<!-- [Converted Leads] end -->
-<!-- [Projects In Progress] start -->
-<div class="col-xxl-3 col-md-6">
-    <div class="card stretch stretch-full">
-        <div class="card-body">
-            <div class="d-flex align-items-start justify-content-between mb-4">
-                <div class="d-flex gap-4 align-items-center">
-                    <div class="avatar-text avatar-lg bg-gray-200">
-                        <i class="feather-briefcase"></i>
+    <!-- [Converted Leads] end -->
+    <!-- [Projects In Progress] start -->
+    <div class="col-xxl-3 col-md-6 mt-3" >
+        <div class="card stretch stretch-full">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between mb-4">
+                    <div class="d-flex gap-4 align-items-center">
+                        <div class="avatar-text avatar-lg bg-gray-200">
+                            <i class="feather-briefcase"></i>
+                        </div>
+                        <div>
+                            <h3 class="fs-13 fw-semibold text-truncate-1-line">Đơn Hàng</h3>
+                            <div class="fs-4 fw-bold text-dark"><span class="counter">{{$order}}</span></div>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="fs-13 fw-semibold text-truncate-1-line">Đơn Hàng</h3>
-                        <div class="fs-4 fw-bold text-dark"><span class="counter">{{$order}}</span></div>
-                    </div>
+                    <a href="javascript:void(0);" class="">
+                        <i class="feather-more-vertical"></i>
+                    </a>
                 </div>
-                <a href="javascript:void(0);" class="">
-                    <i class="feather-more-vertical"></i>
-                </a>
             </div>
         </div>
     </div>
-</div>
-<!-- [Projects In Progress] end -->
-<!-- [Conversion Rate] start -->
-<div class="col-xxl-3 col-md-6">
+    <!-- [Projects In Progress] end -->
+    <!-- [Conversion Rate] start -->
+    <div class="col-xxl-3 col-md-6 mt-3" >
     <div class="card stretch stretch-full">
         <div class="card-body">
             <div class="d-flex align-items-start justify-content-between mb-4">
@@ -93,7 +93,7 @@
 <input type="hidden" id="myInput" value="{{$json_array}}">
 <input type="hidden" id="myInput1" value="{{$json_array1}}">
 <input type="hidden" id="myInput2" value="{{$json_array2}}">
-<div class="col-xxl-12">
+<div class="col-xxl-12" style="padding: 10px">
     <div class="card stretch stretch-full">
         <div class="card-header">
             <h5 class="card-title">Doanh Thu Trong Năm</h5>
@@ -266,8 +266,26 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="px-4 py-3 text-center border border-dashed rounded-3">
-                            <h2 class="fs-13 tx-spacing-1">Đơn Hoàn Thành</h2>
+                            <h2 class="fs-13 tx-spacing-1">Đơn Đã Giao Đến Khách Hàng</h2>
                             <div class="fs-11 text-muted text-truncate-1-line">{{$orderDelivered}}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="px-4 py-3 text-center border border-dashed rounded-3">
+                            <h2 class="fs-13 tx-spacing-1">Đơn Hoàn Thành</h2>
+                            <div class="fs-11 text-muted text-truncate-1-line">{{$orderReceived}}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="px-4 py-3 text-center border border-dashed rounded-3">
+                            <h2 class="fs-13 tx-spacing-1">Đơn Hoàn Trả</h2>
+                            <div class="fs-11 text-muted text-truncate-1-line">{{$orderReturn}}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="px-4 py-3 text-center border border-dashed rounded-3">
+                            <h2 class="fs-13 tx-spacing-1">Đơn Bị Hủy</h2>
+                            <div class="fs-11 text-muted text-truncate-1-line">{{$orderCancel}}</div>
                         </div>
                     </div>
                 </div>

@@ -4,10 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class OrderMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,12 +15,9 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-    // Kiểm tra nếu người dùng đã đăng nhập và có vai trò admin hoặc manager
-    if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'manager')) {
-        return $next($request); // Cho phép truy cập
-    }
-
-        // Nếu không phải admin, chuyển hướng đến trang chủ hoặc trang khác
+        if (isset($_SESSION['thankyou'])) {
+            return $next($request); // Cho phép truy cập
+        }
         return redirect()->route('Client.Home'); // Hoặc trang login
     }
 }

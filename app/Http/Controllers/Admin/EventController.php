@@ -170,7 +170,7 @@ class EventController extends Controller
             $request->validate(
                 [
                     'event_name' => 'required|min:5',
-                    'date_start' => 'required|date|after:today',
+                    'date_start' => 'required|date|before:date_end',
                     'date_end' => 'required|date|after:date_start',
                     'discount' => 'nullable|integer',
                     'type_event' => 'required'
