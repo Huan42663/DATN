@@ -23,7 +23,7 @@ class EventController extends Controller
             ->join('events', 'events.event_id', '=', 'product_event.event_id')
             ->join('product_variant', 'product_variant.product_id', '=', 'products.product_id')
             ->selectRaw(
-                'products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.price) as minPrice'
+                'products.product_id,products.product_name, products.product_image,product_slug, Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice'
             )
             ->groupBy('products.product_id', 'products.product_name', 'products.product_image', 'product_slug')
             ->paginate(4);

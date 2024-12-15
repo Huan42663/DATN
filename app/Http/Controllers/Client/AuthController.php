@@ -132,7 +132,7 @@ class AuthController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'regex:/^[a-zA-Z0-9\s]+$/', // Chỉ cho phép chữ cái, số và khoảng trắng
+                'regex:/^[\p{L}0-9\s]+$/u', // Chỉ cho phép chữ cái, số và khoảng trắng
             ],
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
