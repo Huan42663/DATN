@@ -18,9 +18,6 @@
 
 @section('content')
 
-
-    <!-- [ page-header ] start -->
-
     <div class="col-lg-12 mt-3">
         <div class="card stretch stretch-full">
             <div class="card-body custom-card-action p-0">
