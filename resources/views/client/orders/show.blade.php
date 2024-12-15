@@ -69,7 +69,8 @@
                                         Xác Nhận Nhận Hàng</span>
                                 @elseif($order->status == 'canceled')
                                     <span
-                                        style="color: #f44336; background-color: #fce4ec; padding: 5px 10px; border-radius: 5px;">Hủy Đơn </span>
+                                        style="color: #f44336; background-color: #fce4ec; padding: 5px 10px; border-radius: 5px;">Hủy
+                                        Đơn </span>
                                 @elseif($order->status == 'return')
                                     <span
                                         style="color: #565656; background-color: #eeeeee; padding: 5px 10px; border-radius: 5px;">Trả
@@ -94,7 +95,7 @@
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 5px 0;">
                             <strong style="color: #555;">Địa chỉ giao hàng:</strong>
-                            <span>{{ $order->address.",". $order->street .", ". $order->ward.", ". $order->district.", ". $order->province }}</span>
+                            <span>{{ $order->address . ',' . $order->street . ', ' . $order->ward . ', ' . $order->district . ', ' . $order->province }}</span>
                         </div>
                     </div>
                 </div>
@@ -135,11 +136,14 @@
                                 {{ $detail->product->product_name ?? 'Không tồn tại' }}
                             </span>
                             <span style="text-align: left; padding-left: 10px; font-size:14px;">
-                                @if($detail->sale_price !=null || $detail->sale_price > 0)
-                                    <span  class="d-block text-danger" style="font-size:14px; font-weight: 700">{{number_format($detail->sale_price, 0, ',', '.') . ' VNĐ';}}</span> 
-                                    <del class="text-secondary">{{number_format($detail->price, 0, ',', '.') . ' VNĐ';}}</del>
+                                @if ($detail->sale_price != null || $detail->sale_price > 0)
+                                    <span class="d-block text-danger"
+                                        style="font-size:14px; font-weight: 700">{{ number_format($detail->sale_price, 0, ',', '.') . ' VNĐ' }}</span>
+                                    <del
+                                        class="text-secondary">{{ number_format($detail->price, 0, ',', '.') . ' VNĐ' }}</del>
                                 @else
-                                    <span  class="d-block mb-1 text-danger">{{number_format($detail->price, 0, ',', '.') . ' VNĐ';}}</span>
+                                    <span
+                                        class="d-block mb-1 text-danger">{{ number_format($detail->price, 0, ',', '.') . ' VNĐ' }}</span>
                                 @endif
                             </span>
                             {{-- <span style="text-align: center;">
@@ -150,23 +154,31 @@
                             <span style="text-align: center;">{{ $detail->color ?? 'Không có' }}</span>
                             <span style="text-align: center;">{{ $detail->quantity }}</span>
                             @php
-                                $check = (new App\Models\Rate)::query()->join('products','rates.product_id','=','products.product_id')
-                                        ->leftJoin('product_variant','rates.product_variant_id','=','product_variant.product_variant_id')
-                                        ->leftJoin('sizes','product_variant.size_id','=','sizes.size_id')
-                                        ->leftJoin('colors','product_variant.color_id','=','colors.color_id')
-                                        ->where('rates.order_id',$order->order_id)
-                                        ->where('rates.product_id',$detail->product_id)
-                                        ->where('sizes.size_name',$detail->size)
-                                        ->where('colors.color_name',$detail->color)->first();
+                                $check = (new App\Models\Rate())
+                                    ::query()
+                                    ->join('products', 'rates.product_id', '=', 'products.product_id')
+                                    ->leftJoin(
+                                        'product_variant',
+                                        'rates.product_variant_id',
+                                        '=',
+                                        'product_variant.product_variant_id',
+                                    )
+                                    ->leftJoin('sizes', 'product_variant.size_id', '=', 'sizes.size_id')
+                                    ->leftJoin('colors', 'product_variant.color_id', '=', 'colors.color_id')
+                                    ->where('rates.order_id', $order->order_id)
+                                    ->where('rates.product_id', $detail->product_id)
+                                    ->where('sizes.size_name', $detail->size)
+                                    ->where('colors.color_name', $detail->color)
+                                    ->first();
                             @endphp
-                           
-                        </div>
-                
-                        <a href="{{ route('Client.rate', ['product_id'=>$detail->product_id,'order_code'=>$order->order_code]) }}" class="mt-1 @if($order->status != "received") d-none @elseif($order->status == "received" && $check == null) d-block @endif" id="rate_check"
-                            >
-                            <button class="btn btn-primary" style="width: 100px;">Đánh Giá</button>
-                        </a>
 
+                        </div>
+
+                        <a style="text-align: end" href="{{ route('Client.rate', ['product_id' => $detail->product_id, 'order_code' => $order->order_code]) }}"
+                            class="mt-2 @if ($order->status != 'received' || $check != null) d-none @elseif($order->status == 'received' && $check == null) d-block @endif"
+                            id="rate_check">
+                            <button style="text-align: end" class="btn btn-primary" style=" width: 100px;">Đánh Giá</button>
+                        </a>
                     @endforeach
 
                 </div>
@@ -176,10 +188,11 @@
 
                 <!-- Nút hành động -->
                 <div style="display: flex; justify-content: space-between; margin-top: 30px;">
-                    <input type="hidden" id="order_code" value="{{$order->order_code}}">
+                    <input type="hidden" id="order_code" value="{{ $order->order_code }}">
                     <!-- Hủy đơn hàng -->
                     @if ($order->status == 'unconfirm')
-                        <button type="button" id="cancel"   onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này không')"
+                        <button type="button" id="cancel"
+                            onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này không')"
                             style="width: 260px; max-width: 260px; padding: 10px 15px; font-size: 15px; background-color: #e74c3c; color: white; border-radius: 5px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center;">
                             Hủy đơn hàng
                         </button>
@@ -187,11 +200,12 @@
 
                     <!-- Xác nhận đã nhận hàng -->
                     @if ($order->status == 'delivered')
-                        <button type="submit" id="confirm" 
+                        <button type="submit" id="confirm"
                             style="width: 260px; max-width: 260px; padding: 10px 15px; font-size: 15px; background-color: #28a745; color: white; border-radius: 5px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center;">
                             Xác nhận đã nhận hàng
                         </button>
-                        <button type="submit" id="return" onclick="return confirm('Bạn có chắc muốn trả đơn hàng này không')"
+                        <button type="submit" id="return"
+                            onclick="return confirm('Bạn có chắc muốn trả đơn hàng này không')"
                             style="width: 260px; max-width: 260px; padding: 10px 15px; font-size: 15px; background-color: black; color: white; border-radius: 5px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center;">
                             Trả hàng
                         </button>
@@ -199,136 +213,152 @@
                 </div>
             </div>
             <script>
-                $('#cancel').click(function(){
+                $('#cancel').click(function() {
                     var order_code = $('#order_code').val();
-                    const route = "{{route('Client.orders.cancel')}}"
+                    const route = "{{ route('Client.orders.cancel') }}"
                     $.ajax({
-                        url: route ,
+                        url: route,
                         method: "POST",
                         data: {
-                            _token : $('meta[name="csrf-token"]').attr('content'),
+                            _token: $('meta[name="csrf-token"]').attr('content'),
                             order_code: order_code,
                         },
                         dataType: "json",
                         success: function(response) {
                             swal({
                                 icon: "success",
-                                title:response.data,
-                            }).then(()=>{
-                                $('#order_status').html(`<span style="color: #f44336; background-color: #fce4ec; padding: 5px 10px; border-radius: 5px;">Hủy Đơn </span>`)
+                                title: response.data,
+                            }).then(() => {
+                                $('#order_status').html(
+                                    `<span style="color: #f44336; background-color: #fce4ec; padding: 5px 10px; border-radius: 5px;">Hủy Đơn </span>`
+                                )
                                 $('#cancel').addClass('d-none')
                                 $('#return_banking').removeClass().addClass('d-block')
                                 $('#payment_banking').removeClass().addClass('d-none')
                             });
                         },
-                        error: function(error){
+                        error: function(error) {
                             swal({
                                 icon: "error",
                                 title: error.responseJSON.data,
                             });
 
-                            if (error.responseJSON.order_status == 'unconfirm'){
-                                $('#order_status').html(`style="color: #ff9800; background-color: #fff3cd; padding: 5px 10px; border-radius: 5px;">Chờ Xác Nhận</span>`)
-                            }
-                            else if (error.responseJSON.order_status == 'confirmed'){
-                                $('#order_status').html(` <span style="color: #008805; background-color: #e8f5e9; padding: 5px 10px; border-radius: 5px;">Đã Xác Nhận</span>`)
-                                 $('#cancel').addClass('d-none')
-                            }
-                            else if (error.responseJSON.order_status == 'shipping'){
-                                $('#order_status').html(` <span style="color: #0059fe; background-color: #e8f5e9; padding: 5px 10px; border-radius: 5px;">Đang Vận Chuyển</span>`)
-                                 $('#cancel').addClass('d-none')
-                            }
-                            else if (error.responseJSON.order_status == 'delivered'){
-                                $('#order_status').html(`<span style="color: #009cda; background-color: #e8f5e9; padding: 5px 10px; border-radius: 5px;">Đã Giao Đến Khách Hàng</span>`)
+                            if (error.responseJSON.order_status == 'unconfirm') {
+                                $('#order_status').html(
+                                    `style="color: #ff9800; background-color: #fff3cd; padding: 5px 10px; border-radius: 5px;">Chờ Xác Nhận</span>`
+                                )
+                            } else if (error.responseJSON.order_status == 'confirmed') {
+                                $('#order_status').html(
+                                    ` <span style="color: #008805; background-color: #e8f5e9; padding: 5px 10px; border-radius: 5px;">Đã Xác Nhận</span>`
+                                )
+                                $('#cancel').addClass('d-none')
+                            } else if (error.responseJSON.order_status == 'shipping') {
+                                $('#order_status').html(
+                                    ` <span style="color: #0059fe; background-color: #e8f5e9; padding: 5px 10px; border-radius: 5px;">Đang Vận Chuyển</span>`
+                                )
+                                $('#cancel').addClass('d-none')
+                            } else if (error.responseJSON.order_status == 'delivered') {
+                                $('#order_status').html(
+                                    `<span style="color: #009cda; background-color: #e8f5e9; padding: 5px 10px; border-radius: 5px;">Đã Giao Đến Khách Hàng</span>`
+                                )
                                 $('#cancel').addClass('d-none')
                                 $('#confirm').removeClass().addClass('d-block')
                                 $('#return').removeClass().addClass('d-block')
+                            } else if (error.responseJSON.order_status == 'received') {
+                                $('#order_status').html(
+                                    `<span style="color: #73ff00; background-color: #fff3cd; padding: 5px 10px; border-radius: 5px;">Đã Xác Nhận Nhận Hàng</span>`
+                                )
+                                $('#cancel').addClass('d-none')
+                            } else if (error.responseJSON.order_status == 'canceled') {
+                                $('#order_status').html(
+                                    `<span style="color: #f44336; background-color: #fce4ec; padding: 5px 10px; border-radius: 5px;">Hủy Đơn </span>`
+                                )
+                            } else if (error.responseJSON.order_status == 'return') {
+                                $('#order_status').html(
+                                    ` <span style="color: #565656; background-color: #eeeeee; padding: 5px 10px; border-radius: 5px;">Trả Hàng</span>`
+                                )
+                                $('#cancel').addClass('d-none')
                             }
-                            else if (error.responseJSON.order_status == 'received'){
-                                $('#order_status').html(`<span style="color: #73ff00; background-color: #fff3cd; padding: 5px 10px; border-radius: 5px;">Đã Xác Nhận Nhận Hàng</span>`)
-                                 $('#cancel').addClass('d-none')
-                            }
-                            else if (error.responseJSON.order_status == 'canceled'){
-                                $('#order_status').html(`<span style="color: #f44336; background-color: #fce4ec; padding: 5px 10px; border-radius: 5px;">Hủy Đơn </span>`)
-                            }
-                            else if (error.responseJSON.order_status == 'return'){
-                                $('#order_status').html(` <span style="color: #565656; background-color: #eeeeee; padding: 5px 10px; border-radius: 5px;">Trả Hàng</span>`)
-                                 $('#cancel').addClass('d-none')
-                            }
-                               
-                           
+
+
                         }
                     });
-                    
+
                 });
-            
-                $('#confirm').click(function(){
+
+                $('#confirm').click(function() {
                     var order_code = $('#order_code').val();
-                    const route = "{{route('Client.orders.confirmDelivered')}}"
+                    const route = "{{ route('Client.orders.confirmDelivered') }}"
                     $.ajax({
-                        url: route ,
+                        url: route,
                         method: "POST",
                         data: {
-                            _token : $('meta[name="csrf-token"]').attr('content'),
+                            _token: $('meta[name="csrf-token"]').attr('content'),
                             order_code: order_code,
                         },
                         dataType: "json",
                         success: function(response) {
                             swal({
                                 icon: "success",
-                                title:response.data,
-                            }).then(()=>{
-                                $('#order_status').html(`<span style="color: #017e12; background-color: #fff3cd; padding: 5px 10px; border-radius: 5px;">Đã Xác Nhận Nhận Hàng</span>`)
+                                title: response.data,
+                            }).then(() => {
+                                $('#order_status').html(
+                                    `<span style="color: #017e12; background-color: #fff3cd; padding: 5px 10px; border-radius: 5px;">Đã Xác Nhận Nhận Hàng</span>`
+                                )
                                 $('#confirm').addClass('d-none')
                                 $('#return').addClass('d-none')
-                                $('#rate_check').removeClass().addClass('d-block')
+                                var elements = document.querySelectorAll('#rate_check');
+                                elements.forEach(element => {
+                                    element.classList.remove('d-none');
+                                    element.classList.add('d-block');
+                                });
 
                             });
                         },
-                        error: function(error){
+                        error: function(error) {
                             swal({
                                 icon: "error",
                                 title: error.responseJSON.data,
                             })
                         }
                     });
-                    
+
                 });
 
-                $('#return').click(function(){
+                $('#return').click(function() {
                     var order_code = $('#order_code').val();
-                    const route = "{{route('Client.orders.return')}}"
+                    const route = "{{ route('Client.orders.return') }}"
                     $.ajax({
-                        url: route ,
+                        url: route,
                         method: "POST",
                         data: {
-                            _token : $('meta[name="csrf-token"]').attr('content'),
+                            _token: $('meta[name="csrf-token"]').attr('content'),
                             order_code: order_code,
                         },
                         dataType: "json",
                         success: function(response) {
                             swal({
                                 icon: "success",
-                                title:response.data,
-                            }).then(()=>{
-                                $('#order_status').html(`<span style="color: #565656; background-color: #eeeeee; padding: 5px 10px; border-radius: 5px;">Trả Hàng</span>`)
+                                title: response.data,
+                            }).then(() => {
+                                $('#order_status').html(
+                                    `<span style="color: #565656; background-color: #eeeeee; padding: 5px 10px; border-radius: 5px;">Trả Hàng</span>`
+                                )
                                 $('#confirm').addClass('d-none')
                                 $('#return').addClass('d-none')
                                 $('#return_banking').removeClass().addClass('d-block')
                                 $('#payment_banking').removeClass().addClass('d-none')
                             });
                         },
-                        error: function(error){
+                        error: function(error) {
                             swal({
                                 icon: "error",
                                 title: error.responseJSON.data,
                             })
                         }
                     });
-                    
+
                 });
-            
-            
             </script>
             <!-- Phần bên phải: Bill hóa đơn -->
             <div
@@ -383,59 +413,65 @@
                         <strong>Ngày đặt hàng:</strong> <span>{{ $order->created_at }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Tổng giá trị sản phẩm:</strong><span>{{number_format($order->total-30000, 0, ',', '.') . ' VNĐ';}}</span>
+                        <strong>Tổng giá trị sản
+                            phẩm:</strong><span>{{ number_format($order->total - 30000, 0, ',', '.') . ' VNĐ' }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Phí vận chuyển:</strong><span>{{number_format(30000, 0, ',', '.') . ' VNĐ';}}</span>
+                        <strong>Phí vận chuyển:</strong><span>{{ number_format(30000, 0, ',', '.') . ' VNĐ' }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Khuyến mãi:</strong><span>{{number_format($order->total - $order->total_discount, 0, ',', '.') . ' VNĐ';}}</span>
+                        <strong>Khuyến
+                            mãi:</strong><span>{{ number_format($order->total - $order->total_discount, 0, ',', '.') . ' VNĐ' }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                         <strong>Tổng Tiền:</strong>
-                        @if($order->total > $order->total_discount && $order->total_discount !=null )
-                            <span class="text-danger">{{number_format($order->total_discount, 0, ',', '.') . ' VNĐ';}}</span>
+                        @if ($order->total > $order->total_discount && $order->total_discount != null)
+                            <span
+                                class="text-danger">{{ number_format($order->total_discount, 0, ',', '.') . ' VNĐ' }}</span>
                         @else
-                            <span class="text-danger">{{number_format($order->total, 0, ',', '.') . ' VNĐ';}}</span>
+                            <span class="text-danger">{{ number_format($order->total, 0, ',', '.') . ' VNĐ' }}</span>
                         @endif
                     </div>
 
-                    @if($orderBill != null)
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;" class="mt-1">
-                        <strong class="fs-bold fw-5">Thông tin giao dịch</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Mã ngân hàng:</strong><span>{{$orderBill->bank_code}}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Mã giao dịch:</strong><span>{{$orderBill->bank_tranno}}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Số tiền giao dịch:</strong><span>{{number_format($orderBill->amount, 0, ',', '.') . ' VNĐ';}}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Loại thẻ:</strong><span>{{$orderBill->card_type}}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Mã giao dịch VnPay:</strong><span>{{$orderBill->vnpay_transactionno}}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Thời gian giao dịch</strong><span>{{$orderBill->created_at}}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Tổng Tiền Cần Thu:</strong>
+                    @if ($orderBill != null)
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;" class="mt-1">
+                            <strong class="fs-bold fw-5">Thông tin giao dịch</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Mã ngân hàng:</strong><span>{{ $orderBill->bank_code }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Mã giao dịch:</strong><span>{{ $orderBill->bank_tranno }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Số tiền giao
+                                dịch:</strong><span>{{ number_format($orderBill->amount, 0, ',', '.') . ' VNĐ' }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Loại thẻ:</strong><span>{{ $orderBill->card_type }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Mã giao dịch VnPay:</strong><span>{{ $orderBill->vnpay_transactionno }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Thời gian giao dịch</strong><span>{{ $orderBill->created_at }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>Tổng Tiền Cần Thu:</strong>
                             <span class="text-danger"> 0 VNĐ</span>
-                    </div>
-                    @if($order->method_payment == "banking")
-                        <div style="display: flex; justify-content: end; margin-bottom: 10px;" class="d-none" id="return_banking">
-                            <span class="badge bg-soft-danger text-danger fs-6">Đã Hoàn Trả</span>
                         </div>
-                        <div style="display: flex; justify-content: end; margin-bottom: 10px;" class="d-block"id="payment_banking">
-                            <span class="badge bg-soft-success text-success fs-6">Đã Thanh Toán</span>
-                        </div>
+                        @if ($order->method_payment == 'banking')
+                            <div style="display: flex; justify-content: end; margin-bottom: 10px;" class="d-none"
+                                id="return_banking">
+                                <span class="badge bg-soft-danger text-danger fs-6">Đã Hoàn Trả</span>
+                            </div>
+                            <div style="display: flex; justify-content: end; margin-bottom: 10px;"
+                                class="d-block"id="payment_banking">
+                                <span class="badge bg-soft-success text-success fs-6">Đã Thanh Toán</span>
+                            </div>
                         @endif
                     @endif
-                   
+
                 </div>
 
                 <!-- Thông điệp cảm ơn -->
@@ -459,10 +495,10 @@
 
         </div>
         @if (session('message'))
-            <input type="hidden" id="messagecheck" value="{{session('message')}}">
+            <input type="hidden" id="messagecheck" value="{{ session('message') }}">
         @endif
         @if (session('status'))
-            <input type="hidden" id="statuscheck" value="{{session('status')}}">
+            <input type="hidden" id="statuscheck" value="{{ session('status') }}">
         @endif
         <style>
             /* Thương hiệu với text-shadow nhẹ */
@@ -512,24 +548,22 @@
             </div>
         </div>
     </div>
-       
-    <script>
 
+    <script>
         const check = document.getElementById('messagecheck');
         const check1 = document.getElementById('statuscheck');
 
-        if(check != null && check1 != null){
-            if(check1.value == "false"){
-                    swal({
+        if (check != null && check1 != null) {
+            if (check1.value == "false") {
+                swal({
                     icon: "error",
                     title: check.value,
                 });
-            }
-            else{
+            } else {
                 swal({
-                icon: "success",
-                title: check.value,
-            });
+                    icon: "success",
+                    title: check.value,
+                });
             }
         }
 

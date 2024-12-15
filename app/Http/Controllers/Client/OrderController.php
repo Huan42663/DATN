@@ -161,7 +161,7 @@ class OrderController extends Controller
         $userId = auth()->user()->user_id;
         $orders = Order::where('user_id', $userId)
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(8);
         return view('client.orders.index', compact('orders'));
     }
 
@@ -299,7 +299,7 @@ class OrderController extends Controller
             // $_SESSION['infoOrder'] = $data1;
             // dd($_SESSION['infoOrder']);
             if(isset($_SESSION['voucher'])){
-                if($_SESSION['voucher']->quantity == 0 ||  $_SESSION['voucher']->date_start <= Carbon::now() ||  $_SESSION['voucher']->date_end >=Carbon::now()  ){
+                if($_SESSION['voucher']->quantity == 0 ||  $_SESSION['voucher']->date_start > Carbon::now() ||  $_SESSION['voucher']->date_end < Carbon::now()  ){
                     unset($_SESSION['voucher']);
                     return redirect()->back()->with('error_voucher12','Voucher không khả dụng');
                 } 

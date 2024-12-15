@@ -53,12 +53,12 @@
                         </div>
                         <div class="carousel-inner">
                           <div class="carousel-item active">
-                            <img src="{{ asset('storage/' . $product->product_image) }}" alt="{{ $product->product_image }}" class="d-block w-100" style="width: 200px; height:400px;">
+                            <img src="{{ asset('storage/' . $product->product_image) }}" alt="{{ $product->product_image }}" class="d-block w-100" style="width: 200px; height:650px;">
                           </div>
                           @if(isset($product_images))
                           @foreach ($product_images as $item )
                             <div class="carousel-item">
-                                <img src="{{asset('storage/'.$item->image_color_name)}}" class="d-block w-100" alt="...">
+                                <img style="width: 200px; height:650px;" src="{{asset('storage/'.$item->image_color_name)}}" class="d-block w-100" alt="...">
                             </div>
                           @endforeach
                           @endif
