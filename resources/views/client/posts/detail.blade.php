@@ -29,9 +29,10 @@
                    
 
                     @if(isset($imageUrls[$index]))
-                    <div class="image-item">
-                        <img src="{{ $imageUrls[$index] }}" alt="{{ $post->title }}" style="margin: 20px 0;">
+                    <div class="image-item" style="display: flex; justify-content: center; align-items: center; margin: 20px 0;">
+                        <img src="{{ $imageUrls[$index] }}" alt="{{ $post->title }}">
                     </div>
+                    
                     @endif
                     <p>{{ $text }}</p>
                     @endforeach
