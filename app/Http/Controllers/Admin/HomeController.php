@@ -52,7 +52,7 @@ class HomeController extends Controller
             ->selectRaw('products.product_name, products.product_image,product_slug,COUNT(products.product_id) as quantityProduct,Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
             ->groupBy('products.product_name', 'products.product_image', 'product_slug')
             ->having('quantityProduct', '>', 0)
-            ->orderBy('quantityProduct','desc')
+            ->orderBy('quantityProduct', 'desc')
             ->limit(10)
             ->get();
         //Lấy Doanh thu các tháng trong năm
@@ -66,17 +66,21 @@ class HomeController extends Controller
             ->selectRaw('YEAR(created_at) as year , MONTH(created_at) as month, SUM(total) as total')
             ->whereRaw("YEAR(created_at) = $year AND status = 'delivered' OR status = 'received' ")
             ->groupByRaw('YEAR(created_at), MONTH(created_at)')
+            ->orderBy("month", "ASC")
             ->get();
-
+        // dd($totalMonthInYear);
         $YearTotal = [];
-        $j =0;
-        for($i = 1; $i<13;$i++){
-           
-            if($i == $totalMonthInYear[$j]->month){
-                array_push($YearTotal, $totalMonthInYear[$j]->total);
-                $j++;
-            }else{
-                array_push($YearTotal, $i);
+        $j = 0;
+        for ($i = 1; $i < 13; $i++) {
+            if (!empty($totalMonthInYear)) {
+                if ($i == $totalMonthInYear[$j]->month) {
+                    array_push($YearTotal, $totalMonthInYear[$j]->total);
+                    $j++;
+                } else {
+                    array_push($YearTotal, 0);
+                }
+            }else {
+                array_push($YearTotal, 0);
             }
         }
         $json_array = json_encode($YearTotal);
@@ -84,13 +88,13 @@ class HomeController extends Controller
         //Lấy Sản Phẩm Mới trong tháng
         $month = Carbon::now()->month;
         $productNew = Products::query()
-        ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
-        ->where('products.status',1)
-        ->selectRaw('products.product_name, products.product_image,product_slug,Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
-        ->groupBy('products.product_id','products.product_name', 'products.product_image', 'product_slug')
-        ->orderBy('products.product_id','desc')
-        ->limit(10)
-        ->get();
+            ->join('product_variant', 'products.product_id', '=', 'product_variant.product_id')
+            ->where('products.status', 1)
+            ->selectRaw('products.product_name, products.product_image,product_slug,Max(product_variant.price) as maxPrice , Min(product_variant.sale_price) as minPrice')
+            ->groupBy('products.product_id', 'products.product_name', 'products.product_image', 'product_slug')
+            ->orderBy('products.product_id', 'desc')
+            ->limit(10)
+            ->whereNull('deleted_at')->get();
         $orderUnconfirm = Count(Order::query()->where('status', 'unconfirm')->get());
         $orderCancel = Count(Order::query()->where('status', 'canceled')->get());
         $orderReturn = Count(Order::query()->where('status', 'return')->get());
@@ -98,19 +102,27 @@ class HomeController extends Controller
         $orderConfirm = Count(Order::query()->where('status', 'confirm')->get());
         $orderShip = Count(Order::query()->where('status', 'shipping')->get());
         $orderDelivered = Count(Order::query()->where('status', 'delivered')->get());
-        return view('admin.home',
-        compact(
-            'product',
-            'order',
-            'user',
-            'post',
-            'productHot',
-            'productNew',
-            'chartCategoryProduct',
-            'json_array',
-            'json_array1',
-            'json_array2',
-            'orderUnconfirm',
-            'orderConfirm','orderShip','orderDelivered','orderReturn','orderReceived','orderCancel'));
+        return view(
+            'admin.home',
+            compact(
+                'product',
+                'order',
+                'user',
+                'post',
+                'productHot',
+                'productNew',
+                'chartCategoryProduct',
+                'json_array',
+                'json_array1',
+                'json_array2',
+                'orderUnconfirm',
+                'orderConfirm',
+                'orderShip',
+                'orderDelivered',
+                'orderReturn',
+                'orderReceived',
+                'orderCancel'
+            )
+        );
     }
 }
