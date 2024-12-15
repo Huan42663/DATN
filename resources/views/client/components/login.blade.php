@@ -36,7 +36,8 @@
                     </div>
                     <div class="block-button md:mt-7 mt-4" style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
                         <button class="button-main">Đăng Nhập</button>
-                       <button type="submit" class="btn btn-primary"> <a href="{{ route('password.request') }}" style="color: #000000; text-decoration: none;">Quên mật khẩu?</a></button>
+                        <a href="{{ route('password.request') }}" class=" button-main px-4 py-2" style="color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">Quên mật khẩu?</a>
+
                     </div>
 
                 </form>
