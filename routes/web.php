@@ -233,6 +233,16 @@ Route::prefix('/')->group(function () {
     Route::get('register', [AuthController::class, 'showRegisterForm'])->name('Client.account.showRegisterForm');
     Route::post('register', [AuthController::class, 'register'])->name('register');
 
+    // Route xác nhận email
+
+
+
+Route::get('/verify-email/{email}', [AuthController::class, 'verify'])->name('verifyEmail');
+
+
+
+
+
 
     Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
     Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('forgot-password.send');
@@ -263,7 +273,7 @@ Route::prefix('/')->group(function () {
         Route::post('order/confirmDelivered', [CLientOrderController::class, 'confirmDelivered'])->middleware('auth')->name('Client.orders.confirmDelivered');
         Route::post('order/return', [CLientOrderController::class, 'return'])->middleware('auth')->name('Client.orders.return');
 
-        Route::get('/vnpay_payment',[CLientOrderController::class, 'vnpay_payment'])->middleware('auth')->name('Client.orders.vnpay_payment');
+        Route::get('/vnpay_payment', [CLientOrderController::class, 'vnpay_payment'])->middleware('auth')->name('Client.orders.vnpay_payment');
     });
 
     // ROUTE RATE
