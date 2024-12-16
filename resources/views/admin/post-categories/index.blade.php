@@ -6,10 +6,10 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Category Post</h5>
+                <h5 class="m-b-10">Danh mục bài viết</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang chủ</a></li>
                 <li class="breadcrumb-item">List</li>
             </ul>
         </div>
@@ -17,7 +17,6 @@
 @endsection
 
 @section('content')
-    <!-- [Recent Orders] start -->
     <div class="col-lg-12 mt-3">
         <div class="card stretch stretch-full">
             <div class="card-body custom-card-action p-0">
@@ -30,18 +29,18 @@
                 <div class="table-responsive">
                     <a href="{{ route('Administration.categoryPost.create') }}" class=" btn btn-primary">
                         <i class="feather-plus me-2"></i>
-                        <span>ADD NEW CATEGORY POST</span>
+                        <span>THÊM MỚI DANH MỤC BÀI VIẾT</span>
                     </a>
                     <div class="col-1">
                         <a href="{{ route('Administration.categoryPost.listDelete') }}" class=" btn btn-danger mt-2">
-                            <i class="fa fa-trash"></i> Trash
+                            <i class="fa fa-trash"></i> Thùng rác
                         </a>
                     </div>
                     <table id="example" class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Category Name</th>
-                                <th class="text-end">Actions</th>
+                                <th>Tên danh mục bài viết</th>
+                                <th class="text-end">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,5 +74,4 @@
             </div>
         </div>
     </div>
-    <!-- [Recent Orders] end -->
 @endsection

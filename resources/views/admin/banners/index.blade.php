@@ -48,7 +48,8 @@
                                         <div class="hstack gap-3">
 
                                             <div>
-                                                <img src="{{ asset('storage/' . $banner->image_name) }}" alt="" style="width: 60px; height: 60px;">
+                                                <img src="{{ asset('storage/' . $banner->image_name) }}" alt=""
+                                                    style="width: 60px; height: 60px;">
                                             </div>
                                         </div>
                                     </td>x
@@ -70,17 +71,20 @@
                                             {{-- <a href="" class="avatar-text avatar-md">
                                                 <i class="feather-eye"></i>
                                             </a> --}}
-                                            <a href="{{ route('Administration.banners.edit', $banner->banner_id) }}" class="avatar-text avatar-md">
+                                            <a href="{{ route('Administration.banners.edit', $banner->banner_id) }}"
+                                                class="avatar-text avatar-md">
                                                 <i class="feather-edit"></i>
                                             </a>
-                                            <form action="{{ route('Administration.banners.destroy', $banner->banner_id) }}" method="POST"
+                                            <form action="{{ route('Administration.banners.destroy', $banner->banner_id) }}"
+                                                method="POST"
                                                 onsubmit="return confirm('Bạn có chắc chắn muốn xóa banner này không?')">
-                                              @csrf
-                                              @method('DELETE')
-                                              <button type="submit" class="avatar-text avatar-md text-danger" style="border: none; background: transparent;">
-                                                  <i class="feather-trash-2"></i>
-                                              </button>
-                                          </form>
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="avatar-text avatar-md text-danger"
+                                                    style="border: none; background: transparent;">
+                                                    <i class="feather-trash-2"></i>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
