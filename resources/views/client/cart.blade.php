@@ -34,7 +34,7 @@
                                     <td>
                                         <div class="d-flex">
                                             <a href="{{route('Client.product.detail',$item->product_slug)}}"><img class="me-3" src="{{asset('storage/'.$item->product_image)}}" alt="" width="100"/></a>
-                                            <div class="text-title">{{$item->product_name}}</div>
+                                            <div class="text-title">{!! substr($item->product_name, 0, 20) . '...' !!}</div>
                                         </div>
                                     </td>
                                     <td>
