@@ -6,12 +6,12 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Products</h5>
+                <h5 class="m-b-10">Sản phẩm </h5>
             </div>
             <ul class="breadcrumb">
                 {{-- <li class="breadcrumb-item"><a href="{{ Route('home') }}">Home</a></li> --}}
-                <li class="breadcrumb-item"><a href="{{ url()->previous() }}">Create</a></li>
-                <li class="breadcrumb-item">Create Variants</li>
+                <li class="breadcrumb-item"><a href="{{ url()->previous() }}">Thêm mới </a></li>
+                <li class="breadcrumb-item">Thêm biến thể </li>
             </ul>
         </div>
     </div>
@@ -26,7 +26,7 @@
                         <div class="card-body personal-info">
                             <div class="mb-4 d-flex align-items-center justify-content-between">
                                 <h5 class="fw-bold mb-0 me-4">
-                                    <span class="d-block mb-2">Variants :</span>
+                                    <span class="d-block mb-2">Biến thể :</span>
                                 </h5>
                             </div>
                             @if (isset($_SESSION['data'][0]['action']) != '')
@@ -42,10 +42,10 @@
                                     <thead>
                                         <th></th>
                                         <th>Size</th>
-                                        <th>Color</th>
-                                        <th>Price</th>
-                                        <th>Price Sale</th>
-                                        <th>Quantity</th>
+                                        <th>Màu </th>
+                                        <th>Giá </th>
+                                        <th>Giá khuyến mãi </th>
+                                        <th>Số lượng </th>
                                     </thead>
                                     <tbody>
                                         @foreach ($_SESSION['data'] as $item)
@@ -102,10 +102,10 @@
                         </table>
                     </div>
                     <div class="row">
-                        <button type="submit" class="btn btn-lg btn-light-brand col-4">Add</button>
+                        <button type="submit" class="btn btn-lg btn-light-brand col-4">Thêm </button>
                         <button type="submit" class="btn btn-lg btn-light-brand col-4" name="action"
                             value="delete">
-                            Delete Variant
+                            Xóa biến thể
                         </button>
                     </div>
                     </form>

@@ -39,7 +39,7 @@
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="text" name="event_name" value="{{ old('event_name') }}"
-                                                class="form-control" id="event_name" placeholder="Event Name">
+                                                class="form-control" id="event_name" placeholder="Nhập tên sự kiện ">
                                         </div>
                                         @error('event_name')
                                             <span class="text-danger">{{ $message }}</span>

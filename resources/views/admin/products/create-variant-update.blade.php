@@ -6,14 +6,14 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Products</h5>
+                <h5 class="m-b-10">Sản phẩm </h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.products.list') }}">List</a></li>
-                <li class="breadcrumb-item"><a href="{{ url()->previous() }}">Show</a></li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.products.list') }}">Danh sách </a></li>
+                <li class="breadcrumb-item"><a href="{{ url()->previous() }}">Chi tiết </a></li>
 
 
-                <li class="breadcrumb-item">create-Variant</li>
+                <li class="breadcrumb-item">Thêm biến thể </li>
             </ul>
         </div>
     </div>
@@ -29,7 +29,7 @@
                         <div class="card-body personal-info">
                             <div class="mb-4 d-flex align-items-center justify-content-between">
                                 <h5 class="fw-bold mb-0 me-4">
-                                    <span class="d-block mb-2">Create Variant:</span>
+                                    <span class="d-block mb-2">Thêm biến thể:</span>
                                 </h5>
                             </div>
                             @if (session('message'))
@@ -41,7 +41,7 @@
                                 @csrf
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="status" class="fw-semibold">Color</label>
+                                        <label for="status" class="fw-semibold">Màu </label>
                                     </div>
 
                                     <div class="col-lg-8">
@@ -90,12 +90,12 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="price" class="fw-semibold">Price: </label>
+                                        <label for="price" class="fw-semibold">Giá: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="number" class="form-control" id="price" name="price"
-                                                placeholder="price" value={{ old('price') }}>
+                                                placeholder="Nhập giá " value={{ old('price') }}>
 
                                         </div>
                                         @error('price')
@@ -105,12 +105,12 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="sale_price" class="fw-semibold"> Sale Price: </label>
+                                        <label for="sale_price" class="fw-semibold"> Giá khuyến mãi: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="number" class="form-control" id="sale_price" name="sale_price"
-                                                placeholder="price sale" value={{ old('sale_price') }}>
+                                                placeholder="Nhập giá khuyến mãi " value={{ old('sale_price') }}>
 
                                         </div>
                                         @error('sale_price')
@@ -120,12 +120,12 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="quantity" class="fw-semibold">Quantity: </label>
+                                        <label for="quantity" class="fw-semibold">Số lượng: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="number" class="form-control" id="quantity" name="quantity"
-                                                placeholder="Quantity" value={{ old('quantity') }}>
+                                                placeholder="Nhập số lượng " value={{ old('quantity') }}>
 
                                         </div>
                                         @error('quantity')
@@ -135,12 +135,12 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="weight" class="fw-semibold">Weight: </label>
+                                        <label for="weight" class="fw-semibold">Cân nặng: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="number" class="form-control" id="weight" name="weight"
-                                                placeholder="Weight" value={{ old('weight') }}>
+                                                placeholder="Nhập cân nặng " value={{ old('weight') }}>
 
                                         </div>
                                         @error('weight')
@@ -150,7 +150,7 @@
                                 </div>
                                 <input type="hidden" name="action" value="update">
                                 <div class="row">
-                                    <button type="submit" class="btn btn-lg btn-light-brand">Add New</button>
+                                    <button type="submit" class="btn btn-lg btn-light-brand">Thêm mới </button>
                                 </div>
                             </form>
                         </div>

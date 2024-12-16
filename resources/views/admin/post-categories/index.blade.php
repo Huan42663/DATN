@@ -10,7 +10,7 @@
             </div>
             <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang chủ</a></li>
-                <li class="breadcrumb-item">List</li>
+                <li class="breadcrumb-item">Danh sách </li>
             </ul>
         </div>
     </div>

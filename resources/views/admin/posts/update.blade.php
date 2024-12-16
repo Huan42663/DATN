@@ -6,10 +6,10 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Post</h5>
+                <h5 class="m-b-10">Bài viết </h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang chủ </a></li>
                 <li class="breadcrumb-item">Cập Nhật</li>
             </ul>
         </div>
@@ -38,12 +38,12 @@
                                 @method('PUT')
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="fullnameInput" class="fw-semibold">Title: </label>
+                                        <label for="fullnameInput" class="fw-semibold">Tiêu đề: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="title" name="title"
-                                                placeholder="Title vd: Hello World I'am JS Store" 
+                                                placeholder="Nhập tiêu đề bài viết" 
                                                 @if (isset($_SESSION['data']['title']))
                                                     value = "{{$_SESSION['data']['title']}}"
                                                 @elseif (old('title'))

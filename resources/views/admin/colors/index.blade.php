@@ -109,7 +109,7 @@
                                     <th>STT</th>
                                     <th>Tên Màu </th>
                                     <th>Ngày Đăng</th>
-                                    <th class="text-end">Actions</th>
+                                    <th class="text-end">Hành động </th>
                                 </tr>
                             </thead>
                             <tbody>

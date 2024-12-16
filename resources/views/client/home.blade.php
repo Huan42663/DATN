@@ -36,7 +36,7 @@
                 </div>
             @endif
             <div class="heading flex flex-col items-center text-center md:pt-5 pt-10">
-                <div class="heading3"> NEW </div>
+                <div class="heading3"> Sản phẩm mới  </div>
             </div>
             <div
                 class="list-product hide-product-sold grid lg:grid-cols-4 grid-cols-2 sm:gap-[30px] gap-[20px] md:mt-10 mt-6">
@@ -51,7 +51,7 @@
     <div class="whate-new-block md:pt-5 pt-10">
         <div class="container">
             <div class="heading flex flex-col items-center text-center">
-                <div class="heading3"> HOT </div>
+                <div class="heading3"> Sản phẩm nổi bật  </div>
             </div>
             <div
                 class="list-product hide-product-sold grid lg:grid-cols-4 grid-cols-2 sm:gap-[30px] gap-[20px] md:mt-10 mt-6">
@@ -66,7 +66,7 @@
     </div>
     <br>
     <div class="container">
-        <div class="heading3 text-center"> EVENT </div>
+        <div class="heading3 text-center"> Sự Kiện </div>
         <div class="banner-block style-one grid sm:grid-cols-2 gap-5 md:pt-20 pt-10" style="padding: 20px">
             @if (isset($events) && !empty($events))
                 @foreach ($events as $event)

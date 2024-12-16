@@ -6,11 +6,11 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Products</h5>
+                <h5 class="m-b-10">Sản phẩm </h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">List</li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang chủ </a></li>
+                <li class="breadcrumb-item">Danh sách </li>
             </ul>
         </div>
     </div>
@@ -46,7 +46,7 @@
                                     <th>Tên Sản Phẩm</th>
                                     <th>Giá</th>
                                     <th>Trạng Thái</th>
-                                    <th class="text-end">Actions</th>
+                                    <th class="text-end">Hành động </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -117,7 +117,7 @@
                         </table>
                         <div style="display: flex; justify-content: space-around">
                             <button type="submit" class="btn btn-danger mb-3">
-                                <i class="feather-trash-2 me-2"></i> Delete
+                                <i class="feather-trash-2 me-2"></i> Xóa 
                             </button>
                             <div>
                                 <a href="{{ route('Administration.products.listDelete') }}"

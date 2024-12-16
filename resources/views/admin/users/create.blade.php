@@ -38,7 +38,7 @@
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="fullName"
-                                                value="{{ old('fullName') }}" id="fullnameInput">
+                                                value="{{ old('fullName') }}" id="fullnameInput" placeholder="Nhập họ và tên ">
                                         </div>
                                         @error('fullName')
                                             <span class="text-danger">{{ $message }}</span>
@@ -52,7 +52,7 @@
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="email" class="form-control" name="email"
-                                                value="{{ old('email') }}" id="">
+                                                value="{{ old('email') }}" id="" placeholder="Nhập họ và tên ">
                                         </div>
                                         @error('email')
                                             <span class="text-danger">{{ $message }}</span>
@@ -66,7 +66,7 @@
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="tel" class="form-control" value="{{ old('phone') }}"
-                                                name="phone" id="">
+                                                name="phone" id="" placeholder="Nhập số điện thoại ">
                                         </div>
                                         @error('phone')
                                             <span class="text-danger">{{ $message }}</span>
@@ -79,7 +79,7 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="password" class="form-control" name="password" id="">
+                                            <input type="password" class="form-control" name="password" id="" placeholder="Nhập mật khẩu ">
                                         </div>
                                         @error('password')
                                             <span class="text-danger">{{ $message }}</span>
@@ -93,7 +93,7 @@
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="password" class="form-control" name="password_confirmation"
-                                                id="">
+                                                id="" placeholder="Nhập lại mật khẩu  ">
                                         </div>
                                         @error('password_confirmation')
                                             <span class="text-danger">{{ $message }}</span>
