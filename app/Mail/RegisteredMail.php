@@ -32,7 +32,7 @@ class RegisteredMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Xác nhận đăng ký tài khoảnkhoản',
+            subject: 'Xác nhận đăng ký tài khoản',
         );
     }
 
