@@ -22,6 +22,9 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card border-top-0">
+                    @if (session('error'))
+                        <p class="bg-danger text-white p-2">{{ session('error') }}</p>
+                    @endif
                     <div class="tab-content">
                         <div class="card-body personal-info">
                             <div class="mb-4 d-flex align-items-center justify-content-between">

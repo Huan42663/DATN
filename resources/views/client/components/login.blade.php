@@ -6,14 +6,10 @@
 
                 @if(session('success'))
                 <div id="success-alert" class="alert alert-success alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                     <h8><i class="icon fa fa-check"></i> Xong!</h8>
                     {{ session('success') }}
                 </div>
                 @endif
-
-
-
                 <form class="md:mt-7 mt-4" action="{{ route('login') }}" method="POST">
                     @csrf
 
