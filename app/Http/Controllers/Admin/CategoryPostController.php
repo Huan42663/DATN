@@ -33,29 +33,64 @@ class CategoryPostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(Request $request)
+    // {
+    //     $slug = Str::slug($request->category_post_name);
+    //     $request->validate(
+    //         [
+    //             'category_post_name' => 'required|unique:category_post,category_post_name|string|max:255',
+    //         ],
+    //         [
+    //             'category_post_name.required' => 'Tên danh mục bài viết không được để trống',
+    //             'category_post_name.unnique' => 'Tên của danh mục bài viết đã tồn tại',
+    //             'category_post_name.string' => 'Tên danh mục bài viết phải là một chuỗi',
+    //             'category_post_name.max' => 'Tên danh mục bài viết không được dài quá 255 ký tự',
+    //         ]
+    //     );
+    //     $data = $request->except('_token', '_method', 'example_length', 'category_post');
+    //     $data['category_post_slug'] = $slug;
+    //     $data['showHeader'] = $request->has('showHeader') ? 1 : 0;
+    //     $data['showFooter'] = $request->has('showFooter') ? 1 : 0;
+
+    //     $category_post = CategoryPost::query()->create($data);
+
+    //     return redirect()->route('Administration.categoryPost.list')->with('message', 'Đã thêm danh mục bài viết thành công');
+    // }
     public function store(Request $request)
     {
-        $slug = Str::slug($request->category_post_name);
         $request->validate(
             [
                 'category_post_name' => 'required|unique:category_post,category_post_name|string|max:255',
             ],
             [
-                'category_post_name.required' => 'The article category name cannot be empty',
-                'category_post_name.unnique' => 'The name of the article category already exists',
-                'category_post_name.string' => 'The article category name must be a string',
-                'category_post_name.max' => 'The article category name cannot be larger than 255 characters',
+                'category_post_name.required' => 'Tên danh mục bài viết không được để trống',
+                'category_post_name.unique' => 'Tên của danh mục bài viết đã tồn tại',
+                'category_post_name.string' => 'Tên danh mục bài viết phải là một chuỗi',
+                'category_post_name.max' => 'Tên danh mục bài viết không được dài quá 255 ký tự',
             ]
         );
+
+        $checkText = new PostController();
+        $check = $checkText->ValidateText($request['category_post_name']);
+
+        if ($check === false) {
+            $_SESSION['category_post_name'] = $request['category_post_name'];
+
+            return redirect()->back()->with('error', 'Tên danh mục bài viết không được chứa ký tự đặc biệt');
+        }
+
+        $slug = Str::slug($request->category_post_name);
         $data = $request->except('_token', '_method', 'example_length', 'category_post');
         $data['category_post_slug'] = $slug;
         $data['showHeader'] = $request->has('showHeader') ? 1 : 0;
         $data['showFooter'] = $request->has('showFooter') ? 1 : 0;
 
-        $category_post = CategoryPost::query()->create($data);
+        CategoryPost::query()->create($data);
 
-        return redirect()->route('Administration.categoryPost.list')->with('message', 'Added article categories successfully');
+        unset($_SESSION['category_post_name']);
+        return redirect()->route('Administration.categoryPost.list')->with('message', 'Đã thêm danh mục bài viết thành công');
     }
+
 
     /**
      * Display the specified resource.
@@ -81,38 +116,50 @@ class CategoryPostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $category_post = CategoryPost::where('category_post_id', $id)->get();
-        $category_post = CategoryPost::query()->where('category_post_id', $id)->get();
+        $category_post = CategoryPost::where('category_post_id', $id)->first();
         $listCategoryPost = CategoryPost::query()->where('category_post_id', "!=", $id)->get();
-        if (empty($category_post[0])) {
-            return view('error-404', compact(['message' => "No product categories found"]));
-        } else {
-            foreach ($listCategoryPost as $value) {
-                if ($value->category_post_name == $request->category_post_name) {
-                    return view('admin.post-categories.update', compact(['data' => $category_post, 'message' => "The category name is duplicated"]));
-                } else {
-                    $request['category_post_slug'] = Str::slug($request->category_post_name);
-                    $request->validate(
-                        [
-                            'category_post_name' => 'required|unique:category_post,category_post_name|string|max:255',
-                        ],
-                        [
-                            'category_post_name.required' => 'The article category name cannot be empty',
-                            'category_post_name.unnique' => 'The name of the article category already exists',
-                            'category_post_name.max' => 'The article category name cannot be larger than 255 characters',
-                        ]
-                    );
-                }
-                $data = $request->except('_token', '_method', 'example_length', 'category_post');
-                $data['showHeader'] = $request->has('showHeader') ? 1 : 0;
-                $data['showFooter'] = $request->has('showFooter') ? 1 : 0;
 
-                $category_post = CategoryPost::query()->where('category_post_id', $id)->update($data);
+        if (empty($category_post)) {
+            return view('error-404', ['message' => "Không tìm thấy danh mục sản phẩm"]);
+        }
 
-                return redirect()->route('Administration.categoryPost.list')->with('message', 'Updated article list successfully');
+        foreach ($listCategoryPost as $value) {
+            if ($value->category_post_name == $request->category_post_name) {
+                return view('admin.post-categories.update', [
+                    'data' => $category_post,
+                    'message' => "The category name is duplicated"
+                ]);
             }
         }
+
+        $checkText = new PostController();
+        $check = $checkText->ValidateText($request->category_post_name);
+
+        if ($check === false) {
+            return redirect()->back()->with('error', 'Tên danh mục bài viết không được chứa ký tự đặc biệt');
+        }
+
+        $request->validate(
+            [
+                'category_post_name' => 'required|unique:category_post,category_post_name,' . $id . ',category_post_id|string|max:255',
+            ],
+            [
+                'category_post_name.required' => 'The article category name cannot be empty',
+                'category_post_name.unique' => 'The name of the article category already exists',
+                'category_post_name.max' => 'The article category name cannot be larger than 255 characters',
+            ]
+        );
+
+        $data = $request->except('_token', '_method', 'example_length', 'category_post');
+        $data['category_post_slug'] = Str::slug($request->category_post_name);
+        $data['showHeader'] = $request->has('showHeader') ? 1 : 0;
+        $data['showFooter'] = $request->has('showFooter') ? 1 : 0;
+
+        CategoryPost::query()->where('category_post_id', $id)->update($data);
+
+        return redirect()->route('Administration.categoryPost.list')->with('message', 'Updated article list successfully');
     }
+
 
     /**
      * Remove the specified resource from storage.
