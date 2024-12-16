@@ -17,7 +17,7 @@
 
                     <div class="fullName">
                         <input class="border-line px-4 pt-3 pb-3 w-full rounded-lg" id="fullName" type="text"
-                            name="fullName" value="{{ old('fullName') }}" placeholder="Full Name *" required="">
+                            name="fullName" value="{{ old('fullName') }}" placeholder="Tên đăng nhập *" required="">
                     </div>
                     <div class="confirm-pass mt-5">
                         <input class="border-line px-4 pt-3 pb-3 w-full rounded-lg" id="email" type="email"
@@ -25,16 +25,16 @@
                     </div>
                     <div class="pass mt-5">
                         <input class="border-line px-4 pt-3 pb-3 w-full rounded-lg" id="password" type="password"
-                            name="password" placeholder="Password *" required="">
+                            name="password" placeholder="Mật khẩu *" required="">
                     </div>
                     <div class="pass mt-5">
                         <input class="border-line px-4 pt-3 pb-3 w-full rounded-lg" id="password_confirmation"
-                            type="password" name="password_confirmation" placeholder="Confirm Password *"
+                            type="password" name="password_confirmation" placeholder="Xác nhận mật khẩu *"
                             required="">
                     </div>
                     <div class="pass mt-5">
                         <input class="border-line px-4 pt-3 pb-3 w-full rounded-lg" id="phone" type="text"
-                            name="phone" placeholder="Phone *" required="">
+                            name="phone" placeholder="Số điện thoại *" required="">
                     </div>
                     {{-- <div class="flex items-center mt-5">
                         <div class="block-input">

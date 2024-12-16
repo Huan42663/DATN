@@ -49,9 +49,9 @@ class OrderController extends Controller
         $_SESSION['thankyou'] = "Dặt hàng thành công";
         $full_url = "http://" . $_SERVER['HTTP_HOST'];
         $vnp_Returnurl = $full_url;
-        $vnp_TmnCode = "KOFSYQXY";//Mã website tại VNPAY 
+        $vnp_TmnCode = "KOFSYQXY";//Mã website tại VNPAY
         $vnp_HashSecret = "UO4KD2T4UW40OS06GPZTCYD58Z15PU4P"; //Chuỗi bí mật
-        
+
         // $vnp_TxnRef = $_POST['order_id']; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_TxnRef = $_SESSION['infoOrder']['order_code']; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_OrderInfo = "thanh toán đơn hàng test";
@@ -112,14 +112,14 @@ class OrderController extends Controller
             // "vnp_Inv_Taxcode"=>$vnp_Inv_Taxcode,
             // "vnp_Inv_Type"=>$vnp_Inv_Type
         );
-        
+
         if (isset($vnp_BankCode) && $vnp_BankCode != "") {
             $inputData['vnp_BankCode'] = $vnp_BankCode;
         }
         if (isset($vnp_Bill_State) && $vnp_Bill_State != "") {
             $inputData['vnp_Bill_State'] = $vnp_Bill_State;
         }
-        
+
         //var_dump($inputData);
         ksort($inputData);
         $query = "";
@@ -134,10 +134,10 @@ class OrderController extends Controller
             }
             $query .= urlencode($key) . "=" . urlencode($value) . '&';
         }
-        
+
         $vnp_Url = $vnp_Url . "?" . $query;
         if (isset($vnp_HashSecret)) {
-            $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret);//  
+            $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret);//
             $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
         }
         $returnData = array('code' => '00'
@@ -170,8 +170,12 @@ class OrderController extends Controller
         $order = Order::query()
             ->where('order_code', $order_code)
             ->where('order_id', $order_id)
+            ->where('user_id', auth::user()->user_id)
             ->with(['orderDetail.product', 'orderDetail.size', 'orderDetail.color'])
             ->first();
+            if($order == null ){
+                return redirect()->route('Client.Home');
+            }
         $rate = Rate::query()->where('order_id',$order_id)
         ->join('products','rates.product_id','products.product_id')
         ->leftJoin('product_variant','rates.product_variant_id','product_variant.product_variant_id')
@@ -302,7 +306,7 @@ class OrderController extends Controller
                 if($_SESSION['voucher']->quantity == 0 ||  $_SESSION['voucher']->date_start > Carbon::now() ||  $_SESSION['voucher']->date_end < Carbon::now()  ){
                     unset($_SESSION['voucher']);
                     return redirect()->back()->with('error_voucher12','Voucher không khả dụng');
-                } 
+                }
             }
             $cart = new CartController();
             $data = $cart->showCart(Auth()->user()->user_id);
@@ -370,8 +374,8 @@ class OrderController extends Controller
                 $_SESSION['infoOrder'] = $data1;
                 return redirect()->route('Client.orders.vnpay_payment');
             }
-            
-            
+
+
         }
 
     public function thank(){
@@ -383,7 +387,7 @@ class OrderController extends Controller
                 ->orderBy('products.product_id', 'desc')
                 ->limit(8)
                 ->get();
-            
+
         return View('client.thankyou',compact('products'));
     }
 
@@ -394,15 +398,15 @@ class OrderController extends Controller
             if ($data != null) {
                 if ($data->quantity > 0) {
                     $_SESSION['voucher'] = $data;
-                    return response()->json(["data"=>"Áp dụng thành công",'value'=> $_SESSION['voucher']],Response::HTTP_OK);  
+                    return response()->json(["data"=>"Áp dụng thành công",'value'=> $_SESSION['voucher']],Response::HTTP_OK);
                 }
-                return response()->json(["data"=>"Không tồn tại voucher","status"=>false],Response::HTTP_NOT_FOUND); 
+                return response()->json(["data"=>"Không tồn tại voucher","status"=>false],Response::HTTP_NOT_FOUND);
             } else {
                 unset($_SESSION['voucher']);
-                return response()->json(["data"=>"Không tồn tại voucher","status"=>false],Response::HTTP_NOT_FOUND); 
+                return response()->json(["data"=>"Không tồn tại voucher","status"=>false],Response::HTTP_NOT_FOUND);
             }
         }else{
-            return response()->json(["data"=>"Không tồn tại voucher","status"=>false],Response::HTTP_NOT_FOUND); 
+            return response()->json(["data"=>"Không tồn tại voucher","status"=>false],Response::HTTP_NOT_FOUND);
         }
     }
     public function cancel(Request $request)
@@ -429,15 +433,15 @@ class OrderController extends Controller
                 $data = ['quantity'=>$orderReturn[0]->orderQuantity + $productVariant[0]->quantity ];
                 ProductVariant::where('product_variant_id',$orderReturn[0]->product_variant_id)->update($data);
                 if (isset($request->cancleShow)) {
-                    return response()->json(["data"=>"Hủy đơn hàng thành công",'status'=> true],Response::HTTP_OK);  
+                    return response()->json(["data"=>"Hủy đơn hàng thành công",'status'=> true],Response::HTTP_OK);
                 }
-                return response()->json(["data"=>"Hủy đơn hàng thành công",'status'=> true],Response::HTTP_OK);  
+                return response()->json(["data"=>"Hủy đơn hàng thành công",'status'=> true],Response::HTTP_OK);
             }
             else{
-                return response()->json(["data"=>"Đơn Hàng đã ở trạng thái khác không thể hủy",'status'=> true,'order_status'=>$order->status],Response::HTTP_BAD_REQUEST); 
+                return response()->json(["data"=>"Đơn Hàng đã ở trạng thái khác không thể hủy",'status'=> true,'order_status'=>$order->status],Response::HTTP_BAD_REQUEST);
             }
         }else{
-            return response()->json(["data"=>"Không tìm thầy đơn hàng",'status'=> false],Response::HTTP_NOT_FOUND);  
+            return response()->json(["data"=>"Không tìm thầy đơn hàng",'status'=> false],Response::HTTP_NOT_FOUND);
         }
 
     }
@@ -450,13 +454,13 @@ class OrderController extends Controller
             if ($order->status == 'delivered') {
                 $order->status = 'received';
                 $order->save();
-                    return response()->json(["data"=>"Bạn đã xác nhận đơn hàng thành công",'status'=> true],Response::HTTP_OK);   
+                    return response()->json(["data"=>"Bạn đã xác nhận đơn hàng thành công",'status'=> true],Response::HTTP_OK);
             }
             else{
-                return response()->json(["data"=>"Đơn Hàng đã ở trạng thái khác nên bạn chưa xác nhận được",'status'=> true,'order_status'=>$order->status,'check'=>$order],Response::HTTP_BAD_REQUEST); 
+                return response()->json(["data"=>"Đơn Hàng đã ở trạng thái khác nên bạn chưa xác nhận được",'status'=> true,'order_status'=>$order->status,'check'=>$order],Response::HTTP_BAD_REQUEST);
             }
         }else{
-            return response()->json(["data"=>"Không tìm thầy đơn hàng",'status'=> false],Response::HTTP_NOT_FOUND);  
+            return response()->json(["data"=>"Không tìm thầy đơn hàng",'status'=> false],Response::HTTP_NOT_FOUND);
         }
 
     }
@@ -468,13 +472,13 @@ class OrderController extends Controller
             if ($order->status == 'delivered') {
                 $order->status = 'return';
                 $order->save();
-                    return response()->json(["data"=>"Bạn đã xác nhận trả hàng",'status'=> true],Response::HTTP_OK);   
+                    return response()->json(["data"=>"Bạn đã xác nhận trả hàng",'status'=> true],Response::HTTP_OK);
             }
             else{
-                return response()->json(["data"=>"Đơn Hàng đã của bạn chưa được giao tới nên chưa trả hàng được",'status'=> false,'order_status'=>$order->status,'check'=>$order],Response::HTTP_BAD_REQUEST); 
+                return response()->json(["data"=>"Đơn Hàng đã của bạn chưa được giao tới nên chưa trả hàng được",'status'=> false,'order_status'=>$order->status,'check'=>$order],Response::HTTP_BAD_REQUEST);
             }
         }else{
-            return response()->json(["data"=>"Không tìm thầy đơn hàng",'status'=> false],Response::HTTP_NOT_FOUND);  
+            return response()->json(["data"=>"Không tìm thầy đơn hàng",'status'=> false],Response::HTTP_NOT_FOUND);
         }
 
     }
@@ -487,7 +491,7 @@ class OrderController extends Controller
                        ->leftJoin('colors','order_detail.color','=','colors.color_name')
                        ->where('order_detail.product_id',$product_id)
                        ->where('orders.order_code',$order_code)
-                    //    ->where('orders.user_id',1)  
+                    //    ->where('orders.user_id',1)
                        ->where('orders.user_id',Auth::user()->user_id)
                        ->selectRaw('products.*,order_detail.*,orders.order_id')
                        ->first();
@@ -522,7 +526,7 @@ class OrderController extends Controller
             $rate = Rate::query()->where('order_id', $_SESSION['Rate']->order_id)
                                 ->where('product_id', $_SESSION['Rate']->product_id)
                                 ->where('product_variant_id', $_SESSION['Rate']['product_variant_id'])->first();
-    
+
             if ($rate != null) {
                     return redirect()->route('Client.orders.show',['order_code'=>$_SESSION['Rate']->order_code, 'order_id'=>$_SESSION['Rate']->order_id])->with('message', 'Sản phẩm này trong đơn hàng đã được đánh giá')->with('status',"false");
             } else {
@@ -591,5 +595,5 @@ class OrderController extends Controller
         // Kiểm tra xem chuỗi có khớp với biểu thức chính quy hay không
         return $check;
     }
-    
+
 }

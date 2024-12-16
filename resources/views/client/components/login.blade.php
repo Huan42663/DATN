@@ -25,7 +25,7 @@
                     <div class="pass mt-5">
                         <input class="border-line px-4 pt-3 pb-3 w-full rounded-lg"
                             id="password" name="password" type="password"
-                            placeholder="Password *" required />
+                            placeholder="Mật khẩu *" required />
                         @error('password')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
