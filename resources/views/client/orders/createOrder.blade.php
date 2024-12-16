@@ -279,10 +279,15 @@
                                                 @if ($_SESSION['voucher']->type ==0)
                                                     {{number_format(round(($_SESSION['Total'])/100 * $_SESSION['voucher']->value), 0, ',', '.') . ' VNĐ';}}
                                                     @else
-                                                    {{number_format($_SESSION['voucher']->value, 0, ',', '.') . ' VNĐ';}}
-                                                @endif
-                                            @else
-                                                0 VNĐ
+                                                        @if($_SESSION['voucher']->value > ($_SESSION['Total'] + $_SESSION['ship']))
+                                                            {{number_format($_SESSION['Total'] + $_SESSION['ship'], 0, ',', '.') . ' VNĐ';}}
+                                                        @else
+                                                            {{number_format($_SESSION['voucher']->value, 0, ',', '.') . ' VNĐ';}}
+                                                        @endif
+                                                        @endif
+                                                @else
+                                                    0 VNĐ
+                                                @endifendif
                                             @endif
                                         </span>
                                 </div>
@@ -376,15 +381,17 @@
             dataType: "json",
             success: function(response) {
                 var totalCheck = "{{$totalCheck}}";
-            
+                var price_voucher = 0;
                 var price =0;
                 if( Number(response.value.type) == 1){
                     if(Number(totalCheck) < Number(response.value.value)){
                         price=0;
+                        price_voucher = Number(totalCheck) +30000;
                     }else{
                         price = ((Number(totalCheck) + Number(ship)) - Number(response.value.value));
+                        price_voucher = response.value.value;
                     }
-                    $('#price_voucher').html(Intl.NumberFormat('vi').format(Number(response.value.value))+' VNĐ');
+                    $('#price_voucher').html(Intl.NumberFormat('vi').format(Number(price_voucher))+' VNĐ');
                     $('#PriceTotalEnd').html(Intl.NumberFormat('vi').format(price)+' VNĐ');
                     
                 }else{
