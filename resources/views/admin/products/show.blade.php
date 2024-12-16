@@ -87,17 +87,17 @@
                                 @endif
                                 @if (isset($_SESSION['error']))
                                     <div class="alert alert-danger mt-2">
-                                       Những biến thể bạn cập đã gặp lỗi tại 
-                                       @foreach ( $_SESSION['error'] as $item)
-                                           {{$item}}
-                                       @endforeach
+                                        Những biến thể bạn cập đã gặp lỗi tại
+                                        @foreach ($_SESSION['error'] as $item)
+                                            {{ $item }}
+                                        @endforeach
                                     </div>
                                 @endif
                                 <form action="{{ route('Administration.products.deleteVariant') }}" method="post">
                                     @csrf
                                     <input type="hidden" name="product_id" id=""
                                         value="{{ $data1[0]->product_id }}">
-                                        
+
                                     <table id="example-1" class="table table-hover mb-0">
                                         <thead>
                                             <tr>
@@ -120,16 +120,24 @@
 
                                                     </td>
                                                     <td style="width: 10%">
-                                                            <select name="size_id[]" id="" class="form-control">
-                                                                @foreach ($data4 as $item)
-                                                                    <option value="{{ $item->size_id }}"
-                                                                        @selected($item->size_id == $variant->size_id)>{{ $item->size_name }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
+                                                        <select name="size_id[]" id="" class="form-control">
+                                                            @if ($variant->size_id == null)
+                                                                <option value=""></option>
+                                                            @endif
+                                                            <option value=""></option>
+                                                            @foreach ($data4 as $item)
+                                                                <option value="{{ $item->size_id }}"
+                                                                    @selected($item->size_id == $variant->size_id)>{{ $item->size_name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
                                                     </td>
                                                     <td style="width: 21%">
                                                         <select name="color_id[]" id="" class="form-control">
+                                                            @if ($variant->size_id == null)
+                                                                <option value=""></option>
+                                                            @endif
+                                                            <option value=""></option>
                                                             @foreach ($data5 as $item)
                                                                 <option value="{{ $item->color_id }}"
                                                                     @selected($item->color_name == $variant->color_name)>{{ $item->color_name }}
@@ -140,21 +148,22 @@
                                                     <td style="width: 25%">
                                                         <input type="number" name="price[]" min="1"
                                                             value="{{ $variant->price }}" class="form-control">
-                                                        <br> @error('price.' . $key)
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
+                                                        <br>
+                                                        @error('price.' . $key)
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </td>
-                                                    <td  style="width: 25%">
+                                                    <td style="width: 25%">
                                                         <input type="number" name="sale_price[]" min="0"
                                                             value="{{ $variant->sale_price }}" class="form-control">
-                                                        <br>   @error('sale_price.' . $key)
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
+                                                        <br> @error('sale_price.' . $key)
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </td>
                                                     <td style="width: 14%">
                                                         <input type="number" name="quantity[]" min="1"
                                                             value="{{ $variant->quantity }}" class="form-control">
-                                                            <br>   @error('quantity.' . $key)
+                                                        <br> @error('quantity.' . $key)
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
 
@@ -165,7 +174,8 @@
                                         </tbody>
                                     </table>
                                     <div class="d-flex">
-                                        <button class="btn btn-danger me-2" name="delete" value="delete" onclick="return confirm('Bạn có chắc muốn xóa biến thể không')">
+                                        <button class="btn btn-danger me-2" name="delete" value="delete"
+                                            onclick="return confirm('Bạn có chắc muốn xóa biến thể không')">
                                             <i class="feather-minus me-2"></i>
                                             <span>Xóa Biến Thể</span>
                                         </button>
@@ -221,7 +231,7 @@
                                                             <div>
                                                                 <img width="100px"
                                                                     src="{{ asset('storage/' . $variant->image_color_name) }}"
-                                                                    alt="{{$variant->image_color_name}}">
+                                                                    alt="{{ $variant->image_color_name }}">
                                                             </div>
                                                         </div>
                                                     </td>

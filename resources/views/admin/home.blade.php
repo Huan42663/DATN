@@ -139,7 +139,7 @@
                                             <span  class="d-block mb-1"><img src="{{asset('storage/'.$value->product_image)}}" alt="" width="100px"></span>
                                         </td>
                                         <td>
-                                            <span  class="d-block mb-1">{{$value->product_name}}</span>
+                                            <span  class="d-block mb-1">{!! substr($value->product_name, 0, 20) . '...' !!}</span>
                                         </td>
                                         <td>
                                             <span  class="d-block mb-1 text-danger fw-bold">
@@ -212,7 +212,7 @@
                                             <span  class="d-block mb-1"><img src="{{asset('storage/'.$value->product_image)}}" alt="" width="100px"></span>
                                         </td>
                                         <td>
-                                            <span  class="d-block mb-1">{{$value->product_name}}</span>
+                                            <span  class="d-block mb-1">{!! substr($value->product_name, 0, 20) . '...' !!}</span>
                                         </td>
                                         <td>
                                             <span  class="d-block mb-1 text-danger fw-bold">

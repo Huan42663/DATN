@@ -95,7 +95,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:5',
+            'password' => 'required|min:6',
         ]);
 
         // Lấy thông tin người dùng qua email
@@ -104,7 +104,7 @@ class AuthController extends Controller
         if (!$user) {
             // Tài khoản không tồn tại
             return back()->withErrors([
-                'email' => 'The account does not exist.',
+                'email' => __('auth.account_not_exist'),
             ])->withInput();
         }
         if (!$user->email_verified_at) {
@@ -115,7 +115,7 @@ class AuthController extends Controller
         // Kiểm tra nếu người dùng đang đăng nhập
         if ($user->status == 2) {
             return back()->withErrors([
-                'email' => 'This account is already logged in from another session.',
+                'email' => __('auth.already_logged_in'),
             ])->withInput();
         }
 
@@ -131,7 +131,7 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'Invalid email or password.',
+            'email' => __('auth.invalid_credentials'),
         ])->withInput();
     }
 

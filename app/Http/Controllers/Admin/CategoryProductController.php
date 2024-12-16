@@ -36,7 +36,17 @@ class CategoryProductController extends Controller
      */
     public function store(Request $request)
     {
+
         $request['category_slug'] = Str::slug($request->category_name);
+
+        $checkText = new PostController();
+        $check = $checkText->ValidateText($request->category_name);
+
+        if ($check === false) {
+            return redirect()
+                ->back()
+                ->with('error', 'Tên danh mục sản phẩm không được chứa ký tự đặc biệt');
+        }
 
         $request->validate(
             [
@@ -51,12 +61,14 @@ class CategoryProductController extends Controller
 
         $data = $request->except(['_token', '_method']);
         $data['category_parent_id'] = $request->category_parent_id ?? null;
+
         $category = Category::create($data);
 
         return redirect()
             ->route('Administration.categoryProduct.list')
             ->with('message', 'Added product categories successfully');
     }
+
 
     /**
      * Display the specified resource.
@@ -100,7 +112,6 @@ class CategoryProductController extends Controller
         }
 
         $listCategoryProduct = Category::where('category_id', '!=', $id)->get();
-
         $existingCategory = Category::where('category_name', $request->category_name)
             ->where('category_id', '!=', $id)
             ->first();
@@ -113,8 +124,16 @@ class CategoryProductController extends Controller
             ]);
         }
 
-        $request['category_slug'] = Str::slug($request->category_name);
+        $checkText = new PostController();
+        $check = $checkText->ValidateText($request->category_name);
 
+        if ($check === false) {
+            return redirect()
+                ->back()
+                ->with('error', 'Tên danh mục sản phẩm không được chứa ký tự đặc biệt');
+        }
+
+        $request['category_slug'] = Str::slug($request->category_name);
         $request->validate(
             [
                 'category_name' => "required|unique:categories,category_name,{$id},category_id",
@@ -131,6 +150,7 @@ class CategoryProductController extends Controller
 
         return redirect()->route('Administration.categoryProduct.list')->with('message', 'Updated product catalog successfully');
     }
+
 
     /**
      * Remove the specified resource from storage.
