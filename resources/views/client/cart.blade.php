@@ -34,7 +34,7 @@
                                     <td>
                                         <div class="d-flex">
                                             <a href="{{route('Client.product.detail',$item->product_slug)}}"><img class="me-3" src="{{asset('storage/'.$item->product_image)}}" alt="" width="100"/></a>
-                                            <div class="text-title">{{$item->product_name}}</div>
+                                            <div class="text-title">{!! substr($item->product_name, 0, 20) . '...' !!}</div>
                                         </div>
                                     </td>
                                     <td>
@@ -83,9 +83,27 @@
                     </form>
                 </div>
                 @else
-                    <div class="list-product-main w-full mt-3">
-                        <p class="text-button pt-3">No product in cart</p>
+                <div class="list-product-main w-full mt-5 text-center">
+                    <div class="flex flex-col items-center justify-center bg-gray-100 p-6 rounded-lg shadow-md">
+                        <!-- Biểu tượng -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-500 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18M9 6h6M9 9h6m-3 3h3m-9 0h3m-6 3h18" />
+                        </svg>
+                
+                        <!-- Thông báo chính -->
+                        <p class="text-xl font-bold text-gray-700">Giỏ hàng của bạn đang trống</p>
+                
+                        <!-- Lời khuyến khích -->
+                        <p class="text-sm text-gray-500 mt-2">Khám phá các sản phẩm nổi bật và thêm vào giỏ hàng để bắt đầu hành trình mua sắm của bạn.</p>
+                
+                        <!-- Nút điều hướng -->
+                        <a href="/shop" class="mt-4 inline-block px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md transition duration-200">
+                            Mua sắm ngay
+                        </a>
                     </div>
+                </div>
+                
+                
                 @endif
             </div>
             <div class="xl:w-1/3 xl:pl-12 w-full" >

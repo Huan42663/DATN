@@ -6,11 +6,11 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Products</h5>
+                <h5 class="m-b-10">Sản phẩm </h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.products.list') }}">List</a></li>
-                <li class="breadcrumb-item">Create</li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.products.list') }}">Danh sách </a></li>
+                <li class="breadcrumb-item">Thêm mới </li>
             </ul>
         </div>
     </div>
@@ -44,7 +44,7 @@
                                                 <div class="col-lg-8">
                                                     <div class="input-group">
                                                         <input type="text" class="form-control" id="product_name"
-                                                            name="product_name" placeholder="Product Name"
+                                                            name="product_name" placeholder="Nhập tên sản phẩm "
                                                             value={{ old('product_name') }}><br>
                                                     </div>
                                                     @error('product_name')
@@ -59,7 +59,7 @@
                                                 <div class="col-lg-8">
                                                     <div class="input-group">
                                                         <input type="number" min="1" class="form-control"
-                                                            id="price" name="price" placeholder="price"
+                                                            id="price" name="price" placeholder="Nhập giá "
                                                             value={{ old('price') }}>
 
                                                     </div>
@@ -75,7 +75,7 @@
                                                 <div class="col-lg-8">
                                                     <div class="input-group">
                                                         <input type="number" min="0" class="form-control"
-                                                            id="sale_price" name="sale_price" placeholder="price sale"
+                                                            id="sale_price" name="sale_price" placeholder="Nhập giá khuyến mãi "
                                                             value={{ old('sale_price') }}>
 
                                                     </div>
@@ -91,7 +91,7 @@
                                                 <div class="col-lg-8">
                                                     <div class="input-group">
                                                         <input type="number" min="1" class="form-control"
-                                                            id="quantity" name="quantity" placeholder="Quantity"
+                                                            id="quantity" name="quantity" placeholder="Nhập số lượng "
                                                             value={{ old('quantity') }}>
 
                                                     </div>
@@ -107,7 +107,7 @@
                                                 <div class="col-lg-8">
                                                     <div class="input-group">
                                                         <input type="number" min="1" class="form-control"
-                                                            id="weight" name="weight" placeholder="Weight"
+                                                            id="weight" name="weight" placeholder="Nhập cân nặng "
                                                             value={{ old('weight') }}>
 
                                                     </div>
@@ -139,7 +139,7 @@
                                                         <input type="file" class="form-control" multiple
                                                             id="product_image" name="product_image[]" multiple>
                                                     </div>
-                                                    <span style="color: #282727">hình ảnh đầu tiền sẽ là ảnh đại diện của
+                                                    <span style="color: #282727">Hình ảnh đầu tiền sẽ là ảnh đại diện của
                                                         sản phẩm</span>
                                                     @error('product_image')
                                                         <span class="text-danger">{{ $message }}</span>
@@ -148,16 +148,16 @@
                                             </div>
                                             <div class="row mb-4 align-items-center">
                                                 <div class="col-lg-4">
-                                                    <label for="status" class="fw-semibold"> Status </label>
+                                                    <label for="status" class="fw-semibold"> Trạng thái  </label>
                                                 </div>
                                                 <div class="col-lg-8">
                                                     <div class="input-group">
                                                         <select name="status" id="status" class="form-control">
                                                             <option value="1"
-                                                                {{ old('status') == 1 ? 'selected' : '' }}>Active
+                                                                {{ old('status') == 1 ? 'selected' : '' }}>Hoạt động 
                                                             </option>
                                                             <option value="2"
-                                                                {{ old('status') == 2 ? 'selected' : '' }}>Inactive
+                                                                {{ old('status') == 2 ? 'selected' : '' }}>Không hoạt động 
                                                             </option>
                                                         </select>
                                                     </div>

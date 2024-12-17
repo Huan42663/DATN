@@ -6,11 +6,11 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Category Product</h5>
+                <h5 class="m-b-10"> Danh mục sản phẩm </h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">List</li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang chủ  </a></li>
+                <li class="breadcrumb-item">Danh sách </li>
             </ul>
         </div>
     </div>
@@ -27,11 +27,11 @@
                 <div class="mb-3">
                     <a href="{{ route('Administration.categoryProduct.create') }}" class="btn btn-primary">
                         <i class="feather-plus me-2"></i>
-                        <span>ADD NEW CATEGORY</span>
+                        <span>Thêm danh mục </span>
                     </a>
                     <div class="col-1">
                         <a href="{{ route('Administration.categoryProduct.listDelete') }}" class=" btn btn-danger mt-2">
-                            <i class="fa fa-trash"></i> Trash
+                            <i class="fa fa-trash"></i> Thùng rác 
                         </a>
                     </div>
                 </div>
@@ -41,9 +41,9 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Category Name</th>
-                                <th>Category Parent</th>
-                                <th class="text-end">Action</th>
+                                <th>Tên danh mục </th>
+                                <th>Danh mục cha </th>
+                                <th class="text-end">Hành động </th>
                             </tr>
                         </thead>
                         <tbody>

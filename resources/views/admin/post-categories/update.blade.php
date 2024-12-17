@@ -40,6 +40,7 @@
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
                                         <label for="category_post_name" class="fw-semibold">Tên danh mục: </label>
+                                        <label for="category_post_name" class="fw-semibold">Tên danh mục: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -71,6 +72,7 @@
                                     </div>
                                 </div>
 
+                                <button type="submit" class="btn btn-lg btn-light-brand">Cập nhật</button>
                                 <button type="submit" class="btn btn-lg btn-light-brand">Cập nhật</button>
                             </form>
                         </div>

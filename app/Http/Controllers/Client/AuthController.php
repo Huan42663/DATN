@@ -93,87 +93,53 @@ class AuthController extends Controller
     // Xử lý đăng ký
     public function login(Request $request)
     {
+        // Validate đầu vào
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6',
         ]);
 
         // Lấy thông tin người dùng qua email
-        $user = \App\Models\User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
         if (!$user) {
             // Tài khoản không tồn tại
-            return back()->withErrors([
-                'email' => __('auth.account_not_exist'),
-            ])->withInput();
+            return back()->withErrors(['email' => __('auth.account_not_exist')])->withInput();
         }
+
         if (!$user->email_verified_at) {
-            return back()->withErrors([
-                'email' => 'Vui lòng kiểm tra email của bạn để kích hoạt tài khoản!',
-            ])->withInput();
+            // Email chưa xác thực
+            return back()->withErrors(['email' => 'Vui lòng kiểm tra email để kích hoạt tài khoản.'])->withInput();
         }
-        // Kiểm tra nếu người dùng đang đăng nhập
+
+        if ($user->status == 0) {
+            // Tài khoản bị cấm
+            return back()->withErrors(['email' => 'Tài khoản của bạn đã bị cấm.'])->withInput();
+        }
+        
         if ($user->status == 2) {
-            return back()->withErrors([
-                'email' => __('auth.already_logged_in'),
-            ])->withInput();
+            // Tài khoản đang được đăng nhập từ phiên khác
+            return back()->withErrors(['email' => __('auth.already_logged_in')])->withInput();
         }
 
         // Thực hiện đăng nhập
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $request->session()->regenerate();
+            // Đăng nhập thành công
+            $request->session()->regenerate(); // Regenerate session ID để bảo mật
 
-            // Cập nhật trạng thái thành 2 (đang đăng nhập)
-            $user->status = 2;
-            $user->save();
+            // Lưu user ID vào session để dùng trong middleware
+            $request->session()->put('user_id', $user->id);
 
-            return redirect()->intended('/'); // Điều hướng đến trang chủ hoặc trang trước đó
+            // Cập nhật trạng thái người dùng
+            $user->update(['status' => 2]); // Đặt trạng thái đang đăng nhập
+
+            // Điều hướng đến trang chủ
+            return redirect()->intended('/');
         }
 
-        return back()->withErrors([
-            'email' => __('auth.invalid_credentials'),
-        ])->withInput();
+        // Thông báo lỗi nếu không đăng nhập được
+        return back()->withErrors(['email' => __('auth.invalid_credentials')])->withInput();
     }
-
-    // public function register(Request $request)
-    // {
-    //     // Xác thực dữ liệu đầu vào
-    //     $request->validate([
-    //         'fullName' => [
-    //             'required',
-    //             'string',
-    //             'max:255',
-    //             'regex:/^[\p{L}0-9\s]+$/u', // Chỉ cho phép chữ cái, số và khoảng trắng
-    //         ],
-    //         'email' => 'required|email|unique:users,email',
-    //         'password' => 'required|string|min:6|confirmed',
-    //         'phone' => 'required|string|max:15|unique:users,phone',
-    //     ], [
-    //         'fullName.regex' => 'Full name chỉ được dùng chữ cái và số',
-    //     ]);
-
-    //     try {
-    //         // Tạo tài khoản người dùng
-    //         $user = User::create([
-    //             'fullName' => $request->fullName,
-    //             'email' => $request->email,
-    //             'password' => Hash::make($request->password),
-    //             'phone' => $request->phone,
-    //             'role' => 'guest', // Role mặc định
-    //         ]);
-
-    //         // Tạo giỏ hàng
-    //         Cart::create([
-    //             'user_id' => $user->user_id,
-    //         ]);
-
-    //         return redirect()->route('Client.account.showLoginForm')->with('success', 'Account created successfully. Please log in.');
-    //     } catch (\Exception $e) {
-    //         // Log lỗi và hiển thị thông báo
-    //         Log::error('Registration Error: ' . $e->getMessage());
-    //         return redirect()->back()->withErrors(['error' => $e->getMessage()]);
-    //     }
-    // }
     public function register(Request $request)
     {
         // Xác thực dữ liệu đầu vào
@@ -198,7 +164,7 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'phone' => $request->phone,
-                'email_verified_at' => null, 
+                'email_verified_at' => null,
             ]);
             $verifyUrl = route('verifyEmail', ['email' => $user->email]);
             Mail::to($user->email)->send(new RegisteredMail($user, $verifyUrl));
@@ -215,7 +181,7 @@ class AuthController extends Controller
             return redirect()->route('home')->with('error', 'Tài khoản không tồn tại.');
         }
         if (!$user->email_verified_at) {
-            
+
             $user->email_verified_at = now();
             $user->save();
         }

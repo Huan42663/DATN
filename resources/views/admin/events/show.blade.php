@@ -93,7 +93,7 @@
                                     </div>
                                     <div class="mb-5 d-flex align-items-center justify-content-between">
                                         <button type="submit"class=" btn btn-light-brand">
-                                            <i class="feather-trash-2 me-2"></i> Delete
+                                            <i class="feather-trash-2 me-2"></i> Xóa 
                                         </button>
                                     </div>
                                 </div>
@@ -136,7 +136,7 @@
                                     </div>
                                     <div class="mb-5 d-flex align-items-center justify-content-between">
                                         <button type="submit"class=" btn btn-light-brand">
-                                            <i class="feather-plus me-2"></i> ADD
+                                            <i class="feather-plus me-2"></i> Thêm 
                                         </button>
                                     </div>
                                 </div>

@@ -123,7 +123,7 @@
                                     <th>Tên Sản Phẩm</th>
                                     <th>Giá</th>
                                     <th>Số lượng bán</th>
-                                    <th class="text-end">Actions</th>
+                                    <th class="text-end">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -196,7 +196,7 @@
                                     <th>Ảnh</th>
                                     <th>Tên Sản Phẩm</th>
                                     <th>Giá</th>
-                                    <th class="text-end">Actions</th>
+                                    <th class="text-end">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>

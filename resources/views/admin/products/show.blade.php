@@ -42,13 +42,13 @@
                                 </div>
                                 <div class="d-flex gap-2 text-center pt-1">
                                     <a href="{{ route('Administration.products.edit', $product->product_slug) }}">
-                                        <i class="feather-edit me-2"> Edit </i>
+                                        <i class="feather-edit me-2"> Chỉnh sửa </i>
                                     </a>
                                 </div>
                                 <div class="fs-12 fw-normal text-muted d-flex flex-wrap gap-3 mb-4">
                                     <div
                                         class="flex-fill py-3 px-4 rounded-1 d-none d-sm-block border border-dashed border-gray-5">
-                                        <h6 class="fs-15 fw-bolder">Description:</h6>
+                                        <h6 class="fs-15 fw-bolder">Mô tả:</h6>
                                         <p> {!! $product->description !!}</p>
                                     </div>
                                 </div>
@@ -64,7 +64,7 @@
                         <div class="tab-pane fade show active p-4" id="overviewTab" role="tabpanel">
                             <div class="about-section mb-5">
                                 <div class="mb-4 d-flex align-items-center justify-content-between">
-                                    <h5 class="fw-bold mb-0">List of variant:</h5>
+                                    <h5 class="fw-bold mb-0">Danh sách biến thể:</h5>
                                 </div>
                             </div>
                             <div class="profile-details mb-5">
@@ -72,7 +72,7 @@
                                     class="text-decoration-none text-light">
                                     <button class="btn btn-primary">
                                         <i class="feather-plus me-2"></i>
-                                        <span>ADD New</span>
+                                        <span>Thêm mới </span>
                                     </button>
                                 </a>
                                 @if (session('message'))
@@ -103,10 +103,10 @@
                                             <tr>
                                                 <th></th>
                                                 <th>Size</th>
-                                                <th>Color</th>
-                                                <th>Price</th>
-                                                <th>Sale Price</th>
-                                                <th>Quantity</th>
+                                                <th>Màu </th>
+                                                <th>Giá </th>
+                                                <th>Giá khuyến mãi </th>
+                                                <th>Số lượng </th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -191,7 +191,7 @@
                         <div class="tab-pane fade show active p-4" id="overviewTab" role="tabpanel">
                             <div class="about-section mb-5">
                                 <div class="mb-4 d-flex align-items-center justify-content-between">
-                                    <h5 class="fw-bold mb-0">List Image:</h5>
+                                    <h5 class="fw-bold mb-0">Danh sách ảnh:</h5>
                                 </div>
                             </div>
                             <div class="profile-details mb-5">
@@ -204,7 +204,7 @@
                                             id="">
                                         <button type="submit" class="btn btn-primary text-light mt-1">
                                             <i class="feather-minus me-2"></i>
-                                            <span>ADD NEW</span>
+                                            <span>Thêm mới </span>
                                         </button>
                                     </div>
                                 </form>
@@ -215,7 +215,7 @@
                                         <thead>
                                             <tr>
                                                 <th></th>
-                                                <th>Image</th>
+                                                <th>Hình ảnh </th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -243,7 +243,7 @@
                                     </table>
                                     <button type="submit" class="btn btn-primary">
                                         <i class="feather-minus me-2"></i>
-                                        <span>DELETE</span>
+                                        <span>Xóa </span>
                                     </button>
                                 </form>
                             </div>

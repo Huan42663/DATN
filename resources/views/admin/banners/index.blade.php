@@ -6,10 +6,10 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Banners</h5>
+                <h5 class="m-b-10">Banner </h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang chủ </a></li>
                 <li class="breadcrumb-item">Danh sách</li>
             </ul>
         </div>
@@ -31,10 +31,10 @@
                         <thead>
                             <tr>
                                 {{-- <th>ID</th> --}}
-                                <th>Banner Image</th>
-                                <th>Event</th>
+                                <th>Ảnh Banner </th>
+                                <th>Sự kiện </th>
                                 {{-- <th>Status</th> --}}
-                                <th>Product</th>
+                                <th>Sản phẩm </th>
                                 <th class="text-end">Hành động</th>
                                 {{-- <th>Link</th> --}}
                                 {{-- <th class="text-end">Hành động</th> --}}
@@ -52,7 +52,7 @@
                                                     style="width: 60px; height: 60px;">
                                             </div>
                                         </div>
-                                    </td>x
+                                    </td>
                                     <td>
                                         <span class="d-block mb-1">{{ $banner->event_name }}</span>
                                     </td>

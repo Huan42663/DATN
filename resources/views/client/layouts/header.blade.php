@@ -144,7 +144,7 @@
                         <div class="input-group mb-3 mt-3">
                             <form action="{{ route('Client.product.search') }}" method="GET" class=d-flex>
                                 @csrf
-                                <input type="text" name="keyword" class="form-control" placeholder="search"
+                                <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm"
                                     aria-label="search" aria-describedby="button-addon2" style="border-radius: 20px">
                                 <button class="btn btn" type="submit" id="button-addon2"><svg
                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"

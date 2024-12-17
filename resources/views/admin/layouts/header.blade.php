@@ -78,10 +78,11 @@
                             <div class="d-flex justify-content-between align-items-center notifications-head">
                                 <h6 class="fw-bold text-dark mb-0">Đơn Hàng Mới</h6>
                                 <a href="javascript:void(0);" class="fs-11 text-success text-end ms-auto"
-                                    data-bs-toggle="tooltip" title="Make as Read">
+                                data-bs-toggle="tooltip" title="Đánh dấu đã đọc">
                                     <i class="feather-check"></i>
-                                    <span>Make as Read</span>
+                                    <span>Đánh dấu đã đọc</span>
                                 </a>
+ 
                             </div>
                             @php
                                 $i=0;
@@ -133,12 +134,12 @@
                             </a>
                             <a href="{{route('Client.Home')}}" class="dropdown-item">
                                 <i class="feather-settings"></i>
-                                <span>Home</span>
+                                <span>Trang chủ</span>
                             </a>
                             <div class="dropdown-divider"></div>
                             <a href="{{route('Client.account.logout')}}" class="dropdown-item">
                                 <i class="feather-log-out"></i>
-                                <span>Logout</span>
+                                <span>Đăng xuất </span>
                             </a>
                         </div>
                     </div>

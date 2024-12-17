@@ -6,11 +6,11 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Users</h5>
+                <h5 class="m-b-10">Tài khoản </h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">List</li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang chủ </a></li>
+                <li class="breadcrumb-item">Danh sách </li>
             </ul>
         </div>
     </div>
@@ -27,7 +27,7 @@
                 <div class="table-responsive">
                     <a href="{{ route('Administration.users.create') }}" class=" btn btn-primary">
                         <i class="feather-plus me-2"></i>
-                        <span>ADD NEW ADMIN</span>
+                        <span>Thêm mới ADMIN</span>
                     </a>
                     <table id="example" class="table table-hover mb-0">
                         <thead>
@@ -38,7 +38,7 @@
                                 <th>Ảnh Đại Diện</th>
                                 <th>Chức Vụ</th>
                                 <th>Trạng Thái</th>
-                                <th class="text-end">Actions</th>
+                                <th class="text-end">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>

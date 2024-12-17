@@ -32,7 +32,7 @@ class RegisteredMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Registered account',
+            subject: 'Xác nhận đăng ký tài khoản',
         );
     }
 
@@ -43,7 +43,7 @@ class RegisteredMail extends Mailable
     {
         return new Content(
             view: 'emails.register_account',
-            with: ['user' => $this->user],  // Truyền dữ liệu user vào view
+            with: ['user' => $this->user], 
         );
     }
     public function build()
@@ -51,7 +51,7 @@ class RegisteredMail extends Mailable
         return $this->view('emails.RegisteredMail')
                     ->with([
                         'user' => $this->user,
-                        'verifyUrl' => $this->verifyUrl, // Chuyển verify URL cho email
+                        'verifyUrl' => $this->verifyUrl, 
                     ]);
     }
     /**

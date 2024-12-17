@@ -7,7 +7,7 @@
                     </a>
                     <div class="flex gap-3 mt-3">
                         <div class="flex flex-col "><span class="text-button">Mail:</span><span
-                                class="text-button mt-3">Phone:</span><span class="text-button mt-3">Address:</span>
+                                class="text-button mt-3">Điện thoại:</span><span class="text-button mt-3">Địa chỉ:</span>
                         </div>
                         <div class="flex flex-col "><span class="">jstore@gmail.com</span><span
                                 class="mt-3">0987654321</span><span class="mt-3 pt-px">549 Oak St.Crystal
@@ -39,12 +39,12 @@
                         @endforeach
                     </div>
                     <div class="newsletter basis-1/3 pl-7 max-md:basis-full max-md:pl-0">
-                        <div class="text-button-uppercase">Newletter</div>
-                        <div class="caption1 mt-3">Sign up for our newsletter and get 10% off your first purchase
+                        <div class="text-button-uppercase">Bản tin </div>
+                        <div class="caption1 mt-3">Đăng ký để nhận bản tin của chúng tôi và nhận 10% cho lần mua đầu tiên của bạn 
                         </div>
                         <div class="input-block w-full h-[52px] mt-4">
                             <form class="w-full h-full relative" action="https://anvogue.vercel.app/post"><input
-                                    type="email" placeholder="Enter your e-mail"
+                                    type="email" placeholder="Nhập e-mail của bạn "
                                     class="caption1 w-full h-full pl-4 pr-14 rounded-xl border border-line"
                                     required="" /><button
                                     class="w-[44px] h-[44px] bg-black flex items-center justify-center rounded-xl absolute top-1 right-1"><svg

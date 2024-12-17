@@ -30,6 +30,7 @@
                             <div class="mb-4 d-flex align-items-center justify-content-between">
                                 <h5 class="fw-bold mb-0 me-4">
                                     <span class="d-block mb-2">Thêm danh mục bài viết:</span>
+                                    <span class="d-block mb-2">Thêm danh mục bài viết:</span>
                                 </h5>
                             </div>
                             <form action="{{ route('Administration.categoryPost.store') }}" method="POST">
@@ -38,10 +39,12 @@
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
                                         <label for="category_post_name" class="fw-semibold">Tên danh mục: </label>
+                                        <label for="category_post_name" class="fw-semibold">Tên danh mục: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
                                             <input type="text" class="form-control" placeholder="Nhập tên danh mục"
+                                                <input type="text" class="form-control" placeholder="Nhập tên danh mục"
                                                 name="category_post_name" value="{{ old('category_post_name') }}"
                                                 id="category_post_name">
                                         </div>
