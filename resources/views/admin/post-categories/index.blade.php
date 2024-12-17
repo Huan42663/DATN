@@ -10,7 +10,7 @@
             </div>
             <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang chủ</a></li>
-                <li class="breadcrumb-item">List</li>
+                <li class="breadcrumb-item">Danh sách</li>
             </ul>
         </div>
     </div>
@@ -58,7 +58,7 @@
                                                 method="POST">
                                                 @method('DELETE')
                                                 @csrf
-                                                <button onclick="return confirm('Do you want to delete this category?') "
+                                                <button onclick="return confirm('Bạn có muốn xóa danh mục này không?') "
                                                     class="avatar-text avatar-md">
                                                     <i class="feather-trash-2"></i>
                                                     </i>

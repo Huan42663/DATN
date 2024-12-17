@@ -6,11 +6,11 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Category Post</h5>
+                <h5 class="m-b-10">Danh Mục Bài Viết</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">Update</li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang chủ</a></li>
+                <li class="breadcrumb-item">Cập nhật</li>
             </ul>
         </div>
     </div>
@@ -29,7 +29,7 @@
                         <div class="card-body personal-info">
                             <div class="mb-4 d-flex align-items-center justify-content-between">
                                 <h5 class="fw-bold mb-0 me-4">
-                                    <span class="d-block mb-2">Update Article List:</span>
+                                    <span class="d-block mb-2">Cập nhật danh sách bài viết:</span>
                                 </h5>
                             </div>
                             <form
@@ -39,7 +39,7 @@
                                 @method('PUT')
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="category_post_name" class="fw-semibold">Category Name: </label>
+                                        <label for="category_post_name" class="fw-semibold">Tên danh mục: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -53,7 +53,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="category_post_name" class="fw-semibold">Show Header:</label>
+                                        <label for="category_post_name" class="fw-semibold">Hiển thị đầu trang:</label>
                                     </div>
                                     <div class="col-lg-8">
                                         <input type="checkbox" name="showHeader"
@@ -63,7 +63,7 @@
 
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="category_post_name" class="fw-semibold">Show Footer:</label>
+                                        <label for="category_post_name" class="fw-semibold">Hiển thị chân trang:</label>
                                     </div>
                                     <div class="col-lg-8">
                                         <input type="checkbox" name="showFooter"
@@ -71,7 +71,7 @@
                                     </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-lg btn-light-brand">Update</button>
+                                <button type="submit" class="btn btn-lg btn-light-brand">Cập nhật</button>
                             </form>
                         </div>
                     </div>

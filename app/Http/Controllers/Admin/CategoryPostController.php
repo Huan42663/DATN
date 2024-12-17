@@ -33,29 +33,6 @@ class CategoryPostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //     $slug = Str::slug($request->category_post_name);
-    //     $request->validate(
-    //         [
-    //             'category_post_name' => 'required|unique:category_post,category_post_name|string|max:255',
-    //         ],
-    //         [
-    //             'category_post_name.required' => 'Tên danh mục bài viết không được để trống',
-    //             'category_post_name.unnique' => 'Tên của danh mục bài viết đã tồn tại',
-    //             'category_post_name.string' => 'Tên danh mục bài viết phải là một chuỗi',
-    //             'category_post_name.max' => 'Tên danh mục bài viết không được dài quá 255 ký tự',
-    //         ]
-    //     );
-    //     $data = $request->except('_token', '_method', 'example_length', 'category_post');
-    //     $data['category_post_slug'] = $slug;
-    //     $data['showHeader'] = $request->has('showHeader') ? 1 : 0;
-    //     $data['showFooter'] = $request->has('showFooter') ? 1 : 0;
-
-    //     $category_post = CategoryPost::query()->create($data);
-
-    //     return redirect()->route('Administration.categoryPost.list')->with('message', 'Đã thêm danh mục bài viết thành công');
-    // }
     public function store(Request $request)
     {
         $request->validate(
@@ -144,9 +121,9 @@ class CategoryPostController extends Controller
                 'category_post_name' => 'required|unique:category_post,category_post_name,' . $id . ',category_post_id|string|max:255',
             ],
             [
-                'category_post_name.required' => 'The article category name cannot be empty',
-                'category_post_name.unique' => 'The name of the article category already exists',
-                'category_post_name.max' => 'The article category name cannot be larger than 255 characters',
+                'category_post_name.required' => 'Tên danh mục bài viết không được để trống',
+                'category_post_name.unique' => 'Tên của danh mục bài viết đã tồn tại',
+                'category_post_name.max' => 'Tên danh mục bài viết không được dài quá 255 ký tự',
             ]
         );
 
@@ -157,7 +134,7 @@ class CategoryPostController extends Controller
 
         CategoryPost::query()->where('category_post_id', $id)->update($data);
 
-        return redirect()->route('Administration.categoryPost.list')->with('message', 'Updated article list successfully');
+        return redirect()->route('Administration.categoryPost.list')->with('message', 'Đã cập nhật danh sách bài viết thành công');
     }
 
 
@@ -170,7 +147,7 @@ class CategoryPostController extends Controller
         if (!$category_post) {
             return view('error-404', compact(['error' => 'No find product categories']));
         } else {
-            return redirect()->route('Administration.categoryPost.list')->with('message', 'Successfully deleted article category');
+            return redirect()->route('Administration.categoryPost.list')->with('message', 'Đã xóa thành công danh mục bài viết');
         }
     }
 
@@ -191,10 +168,10 @@ class CategoryPostController extends Controller
             }
 
             return redirect()->route('Administration.categoryPost.list')
-                ->with('message', 'Restore article category successfully');
+                ->with('message', 'Khôi phục danh mục bài viết thành công');
         }
 
         return redirect()->route('Administration.categoryPost.list')
-            ->with('message', 'No categories selected');
+            ->with('message', 'Không có danh mục nào được chọn');
     }
 }

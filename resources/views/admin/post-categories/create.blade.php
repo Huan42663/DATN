@@ -6,11 +6,11 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Category Post</h5>
+                <h5 class="m-b-10">Danh Mục Bài Viết</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Home</a></li>
-                <li class="breadcrumb-item">Create</li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang chủ</a></li>
+                <li class="breadcrumb-item">Thêm mới</li>
             </ul>
         </div>
     </div>
@@ -29,7 +29,7 @@
                         <div class="card-body personal-info">
                             <div class="mb-4 d-flex align-items-center justify-content-between">
                                 <h5 class="fw-bold mb-0 me-4">
-                                    <span class="d-block mb-2">Add Article Category:</span>
+                                    <span class="d-block mb-2">Thêm danh mục bài viết:</span>
                                 </h5>
                             </div>
                             <form action="{{ route('Administration.categoryPost.store') }}" method="POST">
@@ -37,11 +37,11 @@
                                 @method('POST')
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="category_post_name" class="fw-semibold">Category Name: </label>
+                                        <label for="category_post_name" class="fw-semibold">Tên danh mục: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Enter a category name"
+                                            <input type="text" class="form-control" placeholder="Nhập tên danh mục"
                                                 name="category_post_name" value="{{ old('category_post_name') }}"
                                                 id="category_post_name">
                                         </div>
@@ -52,7 +52,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="category_post_name" class="fw-semibold">Show Header: </label>
+                                        <label for="category_post_name" class="fw-semibold">Hiển thị đầu trang: </label>
                                     </div>
                                     <div class="col-lg-8">
 
@@ -61,7 +61,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="category_post_name" class="fw-semibold">Show Footer:
+                                        <label for="category_post_name" class="fw-semibold">Hiển thị chân trang:
                                         </label>
                                     </div>
                                     <div class="col-lg-8">
@@ -72,7 +72,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-lg btn-light-brand">Add New</button>
+                                <button type="submit" class="btn btn-lg btn-light-brand">Thêm mới</button>
                             </form>
                         </div>
                     </div>

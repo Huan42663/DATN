@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'Restore article categories')
+@section('title', 'Khôi phục danh mục bài viết')
 
 @section('content')
     <div class="col-lg-12 mt-1">
@@ -12,10 +12,10 @@
                         <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th>Select</th>
+                                    <th>Lựa chọn</th>
                                     <th>STT</th>
-                                    <th>Category Name</th>
-                                    <th>Date of Deletion</th>
+                                    <th>Tên danh mục</th>
+                                    <th>Ngày xóa</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -33,7 +33,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <button type="submit" class="btn btn-success mt-2">Restore</button>
+                        <button type="submit" class="btn btn-success mt-2">Khôi phục</button>
                     </form>
                 </div>
             </div>
