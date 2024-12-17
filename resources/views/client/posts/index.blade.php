@@ -20,7 +20,7 @@
                         </div> -->
                     <div class="flex items-center gap-2 mt-2">
                         <div class="blog-date caption1 text-secondary">
-                            {{ $post->created_at->format('M d, Y') }}
+                            {{ $post->created_at->translatedFormat('d F, Y') }}
                         </div>
                     </div>
                     <div class="blog-infor mt-7">
@@ -35,7 +35,7 @@
                             {{ $post->short_description }}
                         </div>
                         <div class="blog-content mt-3 duration-300">
-                        {!! substr($post->content, 0, 200) . '...' !!}
+                            {!! substr($post->content, 0, 200) . '...' !!}
                         </div>
 
                     </div>
@@ -45,9 +45,9 @@
         </div>
 
         <!--  phân trang  -->
-       <div class="mt-5">
-    {{ $posts->links() }}
-</div>
+        <div class="mt-5">
+            {{ $posts->links() }}
+        </div>
 
 
     </div>

@@ -19,10 +19,12 @@
     @if($order->total > $order->total_discount && $order->total_discount != null)
     <p><strong>Tổng tiền cần thanh toán:</strong> {{number_format($order->total_discount, 0, ',', '.') . ' VNĐ' }}</p>
     @endif
+    <p>
     @if($order->method_payment == "banking")    
         <span class="badge bg-soft-success text-success">Đã Thanh Toán</span>
     @endif
-    <a href="{{route('Client.orders.show',['order_code'=>$order->order_code,'order_id'=>$order->order_id])}}">Xem chi tiết tại đây</a>
+    </p>
+    <a href="{{route('Client.orders.show',['order_code'=>$order->order_code,'order_id'=>$order->order_id])}}" style="color: #ffffff; background-color: #4CAF50; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Xem chi tiết tại đây</a>
     <p>Chúng tôi sẽ sớm liên hệ với bạn để xác nhận đơn hàng.</p>
     <p>Trân trọng,</p>
     <p>Đội ngũ của chúng tôi</p>
