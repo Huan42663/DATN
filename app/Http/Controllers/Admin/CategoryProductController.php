@@ -54,8 +54,8 @@ class CategoryProductController extends Controller
                 'category_parent_id' => 'nullable|exists:categories,category_id',
             ],
             [
-                'category_name.required' => 'Product category names cannot be empty',
-                'category_name.unique' => 'Product category name already exists',
+                'category_name.required' => 'Tên danh mục sản phẩm không được để trống',
+                'category_name.unique' => 'Tên danh mục sản phẩm đã tồn tại',
             ]
         );
 
@@ -66,7 +66,7 @@ class CategoryProductController extends Controller
 
         return redirect()
             ->route('Administration.categoryProduct.list')
-            ->with('message', 'Added product categories successfully');
+            ->with('message', 'Đã thêm danh mục sản phẩm thành công');
     }
 
 
@@ -83,7 +83,7 @@ class CategoryProductController extends Controller
             )
             ->get();
         return view('admin.product-categories.show', compact([
-            'message' => 'Product catalog details',
+            'message' => 'Chi tiết danh mục sản phẩm',
             'categoryProduct' => $categories
         ]));
     }
@@ -92,7 +92,7 @@ class CategoryProductController extends Controller
     {
         $categories = Category::find($id);
         if (!$categories) {
-            return view('error-404', ['errors' => 'No product categories found']);
+            return view('error-404', ['errors' => 'Không tìm thấy danh mục sản phẩm']);
         }
 
         $listCategoryProduct = Category::where('category_id', '!=', $id)->get();
@@ -108,7 +108,7 @@ class CategoryProductController extends Controller
     {
         $category = Category::find($id);
         if (!$category) {
-            return view('error-404', ['errors' => "No product categories found"]);
+            return view('error-404', ['errors' => "Không tìm thấy danh mục sản phẩm"]);
         }
 
         $listCategoryProduct = Category::where('category_id', '!=', $id)->get();
@@ -120,7 +120,7 @@ class CategoryProductController extends Controller
             return view('admin.product-categories.update', [
                 'categories' => $category,
                 'listCategoryProduct' => $listCategoryProduct,
-                'errors' => "The category name is duplicated",
+                'errors' => "Tên danh mục bị trùng lặp",
             ]);
         }
 
@@ -140,15 +140,15 @@ class CategoryProductController extends Controller
                 'category_parent_id' => "nullable|exists:categories,category_id",
             ],
             [
-                "category_name.required" => "Product category names cannot be empty",
-                "category_name.unique" => "Product category name already exists",
+                "category_name.required" => "Tên danh mục sản phẩm không được để trống",
+                "category_name.unique" => "Tên danh mục sản phẩm đã tồn tại",
             ]
         );
 
         $data = $request->except('_token', '_method', 'example_length', 'category_product');
         $category->update($data);
 
-        return redirect()->route('Administration.categoryProduct.list')->with('message', 'Updated product catalog successfully');
+        return redirect()->route('Administration.categoryProduct.list')->with('message', 'Đã cập nhật danh mục sản phẩm thành công');
     }
 
 
@@ -161,7 +161,7 @@ class CategoryProductController extends Controller
         if (!$categories) {
             return view('error-404', compact(['error' => 'No find product categories']));
         } else {
-            return redirect()->route('Administration.categoryProduct.list')->with('message', 'Successfully deleted product category');
+            return redirect()->route('Administration.categoryProduct.list')->with('message', 'Đã xóa thành công danh mục sản phẩm');
         }
     }
 
@@ -182,10 +182,10 @@ class CategoryProductController extends Controller
             }
 
             return redirect()->route('Administration.categoryProduct.list')
-                ->with('message', 'Restore product catalog successfully');
+                ->with('message', 'Khôi phục danh mục sản phẩm thành công');
         }
 
         return redirect()->route('Administration.categoryProduct.list')
-            ->with('message', 'No categories selected');
+            ->with('message', 'Không có danh mục nào được chọn');
     }
 }

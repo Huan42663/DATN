@@ -9,7 +9,7 @@
                 <h5 class="m-b-10"> Danh mục sản phẩm </h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang chủ  </a></li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.Home') }}">Trang chủ </a></li>
                 <li class="breadcrumb-item">Danh sách </li>
             </ul>
         </div>
@@ -31,7 +31,7 @@
                     </a>
                     <div class="col-1">
                         <a href="{{ route('Administration.categoryProduct.listDelete') }}" class=" btn btn-danger mt-2">
-                            <i class="fa fa-trash"></i> Thùng rác 
+                            <i class="fa fa-trash"></i> Thùng rác
                         </a>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                                                 method="POST">
                                                 @method('DELETE')
                                                 @csrf
-                                                <button onclick="return confirm('Do you want to delete this category?')"
+                                                <button onclick="return confirm('Bạn có muốn xóa danh mục này không?')"
                                                     class="avatar-text avatar-md text-danger">
                                                     <i class="feather-trash-2"></i>
                                                 </button>
