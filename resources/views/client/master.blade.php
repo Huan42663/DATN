@@ -83,6 +83,7 @@
 </head>
 
 <body class="__className_082e4d" style="background-color:rgb(249,246,241) ">
+    <script lang="javascript">var __vnp = {code : 23689,key:'', secret : '4765841452632192fedf72e251b8f705'};(function() {var ga = document.createElement('script');ga.type = 'text/javascript';ga.async=true; ga.defer=true;ga.src = '//core.vchat.vn/code/tracking.js?v=46490'; var s = document.getElementsByTagName('script');s[0].parentNode.insertBefore(ga, s[0]);})();</script>
     
     @include('client.layouts.header')
 
@@ -103,7 +104,6 @@
         // or via CommonJS
         const Swal = require('sweetalert2');
     </script> --}}
-    <script lang="javascript">var __vnp = {code : 23689,key:'', secret : '4765841452632192fedf72e251b8f705'};(function() {var ga = document.createElement('script');ga.type = 'text/javascript';ga.async=true; ga.defer=true;ga.src = '//core.vchat.vn/code/tracking.js?v=46490'; var s = document.getElementsByTagName('script');s[0].parentNode.insertBefore(ga, s[0]);})();</script>
 </body>
     
 </html>

@@ -36,6 +36,10 @@
                         <input class="border-line px-4 pt-3 pb-3 w-full rounded-lg" id="phone" type="text"
                             name="phone" placeholder="Số điện thoại *" required="">
                     </div>
+                    @if(session('phone'))
+                    <span class="text-danger">{{session('phone')}}</span>
+                    @endif 
+
                     {{-- <div class="flex items-center mt-5">
                         <div class="block-input">
                             <input type="checkbox" id="remember" name="remember" required="">

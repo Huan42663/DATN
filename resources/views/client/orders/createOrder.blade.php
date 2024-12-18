@@ -191,7 +191,7 @@
                             <input type="hidden" name="cart_detail_id[]" value="{{$item1->cart_detail_id}}">
                             <div class="item flex items-center justify-between gap-6">
                                 <div class="flex items-center">
-                                    <di v class="bg_img relative flex-shrink-0 w-[100px] h-[140px] me-3">
+                                    <div class="bg_img relative flex-shrink-0 w-[100px] h-[140px] me-3">
                                         <img
                                             src="{{asset('storage/'.$item1->product_image)}}" alt="product/fashion/10-1"
                                             class="w-full h-full object-cover rounded-lg" /><span

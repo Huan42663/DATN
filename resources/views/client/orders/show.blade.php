@@ -512,7 +512,7 @@
     </div>
     {{-- Hỗ trợ  --}}
     <div
-        style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; cursor: pointer; font-family: Arial, sans-serif;">
+        style="position: fixed; bottom: 20px; left: 20px; z-index: 1000; cursor: pointer; font-family: Arial, sans-serif;">
         <!-- Biểu tượng hỗ trợ -->
         <div id="support-icon"
             style="background-color: #007bff; color: white; border-radius: 50%; padding: 18px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); text-align: center; font-size: 20px; transition: background-color 0.3s ease;">
@@ -530,7 +530,7 @@
             style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; border-radius: 8px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); padding: 40px; max-width: 450px; width: 90%; font-family: Arial, sans-serif; text-align: center; z-index: 1002; opacity: 0; transition: opacity 0.3s ease;">
             <h3 style="font-size: 22px; color: #333; margin-bottom: 20px;">Liên hệ hỗ trợ</h3>
             <p style="font-size: 18px; color: #555;">Liên hệ với chúng tôi để được hỗ trợ qua SĐT:</p>
-            <p style="font-size: 20px; font-weight: bold; color: #007bff;">0123456789</p>
+            <p style="font-size: 20px; font-weight: bold; color: #007bff;">0338790976</p>
             <div style="margin-top: 30px;">
                 <button id="close-popup"
                     style="background-color: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Đóng</button>

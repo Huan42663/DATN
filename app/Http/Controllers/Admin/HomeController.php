@@ -80,7 +80,7 @@ class HomeController extends Controller
         $YearTotal = [];
         $j = 0;
         for ($i = 1; $i < 13; $i++) {
-            if (!empty($totalMonthInYear)) {
+            if (!empty($total)) {
                 if ($i ==  $total[$j]->month &&  $total[$j]->year == $year) {
                         array_push($YearTotal,  $total[$j]->total);
                         $j++;

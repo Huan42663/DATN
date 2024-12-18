@@ -31,16 +31,16 @@ class OrderController extends Controller
      */
     public function __construct()
     {
-        $Voucher = Voucher::query()->get();
-        $date = Carbon::now();
-        $data['quantity'] = 0;
-        foreach ($Voucher as $key) {
-            if($key->quantity != 0){
-                if ($key->date_end == $date || $key->date_end < $date) {
-                    Voucher::query()->where('voucher_id', $key->voucher_id)->update($data);
-                }
-            }
-        }
+        // $Voucher = Voucher::query()->get();
+        // $date = Carbon::now();
+        // $data['quantity'] = 0;
+        // foreach ($Voucher as $key) {
+        //     if($key->quantity != 0){
+        //         if ($key->date_end == $date || $key->date_end < $date) {
+        //             Voucher::query()->where('voucher_id', $key->voucher_id)->update($data);
+        //         }
+        //     }
+        // }
         unset($_SESSION['thankyou']);
     }
     public function vnpay_payment(){

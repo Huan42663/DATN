@@ -158,6 +158,10 @@ class AuthController extends Controller
         ]);
 
         try {
+            $pattern = '/^(0|\+84|\+841|\+849|\+8498)([2-9]\d{8})$/';
+            if (!preg_match($pattern, $request->phone)) {
+                return redirect()->back()->with('phone', 'Số điện thoại không đúng định dạng');
+            }
             // Tạo một bản ghi tạm thời với thông tin người dùng (chưa tạo tài khoản)
             $user = User::create([
                 'fullName' => $request->fullName,

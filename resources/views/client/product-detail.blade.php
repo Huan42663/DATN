@@ -165,10 +165,10 @@
                         }
                     @endphp
                         <div class="sapo-product-reviews-star d-flex mt-2">
-                            @for ($i = 0; $i < $rate; $i++)
+                            @for ($i = 0; $i <  floor( $rate); $i++)
                                     <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png " width="15" height="15" alt="" title="" class="img-small me-1">
                             @endfor
-                            @for ($i = 0; $i < 5 -  $rate; $i++)
+                            @for ($i = 0; $i < 5 -( floor( $rate)); $i++)
                                 <img src="https://cdn-icons-png.flaticon.com/512/1828/1828970.png " width="15" height="15" alt="" title="" class="img-small me-1">
                             @endfor
                         </div>
