@@ -375,9 +375,13 @@ class ProductController extends Controller
                     ->where('color_id', $item['color_id'])
                     ->update($data);
             } else {
-                ProductVariant::create($item);
+                $create = ProductVariant::create($item);
+                $checkNoVariant = ProductVariant::where('product_id',$create->product_id)->where('size_id',null)->where('color_id',null)->first();
+                if($checkNoVariant != null){
+                    ProductVariant::where('product_id',$create->product_id)->where('size_id',null)->where('color_id',null)->delete();
+                }
             }
-
+            
             // $product = Products::query()->where('product_id', $item['product_id'])->get();
             // return redirect()->route('Administration.products.show', $product->product_slug)->with('message', 'Thêm biến thể thành công');
 
@@ -470,7 +474,7 @@ class ProductController extends Controller
                 'price' => 'required|numeric|min:1|max:100000000',
                 'sale_price' => 'nullable|numeric|min:0|lte:price',
                 'quantity' => 'required|integer|min:1|max:1000',
-                'weight' => 'required|numeric|min:0.1|max:500',
+                'weight' => 'required|numeric|min:0.01|max:500',
                 'status' => 'required|in:1,2',
                 'product_image' => 'required',
                 'description' => 'required|string|min:10|max:5000',
@@ -906,11 +910,14 @@ class ProductController extends Controller
 
         $data4 = Size::query()->withTrashed()->get();
         $data5 = Color::query()->withTrashed()->get();
+
+        $data6 = Size::query()->get();
+        $data7 = Color::query()->get();
         // dd($data2);
 
         $_SESSION['product_id'] = $data1[0]->product_id;
         if ($data1) {
-            return view('admin.products.show', compact('data1', 'data2', 'data3', 'data4', 'data5'));
+            return view('admin.products.show', compact('data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7'));
         } else {
             return redirect()->back()->with('message', 'Không tìm thấy sản phẩm');
         }

@@ -86,11 +86,13 @@
                                                             <div
                                                                 class="text-button-uppercase text-white bg-red px-2 py-0.5 inline-block rounded-sm">
                                                                 HOT</div>
-                                                            <div class="heading6 mt-2">{{ $item->product_name }}</div>
-                                                            <div class="body1 mt-3 text-secondary">Starting at :
+                                                            <div class="heading6 mt-2">{!! substr($item->product_name, 0, 15) . '...' !!}</div>
+                                                            <div class="body1 mt-3 text-secondary">Giá
                                                                 <br><span class="text-red fw-bold">
-                                                                    @if ($item->minPrice > 0)
+                                                                    @if ($item->minPrice > 0 && $item->minPrice == $item->maxPrice)
                                                                         {{ number_format($item->minPrice, 0, ',', '.') . 'VNĐ' }}
+                                                                    @elseif($item->minPrice > 0)
+                                                                        <span> {{ number_format($item->minPrice, 0, ',', '.') . 'VNĐ' }} - {{number_format($item->maxPrice, 0, ',', '.') . 'VNĐ' }}<span>
                                                                     @else
                                                                         {{ number_format($item->maxPrice, 0, ',', '.') . 'VNĐ' }}
                                                                     @endif
@@ -204,7 +206,7 @@
                                     </path>
                                 </svg>
                                 <span
-                                    class="quantity cart-quantity absolute -right-1.5 -top-1.5 text-xs text-white bg-black w-4 h-4 flex items-center justify-center rounded-full">
+                                    class="quantity cart-quantity absolute -right-1.5 -top-1.5 text-xs text-white bg-black w-4 h-4 flex items-center justify-center rounded-full" id="countCart">
                                     @if (isset($Cart) && $Cart > 0)
                                         {{ $Cart }}
                                     @else

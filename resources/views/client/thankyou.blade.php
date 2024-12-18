@@ -1,7 +1,7 @@
 
 @extends('client.master')
 
-@section('title','Đánh Giá')
+@section('title','Cảm Ơn')
 
 @section('content')
             <style>

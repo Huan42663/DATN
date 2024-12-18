@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'Sizes')
+@section('title', 'Kích Cỡ')
 @section('page-header')
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">

@@ -319,4 +319,18 @@
             </div>
         </div>
     </div>
+    @if(session('message'))
+    <input type="text" hidden id="message" value="{{session('message')}}">
+@endif
+<script>
+    const check = document.getElementById('message');
+    if(check){
+        if(check.value !=""){
+            swal({
+                icon: "success",
+                title: check.value,
+            });
+    }
+    }
+</script>
 @endsection

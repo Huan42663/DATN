@@ -31,17 +31,16 @@ class OrderDetail extends Model
 
     public function product()
     {
-        return $this->belongsTo(Products::class, 'product_id');
+        return $this->belongsTo(Products::class, 'product_id')->withTrashed();
     }
-
 
     public function size()
     {
-        return $this->belongsTo(Size::class, 'size_id');
+        return $this->belongsTo(Size::class, 'size_id')->withTrashed();
     }
 
     public function color()
     {
-        return $this->belongsTo(Color::class, 'color_id');
+        return $this->belongsTo(Color::class, 'color_id')->withTrashed();
     }
 }

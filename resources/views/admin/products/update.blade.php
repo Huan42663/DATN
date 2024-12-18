@@ -1,18 +1,18 @@
 @extends('admin.master')
 
-@section('title', 'Cập nhật sản phẩm')
+@section('title', 'Cập Nhật Sản Phẩm')
 
 @section('page-header')
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Products</h5>
+                <h5 class="m-b-10">Sản Phẩm</h5>
             </div>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ Route('Administration.products.list') }}">List</a></li>
+                <li class="breadcrumb-item"><a href="{{ Route('Administration.products.list') }}">Danh Sách</a></li>
                 <li class="breadcrumb-item"> <a
-                        href="{{ Route('Administration.products.show', $product->product_slug) }}">Show</a></li>
-                <li class="breadcrumb-item">Update</li>
+                        href="{{ Route('Administration.products.show', $product->product_slug) }}">Chi Tiết</a></li>
+                <li class="breadcrumb-item">Cập Nhật</li>
             </ul>
         </div>
     </div>

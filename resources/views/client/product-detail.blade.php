@@ -1,6 +1,6 @@
 @extends('client.master')
 
-@section('title', 'chi tiết sản phẩm')
+@section('title', 'Chi Tiết Sản Phẩm')
 
 @section('content')
     <style>
@@ -34,44 +34,44 @@
         <div class="row">
             <div class="col-md-7">
                 <div class="row">
-                    <div id="carouselExampleIndicators" class="carousel slide">
-                        <div class="carousel-indicators">
-                          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                          @if(isset($product_images))
-                            @php
-                                $i=2;
-                                foreach ($product_images as $item ):
-                            @endphp
-                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{$i}}" aria-label="{{Slide." $i"}}"></button>
-                            @php
-                                $i++;
-                                endforeach
-                            @endphp
-                           
-                          @endif
-                          
-                        </div>
+                    <div id="carouselExample" class="carousel slide">
                         <div class="carousel-inner">
-                          <div class="carousel-item active">
-                            <img src="{{ asset('storage/' . $product->product_image) }}" alt="{{ $product->product_image }}" class="d-block w-100" style="width: 200px; height:650px;">
-                          </div>
-                          @if(isset($product_images))
-                          @foreach ($product_images as $item )
-                            <div class="carousel-item">
-                                <img style="width: 200px; height:650px;" src="{{asset('storage/'.$item->image_color_name)}}" class="d-block w-100" alt="...">
-                            </div>
-                          @endforeach
-                          @endif
+                            @if(isset($product_images))
+                                @php
+                                    $i=0;
+                                    foreach ($product_images as $item ):
+                                @endphp
+                                @if($i == 0)
+                                    <div class="carousel-item @if($i==0) active @endif">
+                                        <img src="{{ asset('storage/' . $product->product_image) }}" alt="{{ $product->product_image }}" class="d-block w-100" style="width: 200px; height:650px;">
+                                    </div>
+                                @else
+                                    <div class="carousel-item">
+                                        <img style="width: 200px; height:650px;" src="{{asset('storage/'.$item->image_color_name)}}" class="d-block w-100" alt="...">
+                                    </div>
+                                @endif
+
+                                @php
+                                    $i++;
+                                    endforeach;
+                                @endphp
+                            @else
+                            <div class="carousel-item active">
+                                <img src="{{ asset('storage/' . $product->product_image) }}" alt="{{ $product->product_image }}" class="d-block w-100" style="width: 200px; height:650px;">
+                              </div>
+                            @endif
+                            
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
                           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                           <span class="visually-hidden">Previous</span>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
                           <span class="carousel-control-next-icon" aria-hidden="true"></span>
                           <span class="visually-hidden">Next</span>
                         </button>
                       </div>
+                    
                     
                 </div>
                 <div class="row mt-3">
@@ -283,13 +283,31 @@
                 quantity.value = 999;
             }
         });
+        function ReadyPrice(){
+                $(document).ready(function(){
+                var min_price = $('#min_price').val();
+                var max_price = $('#max_price').val();
+                if(inp_color.value == "" && inp_size.value == ""){
+                    if (min_price == max_price ){
+                        $('#price').html(`<span class="fs-5 fw-bold text-danger">${Intl.NumberFormat('vi').format(max_price)} VNĐ</span>`)
+                    }
+                    else{
+                        $('#price').html(`<span class="fs-5 fw-bold text-danger">${Intl.NumberFormat('vi').format(min_price)} VNĐ </span>
+                        <i>-</i>
+                        <span class="fs-5 fw-bold text-danger">${Intl.NumberFormat('vi').format(max_price)} VNĐ </span>`)
+                        
+                    }        
+                }
+            })
+        }
+        setInterval(ReadyPrice, 2000)
         buttons.forEach(button => {
             button.addEventListener('click', () => {
                 // Kiểm tra xem nút hiện tại có đang active không
                 const isButtonActive = button.classList.contains('active');
                 // Xóa class active khỏi tất cả các nút
                 buttons.forEach(btn => btn.classList.remove('active'));
-                size[0] = null;
+                inp_size.value  = "";
                 // Nếu nút hiện tại chưa active thì thêm class active
                 if (!isButtonActive) {
                     button.classList.add('active');
@@ -307,7 +325,7 @@
                 const isButtonActive = button.classList.contains('active');
                 // Xóa class active khỏi tất cả các nút
                 buttonColor.forEach(btn => btn.classList.remove('active'));
-                color[0] = null;
+                inp_color.value  = "";
                 // Nếu nút hiện tại chưa active thì thêm class active
                 if (!isButtonActive) {
                     button.classList.add('active');
@@ -381,13 +399,13 @@
                                     icon: "success",
                                     title: response.data,
                                     });
+                                    $('#countCart').html(response.countCart)
                                 },
                                 error: function(jqXHR, textStatus, errorThrown) {
                                     swal({
                                     icon: "error",
                                     title: jqXHR.responseJSON.data,
                                     });
-                                    console.log(formData);
                                 }
                             });
                         } 

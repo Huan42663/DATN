@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'chi tiết sản phẩm')
+@section('title', 'Chi Tiết Sản Phẩm')
 
 @section('page-header')
     <div class="page-header">
@@ -98,7 +98,7 @@
                                     <input type="hidden" name="product_id" id=""
                                         value="{{ $data1[0]->product_id }}">
 
-                                    <table id="example-1" class="table table-hover mb-0">
+                                    <table id="example" class="table table-hover mb-0">
                                         <thead>
                                             <tr>
                                                 <th></th>
@@ -126,10 +126,17 @@
                                                             @endif
                                                             <option value=""></option>
                                                             @foreach ($data4 as $item)
-                                                                <option value="{{ $item->size_id }}"
-                                                                    @selected($item->size_id == $variant->size_id)>{{ $item->size_name }}
-                                                                </option>
+                                                                @if($item->size_id == $variant->size_id)
+                                                                <option value="{{ $item->size_id }}" selected>{{ $item->size_name }}</option>
+                                                                @endif
                                                             @endforeach
+                                                            @foreach ($data6 as $item)
+                                                                @if($item->size_id == $variant->size_id)
+                                                                    <option value="{{ $item->size_id }}" selected>{{ $item->size_name }}</option>
+                                                                @else
+                                                                    <option value="{{ $item->size_id }}">{{ $item->size_name }}</option>
+                                                                @endif
+                                                        @endforeach
                                                         </select>
                                                     </td>
                                                     <td style="width: 21%">
@@ -146,7 +153,7 @@
                                                         </select>
                                                     </td>
                                                     <td style="width: 25%">
-                                                        <input type="number" name="price[]" min="1"
+                                                        <input type="number" name="price[]" min="1" max="9999999999"
                                                             value="{{ $variant->price }}" class="form-control">
                                                         <br>
                                                         @error('price.' . $key)
@@ -154,14 +161,14 @@
                                                         @enderror
                                                     </td>
                                                     <td style="width: 25%">
-                                                        <input type="number" name="sale_price[]" min="0"
+                                                        <input type="number" name="sale_price[]" min="0" max="9999999999"
                                                             value="{{ $variant->sale_price }}" class="form-control">
                                                         <br> @error('sale_price.' . $key)
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </td>
                                                     <td style="width: 14%">
-                                                        <input type="number" name="quantity[]" min="1"
+                                                        <input type="number" name="quantity[]" min="1" max="9999999999"
                                                             value="{{ $variant->quantity }}" class="form-control">
                                                         <br> @error('quantity.' . $key)
                                                             <span class="text-danger">{{ $message }}</span>

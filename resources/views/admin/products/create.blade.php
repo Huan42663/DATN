@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'thêm sản phẩm')
+@section('title', 'Thêm Sản Phẩm')
 
 @section('page-header')
     <div class="page-header">
@@ -58,7 +58,7 @@
                                                 </div>
                                                 <div class="col-lg-8">
                                                     <div class="input-group">
-                                                        <input type="number" min="1" class="form-control"
+                                                        <input type="number" min="1" max="9999999999" class="form-control"
                                                             id="price" name="price" placeholder="Nhập giá "
                                                             value={{ old('price') }}>
 
@@ -74,7 +74,7 @@
                                                 </div>
                                                 <div class="col-lg-8">
                                                     <div class="input-group">
-                                                        <input type="number" min="0" class="form-control"
+                                                        <input type="number" min="0" max="9999999999"  class="form-control"
                                                             id="sale_price" name="sale_price" placeholder="Nhập giá khuyến mãi "
                                                             value={{ old('sale_price') }}>
 
@@ -90,7 +90,7 @@
                                                 </div>
                                                 <div class="col-lg-8">
                                                     <div class="input-group">
-                                                        <input type="number" min="1" class="form-control"
+                                                        <input type="number" min="0" max="9999999999"class="form-control"
                                                             id="quantity" name="quantity" placeholder="Nhập số lượng "
                                                             value={{ old('quantity') }}>
 
@@ -106,8 +106,8 @@
                                                 </div>
                                                 <div class="col-lg-8">
                                                     <div class="input-group">
-                                                        <input type="number" min="1" class="form-control"
-                                                            id="weight" name="weight" placeholder="Nhập cân nặng "
+                                                        <input type="number" step="0.01"  class="form-control"
+                                                            id="weight" name="weight" placeholder="Nhập cân nặng " min="0" max="9999999999"
                                                             value={{ old('weight') }}>
 
                                                     </div>

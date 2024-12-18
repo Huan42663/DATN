@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'Thêm Voucher')
+@section('title', 'Thêm Mã Khuyến Mại')
 
 @section('page-header')
     <div class="page-header">

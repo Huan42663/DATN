@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'trang chủ')
+@section('title', 'Trang Chủ')
 
 @section('content')
 <div class="row ">
@@ -95,8 +95,19 @@
 <input type="hidden" id="myInput2" value="{{$json_array2}}">
 <div class="col-xxl-12" style="padding: 10px">
     <div class="card stretch stretch-full">
-        <div class="card-header">
-            <h5 class="card-title">Doanh Thu Trong Năm</h5>
+        <div class="card-header d-flex justify-content-space-between" style="padding 20px">
+            <div class="col-8">
+                <h5 class="card-title">Doanh Thu Trong Năm : @if(isset($_GET['year'])) {{$_GET['year']}} @else {{$year}} @endif</h5>
+            </div>
+            <div class="col-4">
+                <form action="{{route('Administration.Home')}}" method="get" class=" d-flex justify-content-end">
+                    @csrf
+                    <input type="number" min="2024"  name="year" class="form-control">
+                    <button class="btn btn-primary">Tìm</button>
+                </form>
+            </div>
+            
+            
         </div>
         <div class="card-body custom-card-action p-0">
             <div>
@@ -316,7 +327,7 @@
     const data = {
         labels: ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'],
         datasets: [{
-            label: "Doanh Thu",
+            label: "Tháng 1",
             data: chart,
             backgroundColor: [
             'rgb(255, 99, 132, 0.4)',

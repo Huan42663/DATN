@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'danh sách sự kiện')
+@section('title', 'Danh Sách Sự Kiện')
 
 @section('page-header')
     <div class="page-header">
@@ -58,7 +58,11 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="d-block mb-1">{{ $event->type_event }}</span>
+                                        @if ($event->type_event == 0)
+                                            <span class="d-block mb-1">Giới Thiệu</span>
+                                        @else
+                                            <span class="d-block mb-1">Giảm Giá</span>
+                                        @endif
                                     </td>
                                     <td>
                                         <span class="d-block mb-1">{{ $event->discount }}</span>

@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'danh sách tài khoản')
+@section('title', 'Danh Sách Tài Khoản')
 
 @section('page-header')
     <div class="page-header">

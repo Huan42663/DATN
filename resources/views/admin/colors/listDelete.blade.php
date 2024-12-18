@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'Khôi phục Color')
+@section('title', 'Khôi phục Màu')
 
 @section('page-header')
     <div class="page-header">
@@ -57,7 +57,7 @@
                     </tbody>
                 </table>
                 <div class="d-flex">
-                    <button class="btn btn-success me-2" type="submit">Khôi Phục</button>
+                    <button class="btn btn-success me-2" type="submit" onclick="return confirm('bạn có muốn khôi phục những màu này không')">Khôi Phục</button>
                     <a href="{{route('Administration.colors.list')}}"><button class="btn btn-primary" type="button">Danh Sách</button></a>
                 </div>
             </form>

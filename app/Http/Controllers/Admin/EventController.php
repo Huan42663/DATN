@@ -9,12 +9,30 @@ use App\Models\Products;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
+
+    public function __construct()
+    {
+        
+        $date = Carbon::now();
+        $Event = Event::query()->get();
+        $data1['status'] = 0;
+            foreach ($Event as $key) {
+                if($key->status != 0){
+                    if ($key->date_end == $date || $key->date_end < $date) {
+                        Event::query()->where('event_id', $key->event_id)->update($data1);
+                    }
+                }
+            }
+
+        unset($_SESSION['thankyou']);
+    }
     /**
      * Display a listing of the resource.
      */

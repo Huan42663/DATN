@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'thêm sự kiện')
+@section('title', 'Thêm Biến Thể Sản Phẩm')
 
 @section('page-header')
     <div class="page-header">
@@ -75,23 +75,23 @@
                                         </td>
 
                                         <td>
-                                            <input type="text" class="form-control" name="price"
-                                                value="{{ $item['price'] }}" id=""><br>
+                                            <input type="number" class="form-control" name="price" 
+                                                value="{{ $item['price'] }}" id="" min="1" max="9999999999" disabled><br>
                                             @error('price')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control"
+                                            <input type="number" class="form-control"
                                                 value="{{ $item['sale_price'] }}" name="sale_price"
-                                                id=""><br>
+                                                id="" min="0" max="9999999999" disabled><br>
                                             @error('sale_price')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control"
-                                                value="{{ $item['quantity'] }}" name="quantity" id=""><br>
+                                            <input type="number" class="form-control"
+                                                value="{{ $item['quantity'] }}" name="quantity" id="" min="0" max="99999" disabled><br>
                                             @error('quantity')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror

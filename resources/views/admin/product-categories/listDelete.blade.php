@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'Restore product catalog')
+@section('title', 'Khôi Phục Danh Mục Sản Phẩm')
 
 @section('content')
     <div class="col-lg-12 mt-1">

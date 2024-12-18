@@ -1,7 +1,7 @@
 
 @extends('admin.master')
 
-@section('title', 'Vouchers')
+@section('title', ' Mã Khuyến Mại')
 @section('page-header')
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
@@ -70,16 +70,18 @@
                                         <span  class="d-block mb-1">{{$value->voucher_code}}</span>
                                     </td>
                                     <td>
-                                        <span  class="d-block mb-1">{{$value->type}}</span>
+                                        @if($value->type == 0)
+                                            <span  class="d-block mb-1">Giảm theo %</span>
+                                        @else
+                                            <span  class="d-block mb-1">Giảm theo giá tiền</span>
+                                        @endif
                                     </td>
                                     <td>
-                                        <span  class="d-block mb-1">
-                                            @if ($value->value > 100 )
-                                                {{number_format($value->value, 0, ',', '.') . 'VNĐ';}}
-                                            @else
-                                                {{$value->value."%"}}
-                                            @endif
-                                        </span>
+                                        @if($value->type == 0)
+                                            <span  class="d-block mb-1">{{$value->value."%"}}</span>
+                                        @else
+                                            <span  class="d-block mb-1">{{number_format($value->value, 0, ',', '.') . ' VNĐ';}}</span>
+                                         @endif
                                     </td>
                                     <td>
                                         <span  class="d-block mb-1">{{$value->quantity}}</span>
@@ -114,5 +116,19 @@
         </div>
     </div>
 </div>
+@if(session('errorUpdate'))
+    <input type="text" hidden id="errorUpdate" value="{{session('errorUpdate')}}">
+@endif
+<script>
+    const check = document.getElementById('errorUpdate');
+    if(check){
+        if(check.value !=""){
+            swal({
+                icon: "error",
+                title: check.value,
+            });
+    }
+    }
+</script>
 @endsection
 

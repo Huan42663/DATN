@@ -18,7 +18,7 @@
         <div class="navbar-content">
             <ul class="nxl-navbar">
                 <li class="nxl-item nxl-caption">
-                    <label>Navigation</label>
+                    <label>Điều hướng</label>
                 </li>
                 <li class="nxl-item nxl-hasmenu">
                     <a href="javascript:void(0);" class="nxl-link">

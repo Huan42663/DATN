@@ -53,6 +53,8 @@
                             width="294" height="200" style="border:0; margin:right" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 
                         <!-- <div class="text-button-uppercase">Bản tin </div>
+                    {{-- <div class="newsletter basis-1/3 pl-7 max-md:basis-full max-md:pl-0">
+                        <div class="text-button-uppercase">Bản tin </div>
                         <div class="caption1 mt-3">Đăng ký để nhận bản tin của chúng tôi và nhận 10% cho lần mua đầu tiên của bạn 
                         </div>-->
                         <!-- <div class="input-block w-full h-[52px] mt-4"> 
@@ -81,7 +83,7 @@
                             </a><a target="_blank" href="https://www.pinterest.com/">
                                 <div class="icon-pinterest text-2xl text-black"></div>
                             </a></div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             {{-- <div

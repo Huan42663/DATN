@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'danh sách sản phẩm')
+@section('title', 'Danh Sách Sản Phẩm')
 
 @section('page-header')
     <div class="page-header">
@@ -116,7 +116,7 @@
                             </tbody>
                         </table>
                         <div style="display: flex; justify-content: space-around">
-                            <button type="submit" class="btn btn-danger mb-3">
+                            <button type="submit" class="btn btn-danger mb-3" onclick="return confirm('bạn có chắc muốn xóa những sản phẩm này không')">
                                 <i class="feather-trash-2 me-2"></i> Xóa 
                             </button>
                             <div>

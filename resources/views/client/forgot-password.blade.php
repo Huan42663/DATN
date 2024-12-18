@@ -1,6 +1,6 @@
 @extends('client.master')
 
-@section('title', 'quên mật khẩu')
+@section('title', 'Quên Mật Khẩu')
 
 @section('content')
 <style>

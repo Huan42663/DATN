@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'Product Category List')
+@section('title', 'Danh Mục Sản Phẩm')
 
 @section('page-header')
     <div class="page-header">

@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'cập nhật Banner')
+@section('title', 'Cập Nhật Banner')
 
 @section('page-header')
     <div class="page-header">

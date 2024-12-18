@@ -62,20 +62,28 @@ class HomeController extends Controller
         } else {
             $year = Carbon::now()->year;
         }
+        // dd($year);
         $totalMonthInYear = Order::query()
             ->selectRaw('YEAR(created_at) as year , MONTH(created_at) as month, SUM(total) as total')
-            ->whereRaw("YEAR(created_at) = $year AND status = 'delivered' OR status = 'received' ")
+            ->whereRaw("status = 'delivered' OR status = 'received'")
+            ->whereYear('created_at', $year)
             ->groupByRaw('YEAR(created_at), MONTH(created_at)')
             ->orderBy("month", "ASC")
             ->get();
         // dd($totalMonthInYear);
+        $total = [];
+        foreach($totalMonthInYear as $check){
+            if($check->year == $year){
+                array_push($total, $check);
+            }
+        }
         $YearTotal = [];
         $j = 0;
         for ($i = 1; $i < 13; $i++) {
             if (!empty($totalMonthInYear)) {
-                if ($i == $totalMonthInYear[$j]->month) {
-                    array_push($YearTotal, $totalMonthInYear[$j]->total);
-                    $j++;
+                if ($i ==  $total[$j]->month &&  $total[$j]->year == $year) {
+                        array_push($YearTotal,  $total[$j]->total);
+                        $j++;
                 } else {
                     array_push($YearTotal, 0);
                 }
@@ -107,6 +115,7 @@ class HomeController extends Controller
             compact(
                 'product',
                 'order',
+                'year',
                 'user',
                 'post',
                 'productHot',

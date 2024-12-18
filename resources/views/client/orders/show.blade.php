@@ -1,5 +1,5 @@
 @extends('client.master')
-@section('title', 'Chi tiết đơn hàng')
+@section('title', 'Chi Tiết Đơn Hàng')
 
 @section('content')
     <!-- Nút quay lại -->
@@ -173,8 +173,7 @@
                             @endphp
 
                         </div>
-
-                        <a style="text-align: end" href="{{ route('Client.rate', ['product_id' => $detail->product_id, 'order_code' => $order->order_code]) }}"
+                        <a style="text-align: end" href="{{ route('Client.rate', ['order_detail_id' => $detail->order_detail_id, 'order_code' => $order->order_code]) }}"
                             class="mt-2 @if ($order->status != 'received' || $check != null) d-none @elseif($order->status == 'received' && $check == null) d-block @endif"
                             id="rate_check">
                             <button style="text-align: end" class="btn btn-primary" style=" width: 100px;">Đánh Giá</button>
@@ -487,6 +486,9 @@
         @if (session('status'))
             <input type="hidden" id="statuscheck" value="{{ session('status') }}">
         @endif
+        @if (session('error'))
+            <input type="hidden" id="errorcheck" value="{{ session('error') }}">
+        @endif
         <style>
             /* Thương hiệu với text-shadow nhẹ */
             @keyframes glowing {
@@ -539,6 +541,7 @@
     <script>
         const check = document.getElementById('messagecheck');
         const check1 = document.getElementById('statuscheck');
+        const check2 = document.getElementById('errorcheck');
 
         if (check != null && check1 != null) {
             if (check1.value == "false") {
@@ -549,6 +552,14 @@
             } else {
                 swal({
                     icon: "success",
+                    title: check.value,
+                });
+            }
+        }
+        if (check2 != null) {
+            if (check1.value != "") {
+                swal({
+                    icon: "error",
                     title: check.value,
                 });
             }

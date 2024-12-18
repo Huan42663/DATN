@@ -25,13 +25,6 @@ class VoucherController extends Controller
     public function index()
     {
         $data = Voucher::query()->orderByDesc("voucher_id")->get();
-        foreach ($data as $key) {
-            if ($key->type == 0) {
-                $key->type = "Giảm theo %";
-            } else {
-                $key->type = "Giảm theo giá tiền";
-            }
-        };
         return View('admin.vouchers.index',compact('data'));
     }
     public function create()
@@ -127,14 +120,19 @@ class VoucherController extends Controller
      */
     public function update(Request $request, Voucher $voucher)
     {
-        $voucher1 = Voucher::query()->where("voucher_id", $voucher->voucher_id)->get();
-        $voucherCheck = Voucher::query()->where("voucher_id", '!=', $voucher1[0]->voucher_id)->get();
+        $voucher1 = Voucher::query()->where("voucher_id", $voucher->voucher_id)->first();
+        if(isset($_SESSION['voucher'])){
+            if($_SESSION['voucher']->voucher_id == $voucher1->voucher_id){
+                return redirect()->back()->with("errorUpdate","Sửa mã khuyến mãi không thành công vì có người dùng đang sử dụng");
+            } 
+        }
+        $voucherCheck = Voucher::query()->where("voucher_id", '!=', $voucher1->voucher_id)->get();
         $request->validate(
             [
                 "voucher_code" => "required|regex:/^[a-zA-Z0-9\s]+$/",
                 "type"         => "required|integer",
                 "value"        => "required|integer|min:1",
-                "quantity"     => "required|integer|min:1",
+                "quantity"     => "required|integer",
                 "date_start"   => "required|date",
                 "date_end"     => "required|date",
             ],
@@ -161,10 +159,22 @@ class VoucherController extends Controller
                     return redirect()->back()->with("error","Mã khuyến mãi đã có");
                 }
             }
-            if ($request['date_end'] <= Carbon::now()) {
-                return redirect()->back()->with("error1","Ngày kết thúc phải lớn hơn ngày hiện tại");
-            }
+            $datetimeEnd = new DateTime($request->date_end);
+            $request['date_end'] = $datetimeEnd->format('Y-m-d H:i:s');
 
+            $datetimeStart = new DateTime($request->date_start);
+            $request['date_start'] = $datetimeStart->format('Y-m-d H:i:s');
+
+            if($request['date_start'] != $voucher1->date_start){
+                if ($request['date_start'] < Carbon::now()) {
+                    return redirect()->back()->with("error1","Ngày bắt phải lớn hơn ngày hiện tại");
+                }
+            }
+            if($request['date_end'] != $voucher1->date_end){
+                if ($request['date_end'] < $request['date_start']) {
+                    return redirect()->back()->with("error1","Ngày kết thúc phải lớn hơn ngày bắt đầu");
+                }
+            }
             if ($request['type'] == 0 && $request["value"] > 100) {
                 return redirect()->back()->with("error2","Mức giảm tối đa cho phần trăm là 100");
             }
@@ -180,6 +190,11 @@ class VoucherController extends Controller
     {
         if(isset($request->voucher_id) && !empty($request->voucher_id)){
             foreach($request->voucher_id as $item){
+                if(isset($_SESSION['voucher']) && isset($_SESSION['PayMent'])){
+                    if($_SESSION['voucher']->voucher_code == $item){
+                        return redirect()->back()->with("errorUpdate","Xóa mã khuyến mãi không thành công vì có người dùng đang sử dụng");
+                    } 
+                }
                 Voucher::query()->where('voucher_code',$item)->delete();
             }
             return redirect()->back()->with('success','Xóa mã khuyến mãi thành công');

@@ -1,7 +1,7 @@
 
 @extends('admin.master')
 
-@section('title', 'Posts')
+@section('title', 'Bài Viết')
 @section('page-header')
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">

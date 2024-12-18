@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'Khôi phục Size')
+@section('title', 'Khôi phục Kích Cỡ')
 
 @section('page-header')
     <div class="page-header">

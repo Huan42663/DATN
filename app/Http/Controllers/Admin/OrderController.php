@@ -21,9 +21,11 @@ class OrderController extends Controller
 
     public function index()
     {
-        $data = Order::query()->orderBy('order_id','desc')->get();
-        // dd($data);
-        return View('admin.orders.index', compact('data'));
+        $data = Order::query()->withTrashed()->orderBy('order_id','desc')->get();
+        $data2 = Order::query()->withTrashed()->where('method_payment','banking')->where('status','canceled')->get();
+        $count = Count($data2);
+        // dd($count);
+        return View('admin.orders.index', compact('data','count'));
     }
 
     /**
@@ -33,7 +35,7 @@ class OrderController extends Controller
     {
            
         // dd($order_code);
-             $infoOrder =   Order::query()->where('order_code', $order_code)->get();
+             $infoOrder =   Order::query()->withTrashed()->where('order_code', $order_code)->get();
              
              $bill      =  Bill::query()->where('order_id', '=', $infoOrder[0]->order_id)->first();
                 
@@ -64,14 +66,19 @@ class OrderController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, $order_id){
-        $value =  Order::query()->where('order_id', '=', $order_id)->get();
+        $value =  Order::query()->withTrashed()->where('order_id', '=', $order_id)->get();
         // dd($value);
         if ($value[0]->status == "unconfirm") $request["status"] = "confirmed";                     
         elseif($value[0]->status == "confirmed") $request["status"] = "shipping";           
         elseif($value[0]->status == "shipping") $request["status"] = "delivered";                
         $data =['status'=>$request["status"]];
         Order::query()->where('order_id', '=', $order_id)->update($data);
-        return redirect()->back();
+        return redirect()->back()->with('message','Cập nhật đơn hàng thành công');
+    }
+
+    public function OrderBankingCancel(){
+        $data = Order::query()->withTrashed()->where('method_payment','banking')->where('status','canceled')->orderBy('order_id','desc')->get();
+        return View('admin.orders.update',compact('data'));
     }
 
 }

@@ -45,6 +45,7 @@ Route::prefix('/Administration')->middleware(['auth', 'admin'])->group(function 
     // ROUTE ORDER
     Route::prefix('orders')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('Administration.orders.list');
+        Route::get('/bankingCancel', [OrderController::class, 'OrderBankingCancel'])->name('Administration.orders.bankingCancel');
         Route::get('detail-{order_code}', [OrderController::class, 'show'])->name('Administration.orders.show');
         Route::put('/{order}', [OrderController::class, 'update'])->name('Administration.orders.update');
     });
@@ -207,7 +208,7 @@ Route::prefix('/')->group(function () {
 
     // ROUTE PRODUCT
     Route::get('products', [CLientProductController::class, 'index'])->name('Client.product.list');
-    Route::get('products/search', [CLientProductController::class, 'index'])->name('Client.product.search');
+    Route::get('products/search', [CLientProductController::class, 'search'])->name('Client.product.search');
     Route::get('category-{slug}', [CategoryController::class, 'show'])->name('Client.product.category');
     Route::get('products/detail/{slug}', [CLientProductController::class, 'productDetail'])->name('Client.product.detail');
     Route::post('products/getQuantity', [CLientProductController::class, 'getQuantity'])->name('Client.product.getQuantity');
@@ -277,7 +278,7 @@ Route::get('/verify-email/{email}', [AuthController::class, 'verify'])->name('ve
     });
 
     // ROUTE RATE
-    Route::get('rate/{product_id}/{order_code}', [ClientOrderController::class, 'rates'])->name('Client.rate');
+    Route::get('rate/{order_detail_id}/{order_code}', [ClientOrderController::class, 'rates'])->name('Client.rate');
     Route::post('order/rate', [ClientOrderController::class, 'CreateRate'])->name('Client.orders.createRate');
 
 

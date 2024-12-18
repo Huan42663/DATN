@@ -1,6 +1,6 @@
 @extends('client.master')
 
-@section('title', 'Tim Kiem')
+@section('title', 'Tìm Kiếm')
 
 @section('content')
     <div class="container mt-5">

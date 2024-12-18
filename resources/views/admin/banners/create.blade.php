@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'thêm Banner')
+@section('title', 'Thêm Banner')
 
 @section('page-header')
     <div class="page-header">
@@ -35,7 +35,7 @@
                                 @method('POST')
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="image_name" class="fw-semibold">Image_name: </label>
+                                        <label for="image_name" class="fw-semibold">Ảnh: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="input-group">
@@ -49,7 +49,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="image_name" class="fw-semibold">Event_id: </label>
+                                        <label for="image_name" class="fw-semibold">Sự Kiện: </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <select name="event_id" class="form-control" id="">
@@ -65,7 +65,7 @@
                                 </div>
                                 <div class="row mb-4 align-items-center">
                                     <div class="col-lg-4">
-                                        <label for="image_name" class="fw-semibold">Prodcut_id: </label>
+                                        <label for="image_name" class="fw-semibold">Sản Phẩm : </label>
                                     </div>
                                     <div class="col-lg-8">
                                         <select class="form-control" name="product_id" id="">

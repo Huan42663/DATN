@@ -31,7 +31,7 @@ class CartController extends Controller
                    ->where('product_variant.color_id',$request->color_id)
                    ->first();
         if(!isset($product)){
-            return response()->json(["data"=>"Sản phẩm bạn vừa thêm không có vui lòng kiểm tra lại"],Response::HTTP_NOT_FOUND);  
+            return response()->json(["data"=>"Vui lòng chọn đầy đủ kích thước và màu"],Response::HTTP_NOT_FOUND);  
         }
         if(isset($product) && $product->quantity < $request['quantity']){
             return response()->json(["data"=>"Số lượng sản phẩm bạn vừa thêm vào giỏ hàng đã quá số lượng chúng tôi có là ". $product->quantity],Response::HTTP_BAD_REQUEST);  
@@ -54,7 +54,7 @@ class CartController extends Controller
         else{
             $data['quantity'] = $cart->cartQuantity + $request['quantity'];
             if($data['quantity'] > $product->quantity){
-                return response()->json(["data"=>"Số lượng sản phẩm bạn vừa thêm vào giỏ hàng và số lượng sản phẩm bạn có trong giỏ hàng đã quá số lượng chúng tôi có là ".$cart->cartQuantity],Response::HTTP_BAD_REQUEST);  
+                return response()->json(["data"=>"Số lượng sản phẩm bạn vừa thêm vào giỏ hàng và số lượng sản phẩm bạn có trong giỏ hàng đã quá số lượng chúng tôi có là :".$product->quantity],Response::HTTP_BAD_REQUEST);  
              }
             else{
                 CartDetail::query()->where('cart_detail.cart_id',$cart_id->cart_id)
@@ -62,7 +62,9 @@ class CartController extends Controller
                             ->update($data);
             }
         }
-        return response()->json(["data"=>"Thêm sản phẩm vào giỏ hàng thành công"],Response::HTTP_CREATED);  
+        $cart = $this->showCart(Auth::user()->user_id);
+        $countCart = Count($cart['Cart']);
+        return response()->json(["data"=>"Thêm sản phẩm vào giỏ hàng thành công","countCart"=>$countCart],Response::HTTP_CREATED);  
 
     }
     public function UpdateCartDetail(Request $request)

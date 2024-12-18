@@ -1,7 +1,7 @@
 
 @extends('admin.master')
 
-@section('title', 'Order')
+@section('title', 'Đơn Hàng')
 @section('page-header')
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
@@ -20,6 +20,14 @@
 <div class="col-lg-12 mt-3" >
     <div class="card stretch stretch-full">
         <div class="card-body custom-card-action p-0">
+            <div class="row" style="padding: 20px">
+                <a href="{{route('Administration.orders.bankingCancel')}}"><button type="button" class="btn btn-primary position-relative">
+                    Danh sách Thanh Toán Bị Hủy
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      <span class="">{{$count}}</span>
+                    </span>
+                  </button></a>
+            </div>
             <div class="table-responsive" style="padding: 20px;">
                 <table id="example" class="table table-hover mb-0">
                     <thead>

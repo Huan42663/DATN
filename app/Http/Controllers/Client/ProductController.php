@@ -51,12 +51,12 @@ class ProductController extends Controller
             ->where('product_slug', $slug)
             ->select('products.*')
             ->first();
-        $product1 = ProductVariant::query()
-            ->where('product_id', $product->product_id)->sum('quantity');
-        // kiểm tra sản phẩm có tồn tại hay không
-        if (empty($product)) {
-            return view('error-404');
-        } else {
+            // kiểm tra sản phẩm có tồn tại hay không
+            if (empty($product)) {
+                return view('error-404');
+            } else {
+            $product1 = ProductVariant::query()
+                ->where('product_id', $product->product_id)->sum('quantity');
             // lấy ra giá nhỏ nhất
             $product['min_price'] = Products::query()
                 ->where('product_slug', "=", $slug)
@@ -112,13 +112,10 @@ class ProductController extends Controller
             // lấy ra 1 mảng các ảnh của biến thể
             $product_images = Products::query()
                 ->where('product_slug', $slug)
-                ->join('product_variant', 'products.product_id', "=", 'product_variant.product_id')
-                ->join('colors', 'product_variant.color_id', "=", 'colors.color_id')
-                ->join('image_color', 'colors.color_id', "=", 'image_color.color_id')
-                ->join('variant_image_color', 'product_variant.product_variant_id', "=", 'variant_image_color.product_variant_id')
-                ->select('image_color_name')
+                ->join('image_color', 'products.product_id', "=", 'image_color.product_id')
+                ->select('products.product_image','image_color_name')
                 ->get();
-
+            // dd($product_images);
             // lấy ra các danh mục của sản phẩm
             $product['categories'] = Products::query()
                 ->where('product_slug', $slug)

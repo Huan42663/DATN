@@ -177,28 +177,28 @@
                 </div>
             </div>
             <div class="right justify-start flex-shrink-0 lg:w-[47%] bg-surface lg:py-20 py-12">
-                <div
-                    class="lg:sticky lg:top-24 h-fit lg:max-w-[606px] w-full flex-shrink-0 lg:pl-[80px] pr-[16px] max-lg:pl-[16px]">
+                <div class="lg:sticky lg:top-24 h-fit lg:max-w-[606px] w-full flex-shrink-0 lg:pl-[80px] pr-[16px] max-lg:pl-[16px]">
                     <div class="list_prd flex flex-col gap-7">
                         @if(isset($data) && !empty($data) && isset($data1) && !empty($data1))
-                        @php
-                            $_SESSION['Total'] = 0;
-                            $_SESSION['ship'] = 30000;
-                            foreach ($data1['Cart'] as $item1 ):
-                                foreach ($data as $item):
-                        @endphp
+                            @php
+                                $_SESSION['Total'] = 0;
+                                $_SESSION['ship'] = 30000;
+                                foreach ($data1['Cart'] as $item1 ):
+                                    foreach ($data as $item):
+                            @endphp
                             
                             @if ($item == $item1->cart_detail_id)
                             <input type="hidden" name="cart_detail_id[]" value="{{$item1->cart_detail_id}}">
                             <div class="item flex items-center justify-between gap-6">
-                                <div class="flex items-center gap-6">
-                                    <div class="bg_img relative flex-shrink-0 w-[100px] h-[100px]">
+                                <div class="flex items-center">
+                                    <di v class="bg_img relative flex-shrink-0 w-[100px] h-[140px] me-3">
                                         <img
                                             src="{{asset('storage/'.$item1->product_image)}}" alt="product/fashion/10-1"
                                             class="w-full h-full object-cover rounded-lg" /><span
                                             class="quantity flex items-center justify-center absolute -top-3 -right-3 w-7 h-7 rounded-full bg-black text-white">{{$item1->quantity}}</span>
                                     </div>
-                                    <div><strong class="name text-title">{{$item1->product_name}}</strong> <br>
+                                    <div>
+                                        <strong class="name text-title">{{$item1->product_name}}</strong> <br>
                                         <span class="discount">{{$item1->size ." " . $item1->color}}</span>
                                         <div class="flex items-center gap-2 mt-2"><svg xmlns="http://www.w3.org/2000/svg"
                                                 width="1em" height="1em" fill="currentColor" viewBox="0 0 256 256"
@@ -209,19 +209,20 @@
                                             </svg>
                                             <span class="discount">{{number_format($item1->price - $item1->sale_price, 0, ',', '.') . ' VNĐ';}}</span>
                                         </div>
+                                        <div class="row">
+                                            @if(isset($item1->sale_price) && $item1->sale_price<$item1->price)
+                                            <del class="caption1 text-secondary org_price">{{number_format($item1->price, 0, ',', '.') . ' VNĐ';}}</del>
+                                            <strong class="text-title price" >{{number_format($item1->sale_price, 0, ',', '.') . ' VNĐ';}}</strong>
+                                            @else
+                                                <strong class="text-title price" >{{number_format($item1->price, 0, ',', '.') . ' VNĐ';}}</strong>
+                                            @endif
+                                        </div>
+                                        <div class="row">
+                                            <strong class="text-end text-danger text-title price fw-bold">{{number_format($item1->total, 0, ',', '.') . ' VNĐ';}}</strong>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="flex flex-col gap-1">
-                                    @if(isset($item1->sale_price) && $item1->sale_price<$item1->price)
-                                    <del class="caption1 text-secondary text-end org_price">{{number_format($item1->price, 0, ',', '.') . ' VNĐ';}}</del>
-                                    <strong class="text-title price" >{{number_format($item1->sale_price, 0, ',', '.') . ' VNĐ';}}</strong>
-                                    @else
-                                        <strong class="text-title price" >{{number_format($item1->price, 0, ',', '.') . ' VNĐ';}}</strong>
-                                    @endif
-                                </div>
-                                <div class="">
-                                    <strong class="text-title price fw-bold">{{number_format($item1->total, 0, ',', '.') . ' VNĐ';}}</strong>
-                                </div>
+                                
                             </div>
                         @php
                             $_SESSION['Total'] += $item1->total;
@@ -230,7 +231,7 @@
                                 endforeach;
                             endforeach;
                         @endphp
-                        <div class="form_discount flex gap-3 mt-8">
+                        <div class="form_discount flex gap-3 mt-8" style="width: 90%;">
                                 {{-- <input type="text" placeholder="Discount code" class="w-full border border-line rounded-lg px-4" name="voucher_code" id="voucher_code"/> --}}
                                 <select name="voucher_code" id="voucher_code" class="form-control">
                                     <option value=""></option>
@@ -266,64 +267,63 @@
                             // $total = number_format($_SESSION['Total'] , 0, ',', '.') . ' VNĐ';
                             $totalCheck = $_SESSION['Total'] ;
                         @endphp
-                        <div class="subtotal flex items-center justify-between mt-2"><strong
-                                class="heading6">Thành Tiền</strong><strong class="heading6">{{number_format($_SESSION['Total'], 0, ',', '.') . ' VNĐ';}}</strong></div>
-                        <div class="ship-block flex items-center justify-between mt-2"><strong
-                                class="heading6">Phí Ship</strong><span class="body1 text-secondary">{{number_format($_SESSION['ship'], 0, ',', '.') . ' VNĐ';}}</span></div>
-                            <input type="hidden" name="total" id="total" value={{$_SESSION['Total'] + $_SESSION['ship']}}>
-                           
-                                <div class="ship-block flex items-center justify-between mt-2" id="text_voucher" >
-                                    <strong class="heading6">Tiền Được Giảm</strong>
-                                        <span class="body1 text-secondary" id="price_voucher">
-                                            @if(isset($_SESSION['voucher']))
-                                                @if ($_SESSION['voucher']->type ==0)
-                                                    {{number_format(round(($_SESSION['Total'])/100 * $_SESSION['voucher']->value), 0, ',', '.') . ' VNĐ';}}
+                        <div class="mt-3" style="width: 90%;">
+                            <div class="subtotal flex items-center justify-between mt-2"><strong
+                                    class="heading6">Thành Tiền</strong><strong class="heading6">{{number_format($_SESSION['Total'], 0, ',', '.') . ' VNĐ';}}</strong></div>
+                            <div class="ship-block flex items-center justify-between mt-2"><strong
+                                    class="heading6">Phí Ship</strong><span class="body1 text-secondary">{{number_format($_SESSION['ship'], 0, ',', '.') . ' VNĐ';}}</span></div>
+                                <input type="hidden" name="total" id="total" value={{$_SESSION['Total'] + $_SESSION['ship']}}>
+                            
+                                    <div class="ship-block flex items-center justify-between mt-2" id="text_voucher" >
+                                        <strong class="heading6">Tiền Được Giảm</strong>
+                                            <span class="body1 text-secondary" id="price_voucher">
+                                                @if(isset($_SESSION['voucher']))
+                                                    @if ($_SESSION['voucher']->type ==0)
+                                                        {{number_format(round(($_SESSION['Total'])/100 * $_SESSION['voucher']->value), 0, ',', '.') . ' VNĐ';}}
                                                     @else
                                                         @if($_SESSION['voucher']->value > ($_SESSION['Total'] + $_SESSION['ship']))
                                                             {{number_format($_SESSION['Total'] + $_SESSION['ship'], 0, ',', '.') . ' VNĐ';}}
                                                         @else
                                                             {{number_format($_SESSION['voucher']->value, 0, ',', '.') . ' VNĐ';}}
                                                         @endif
-                                                        @endif
+                                                    @endif
                                                 @else
                                                     0 VNĐ
-                                                @endifendif
-                                            @endif
-                                        </span>
-                                </div>
+                                                @endif
+                                            </span>
+                                    </div>
+                                
                             
-                        
-                        <div class="total-cart-block flex items-center justify-between mt-2"><strong
-                                class="heading6">Tổng Giá Trị Đơn Hàng</strong>
-                            <div class="flex items-end gap-2"><strong
-                                    class="heading4" id="PriceTotalEnd"> 
-                                    @if(isset($_SESSION['voucher'] ))
-                                        @if ($_SESSION['voucher']->type ==0)
-                                        {{number_format(($_SESSION['Total'] + $_SESSION['ship']) - (round(($_SESSION['Total'])/100 * $_SESSION['voucher']->value)), 0, ',', '.') . ' VNĐ';}}
-                                        <input type="hidden" name="total_discount" id="total_discount" value={{($_SESSION['Total'] + $_SESSION['ship']) - (round(($_SESSION['Total'])/100 * $_SESSION['voucher']->value))}}>
-                                        @else
-                                            @if($_SESSION['voucher']->value > $_SESSION['Total'] + $_SESSION['ship'] )
-                                                0.VNĐ
-                                                <input type="hidden" name="total_discount" id="total_discount" value='0'>
+                            <div class="total-cart-block flex items-center justify-between mt-2"><strong
+                                    class="heading6">Tổng Giá Trị Đơn Hàng</strong>
+                                <div class="flex items-end gap-2"><strong
+                                        class="heading4" id="PriceTotalEnd"> 
+                                        @if(isset($_SESSION['voucher'] ))
+                                            @if ($_SESSION['voucher']->type ==0)
+                                            {{number_format(($_SESSION['Total'] + $_SESSION['ship']) - (round(($_SESSION['Total'])/100 * $_SESSION['voucher']->value)), 0, ',', '.') . ' VNĐ';}}
+                                            <input type="hidden" name="total_discount" id="total_discount" value={{($_SESSION['Total'] + $_SESSION['ship']) - (round(($_SESSION['Total'])/100 * $_SESSION['voucher']->value))}}>
+                                            @else
+                                                @if($_SESSION['voucher']->value > $_SESSION['Total'] + $_SESSION['ship'] )
+                                                    0.VNĐ
+                                                    <input type="hidden" name="total_discount" id="total_discount" value='0'>
                                                 @else
-                                                {{number_format((($_SESSION['Total'] + $_SESSION['ship']) - $_SESSION['voucher']->value), 0, ',', '.') . ' VNĐ';}}
-                                                <input type="hidden" name="total_discount" id="total_discount" value={{($_SESSION['Total'] + $_SESSION['ship']) - $_SESSION['voucher']->value}}>
+                                                    {{number_format((($_SESSION['Total'] + $_SESSION['ship']) - $_SESSION['voucher']->value), 0, ',', '.') . ' VNĐ';}}
+                                                    <input type="hidden" name="total_discount" id="total_discount" value={{($_SESSION['Total'] + $_SESSION['ship']) - $_SESSION['voucher']->value}}>
+                                                @endif
                                             @endif
-                                        @endif
-                                    @else
-                                        {{number_format(($_SESSION['Total'] + $_SESSION['ship']), 0, ',', '.') . ' VNĐ';}}
-                                        <input type="hidden" name="total_discount" id="total_discount" value={{($_SESSION['Total'] + $_SESSION['ship'])}}>
-                                    @endif</strong>
+                                        @else
+                                            {{number_format(($_SESSION['Total'] + $_SESSION['ship']), 0, ',', '.') . ' VNĐ';}}
+                                            <input type="hidden" name="total_discount" id="total_discount" value={{($_SESSION['Total'] + $_SESSION['ship'])}}>
+                                        @endif</strong>
                                         <div id="price_discount" hidden></div>
                                 </div>
+                            </div>
+                            <div class="row">
+                                <button class="btn btn-dark bg-dark text-light" type="submit" name="order" value="order">Đặt Hàng</button>
+                            </div>  
                         </div>
-                        <div class="row">
-                            <button class="btn btn-dark bg-dark text-light" type="submit" name="order" value="order">Đặt Hàng</button>
-                        </div>
-                                
                         @endif
-                    </div>
-                    
+                    </div>  
                 </div>
             </div>
         </div>
@@ -411,6 +411,12 @@
                 var totalCheck = "{{$totalCheck}}";
                     $('#price_voucher').html("0 VNĐ");
                     console.log(error);
+                   
+                    swal({
+                        icon: "error",
+                        title: error.responseJSON.data,
+                    });
+ 
                     // $('#error_voucher').html(error.responseJSON.data);
                     $('#PriceTotalEnd').html(Intl.NumberFormat('vi').format(Number(totalCheck)+ Number(ship))+' VNĐ');
                     $('#price_discount').html(`<input type="hidden" name="total_discount" id="total_discount" value="${totalCheck}">`);

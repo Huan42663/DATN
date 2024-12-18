@@ -1,6 +1,6 @@
 @extends('client.master')
 
-@section('title', 'Chi tiết')
+@section('title', 'Danh Mục Sản Phẩm')
 
 @section('content')
     {{-- <div class="container">

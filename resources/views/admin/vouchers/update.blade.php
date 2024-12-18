@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'Update Voucher')
+@section('title', 'Cập Nhật Mã Khuyến Mại')
 
 @section('page-header')
     <div class="page-header">
@@ -144,4 +144,19 @@
             </div>
         </div>
     </div>
+    @if(session('errorUpdate'))
+    <input type="text" hidden id="errorUpdate" value="{{session('errorUpdate')}}">
+    @endif
+
+    <script>
+        const check = document.getElementById('errorUpdate');
+        if(check){
+            if(check.value !=""){
+                swal({
+                    icon: "error",
+                    title: check.value,
+                });
+        }
+        }
+    </script>
 @endsection

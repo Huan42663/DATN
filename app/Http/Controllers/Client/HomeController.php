@@ -34,6 +34,16 @@ class HomeController extends Controller
                 }
             }
         }
+        $Event = Event::query()->get();
+        $data1['status'] = 0;
+            foreach ($Event as $key) {
+                if($key->status != 0){
+                    if ($key->date_end == $date || $key->date_end < $date) {
+                        Event::query()->where('event_id', $key->event_id)->update($data1);
+                    }
+                }
+            }
+
         unset($_SESSION['thankyou']);
     }
     public function index()

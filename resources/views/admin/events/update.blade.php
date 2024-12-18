@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'cập nhật sự kiện')
+@section('title', 'Cập Nhật Sự Kiện')
 
 @section('page-header')
     <div class="page-header">

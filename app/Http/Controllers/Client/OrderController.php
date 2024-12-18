@@ -42,7 +42,6 @@ class OrderController extends Controller
             }
         }
         unset($_SESSION['thankyou']);
-        // unset($_SESSION['order_code']);
     }
     public function vnpay_payment(){
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
@@ -176,6 +175,7 @@ class OrderController extends Controller
             if($order == null ){
                 return redirect()->route('Client.Home');
             }
+        // dd($order->orderDetail);
         $rate = Rate::query()->where('order_id',$order_id)
         ->join('products','rates.product_id','products.product_id')
         ->leftJoin('product_variant','rates.product_variant_id','product_variant.product_variant_id')
@@ -307,10 +307,15 @@ class OrderController extends Controller
                     unset($_SESSION['voucher']);
                     return redirect()->back()->with('error_voucher12','Voucher không khả dụng');
                 }
+                $check = Voucher::where('voucher_id',$_SESSION['voucher']->voucher_id)->first();
+                if($check == null){
+                    unset($_SESSION['voucher']);
+                    return redirect()->back()->with('error_voucher12','Voucher không khả dụng');
+                }
             }
             $cart = new CartController();
             $data = $cart->showCart(Auth()->user()->user_id);
-            $_SESSION['listCart'] = $data['Cart'];
+            
             $cart = Cart::where('user_id',Auth()->user()->user_id)->first();
             foreach ($request->cart_detail_id as $item1) {
                 $check = CartDetail::where('cart_detail_id', $item1)->where('cart_id',$cart->cart_id)->first();
@@ -362,7 +367,9 @@ class OrderController extends Controller
                 unset($_SESSION['dataInfo']);
                 return redirect()->route('Client.orders.thank');
             }else{
+                $_SESSION['listCart'] = $data['Cart'];
                 $order = Order::all();
+                $_SESSION['PayMent'] = "payment";
                 $order_code = "jsstore24" . rand(1000000, 9999999);
                 foreach($order as $item){
                    $check = Order::where('order_code',$order_code)->first();
@@ -387,7 +394,7 @@ class OrderController extends Controller
                 ->orderBy('products.product_id', 'desc')
                 ->limit(8)
                 ->get();
-
+        unset($_SESSION['PayMent']);
         return View('client.thankyou',compact('products'));
     }
 
@@ -399,8 +406,9 @@ class OrderController extends Controller
                 if ($data->quantity > 0) {
                     $_SESSION['voucher'] = $data;
                     return response()->json(["data"=>"Áp dụng thành công",'value'=> $_SESSION['voucher']],Response::HTTP_OK);
+                }else{
+                    return response()->json(["data"=>"Voucher không khả dụng hoặc hết lượt sử dụng","status"=>false],Response::HTTP_NOT_FOUND);
                 }
-                return response()->json(["data"=>"Không tồn tại voucher","status"=>false],Response::HTTP_NOT_FOUND);
             } else {
                 unset($_SESSION['voucher']);
                 return response()->json(["data"=>"Không tồn tại voucher","status"=>false],Response::HTTP_NOT_FOUND);
@@ -482,20 +490,20 @@ class OrderController extends Controller
         }
 
     }
-    public function rates(string $product_id,string $order_code){
-            $_SESSION['order_code'] = $order_code;
+    public function rates(string $order_detail,string $order_code){
+           
+            // tìm chi tiết đơn hàng
             $product = OrderDetail::query()
                        ->join('orders','order_detail.order_id','=','orders.order_id')
                        ->join('products','order_detail.product_id','=','products.product_id')
                        ->leftJoin('sizes','order_detail.size','=','sizes.size_name')
                        ->leftJoin('colors','order_detail.color','=','colors.color_name')
-                       ->where('order_detail.product_id',$product_id)
-                       ->where('orders.order_code',$order_code)
-                    //    ->where('orders.user_id',1)
-                       ->where('orders.user_id',Auth::user()->user_id)
-                       ->selectRaw('products.*,order_detail.*,orders.order_id')
+                        ->where('order_detail_id',$order_detail)
+                       ->selectRaw('products.*,order_detail.*,orders.order_id,orders.order_code')
                        ->first();
+            $_SESSION['order_code'] = $product->order_code;
             if($product != null){
+                // tìm sản phẩm trong chi tiết đơn hàng
                 $productCheck = ProductVariant::leftJoin('sizes','product_variant.size_id','=','sizes.size_id')
                                 ->leftJoin('colors','product_variant.color_id','=','colors.color_id')
                                 ->where('product_variant.product_id',$product->product_id)
@@ -575,6 +583,7 @@ class OrderController extends Controller
         }
     }
     else{
+        // dd($_SESSION['order_code']);
         $order = Order::where('order_code', $_SESSION['order_code'])->first();
         return redirect()->route('Client.orders.show', [$order->order_code, $order->order_id])->with('message', 'Sản phẩm này trong đơn hàng đã được đánh giá')->with('status',"false");
     }
