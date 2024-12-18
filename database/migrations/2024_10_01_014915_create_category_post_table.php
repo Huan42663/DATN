@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('category_post', function (Blueprint $table) {
             $table->id('category_post_id');
             $table->string('category_post_name');
+            $table->text('category_post_slug');
             $table->softDeletes();
             $table->timestamps();
         });

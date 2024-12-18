@@ -4,147 +4,128 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Color;
-use Illuminate\Http\Request;
+use App\Models\ProductVariant;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use \Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log as FacadesLog;
 use Illuminate\Support\Facades\Validator;
-
+use Log;
 
 class ColorController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $data = Color::query()->get();
-        return response()->json(
-            [
-                'message' => "Danh sách màu",
-                'data' => $data
-            ],
-            Response::HTTP_OK
-        );
+
+        $data = Color::query()->orderByDesc('color_id')->get();
+        return View('admin.colors.index', compact('data'));
     }
+
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
+        $request->validate(
             ['color_name' => "required|unique:colors,color_name"],
             [
                 "color_name.required" => "Không được bỏ trống",
                 "color_name.unique" => "Màu đã có"
             ]
         );
+        $data = ['color_name' => $request['color_name']];
+        $checkText = new PostController;
+        $check = $checkText->ValidateText($request['color_name']);
+        if($check == false){
+            $_SESSION['color'] = $request['color_name'];
+            return redirect()->back()->with('color','tên của màu không được chứa kí tự đặc biệt');
+        }
+        Color::create($data);
+        unset($_SESSION['color']);
+        return redirect()->back()->with("success", "Thêm màu Thành Công");
+    }
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-                'data' => $request->all()
-            ], 422);
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $color_id)
+    {
+        $ColorInfo = Color::query()->where("color_id", '=', $color_id)->get();
+        $data = Color::query()->orderByDesc('color_id')->get();
+        if ($ColorInfo) {
+            return View('admin.colors.index', compact('ColorInfo', 'data'));
         } else {
-            $Size = Color::create($request->all());
-            return response()->json(
-                [
-                    'message' => "Thêm Màu Thành Công",
-                    'data' => $Size
-                ],
-                Response::HTTP_CREATED
-            );
+            return View('admin.colors.index', compact('data'))->with('error', 'Không tìm thấy màu');
         }
     }
-    public function show(string $color_name)
-    {
-        try {
-            $data = Color::query()->where("color_name", '=', $color_name)->get();
-            $count = Count($data);
-            if ($count <= 0) {
-                return response()->json(
-                    [
-                        'message' => "Chi tiết màu",
-                        'data' => $data
-                    ]
-                );
-            } else {
-                return response()->json(
-                    ['error' => "Không tìm thấy"],
-                    Response::HTTP_NOT_FOUND
-                );
-            }
-        } catch (\Throwable $th) {
-            Log::error(__CLASS__ . "@" . __FUNCTION__, [
-                'Line' => $th->getLine(),
-                'message' => $th->getMessage(),
-            ]);
 
-            if ($th instanceof ModelNotFoundException) {
-                return response()->json(
-                    ['error' => "Không tìm thấy"],
-                    Response::HTTP_NOT_FOUND
-                );
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Color $color)
+    {
+        $ColorInfo = Color::query()->where("color_id", '=', $color->color_id)->get();
+        $data = Color::query()->orderByDesc('color_id')->get();
+
+        $ColorCheck = Color::query()->where("color_id", '!=', $color->color_id)->get();
+        foreach ($ColorCheck as $value) {
+            if ($value->color_name == $request["color_name"]) {
+                return View('admin.colors.index', compact('ColorInfo', 'data'))->with('error', 'Màu đã có');
             }
         }
+        $request->validate(
+            ['color_name' => "required"],
+            [
+                "color_name.required" => "Không được bỏ trống"
+            ]
+        );
+        $data = ['color_name' => $request['color_name']];
+        $checkText = new PostController;
+        $check = $checkText->ValidateText($request['color_name']);
+        if($check == false){
+            $_SESSION['color'] = $request['color_name'];
+            return redirect()->back()->with('color','tên của màu không được chứa kí tự đặc biệt');
+        }
+        $color->update($data);
+        unset($_SESSION['color']);
+        return redirect()->route('Administration.colors.list')->with('success', 'Sửa Màu Thành Công');;
     }
-    public function update(Request $request, string $id)
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Request $request)
     {
-        $color = Color::query()->where("color_id", '=', $id)->get();
-        $count = Count($color);
-            if ($count <= 0) {
-            return response()->json([
-                'error' => 'Không tìm thấy màu',
-            ], Response::HTTP_NOT_FOUND);
+        if (isset($request->color_id) && !empty($request->color_id)) {
+            foreach ($request->color_id as $item) {
+                $color = Color::query()->find($item);
+                $data = ['quantity'=>0];
+                ProductVariant::where('color_id',$item)->update($data);
+                $color->delete();
+            }
+            return redirect()->route('Administration.colors.list')->with('success', 'Xóa màu thành công');
         } else {
-            $colorCheck = Color::query()->where("color_id", '!=', $id)->get();
-            foreach ($colorCheck as $value) {
-                if ($value->color_name == $request->color_name) {
-                    return response()->json([
-                        'error' => 'Tên màu đã có',
-                    ], 422);
-                }
-            }
-            $validator = Validator::make(
-                $request->all(),
-                ['size_name' => "sometimes|required"],
-                [
-                    "size_name.required" => "Không được bỏ trống"
-                ]
-
-            );
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            } else {
-                Color::query()->where("color_id", '=', $id)->update($request->all());
-                $color1 = Color::query()->where("color_id", '=', $id)->get();
-                return response()->json(
-                    [
-                        'message' => "Sửa Màu Thành Công",
-                        'data' => $color1
-                    ],
-                    Response::HTTP_CREATED
-                );
-            }
+            return redirect()->route('Administration.colors.list')->with('error', 'Không tìm thấy màu ');
         }
     }
-    public function destroy(string $id)
+    public function listColorDelete()
     {
-        $size = Color::query()->where('color_id', '=', $id)->delete();
-        if (!$size) {
-            return response()->json(
-                [
-                    'error' => "Không tìm thấy màu",
-                ],
-                Response::HTTP_NOT_FOUND
-            );
+        $color = Color::onlyTrashed()->get();
+        return View('admin.colors.listDelete', compact('color'));
+    }
+    public function restoreColor(Request $request)
+    {
+        if (isset($request->color_id) && !empty($request->color_id)) {
+            foreach ($request->color_id as $item) {
+                $color = Color::withTrashed()->find($item);
+                $color->restore();
+            }
+            return redirect()->route('Administration.colors.list')->with('success', 'Khôi phục màu thành công');
         } else {
-            return response()->json(
-                [
-                    'message' => "Xóa Màu Thành Công",
-                ],
-                Response::HTTP_OK
-            );
+            return redirect()->route('Administration.colors.list');
         }
     }
 }

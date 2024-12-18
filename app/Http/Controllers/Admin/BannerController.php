@@ -4,194 +4,200 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Models\Event;
+use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class BannerController extends Controller
 {
-    public function index(){
-        $data = Banner::query()->get();
-            return response()->json(
-                [
-                    'message' => "Danh sách Banner",
-                    'data' => $data
-                ],
-                Response::HTTP_OK
-        );
-    }
-    public function show($id)
+    public function index()
     {
-        // Tìm banner theo banner_id
-        $banner = Banner::where('banner_id', $id)->first();
+        $banners = Banner::query()
+            ->leftJoin('events', 'events.event_id', '=', 'banners.event_id')
+            ->leftJoin('products', 'products.product_id', '=', 'banners.product_id')
+            ->select(
+                'banners.banner_id',
+                'image_name',
+                'banners.status',
+                'product_name',
+                'event_name'
+            )
+            ->orderBy('banners.banner_id', 'DESC')
+            ->get();
 
-        // Kiểm tra nếu banner không tồn tại
-        if (!$banner) {
-            return response()->json([
-                'message' => 'Banner không tồn tại'
-            ], 404);
-        }
-
-        // Trả về dữ liệu banner
-        return response()->json([
-            'message' => 'Chi tiết Banner',
-            'data' => $banner
-        ], 200);
+        // Trả về view và truyền dữ liệu vào
+        return view('admin.banners.index', compact('banners'));
     }
-    // public function store(Request $request)
+    public function create()
+    {
+        $products = Products::all();
+        $events = Event::all();
+        return view('admin.banners.create', compact('products', 'events'));
+    }
+    // public function show($id)
     // {
-    //     // Xác thực dữ liệu
-    //     $validatedData = $request->validate([
-    //         'image_name' => 'required|string|max:255',
-    //         'status' => 'required|boolean',
-    //         'event_id' => 'nullable|integer',
-    //         'product_id' => 'nullable|integer',
-    //         'link' => 'nullable|string|url'
-    //     ]);
+    //     // Tìm banner theo banner_id
+    //     $banner = Banner::where('banner_id', $id)->first();
 
-    //     // Tạo banner mới trong cơ sở dữ liệu
-    //     $banner = Banner::create($validatedData);
+    //     // Kiểm tra nếu banner không tồn tại
+    //     if (!$banner) {
+    //         return response()->json([
+    //             'message' => 'Banner không tồn tại'
+    //         ], 404);
+    //     }
 
-    //     // Trả về phản hồi JSON
+    //     // Trả về dữ liệu banner
     //     return response()->json([
-    //         'message' => 'Banner đã được tạo thành công',
+    //         'message' => 'Chi tiết Banner',
     //         'data' => $banner
-    //     ], Response::HTTP_CREATED); // Trạng thái 201
+    //     ], 200);
     // }
     public function store(Request $request)
     {
-        try {
-            // Xác thực dữ liệu
-            $validatedData = $request->validate([
-                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate file ảnh
-                'status' => 'required|boolean',
-                'event_id' => 'nullable|integer',
-                'product_id' => 'nullable|integer',
-                'link' => 'nullable|string|url' // Cho phép null nhưng phải là URL hợp lệ nếu có
-            ]);
-
-            // Kiểm tra và thiết lập giá trị cho link
-            if (empty($request->link)) {
-                if (!empty($request->event_id) && empty($request->product_id)) {
-                    // Nếu chỉ có event_id, gán link là slug của event_id
-                    $validatedData['link'] = url('/events/' . $request->event_id); // Ví dụ link theo slug của event
-                } elseif (empty($request->event_id) && !empty($request->product_id)) {
-                    // Nếu chỉ có product_id, gán link là slug của product_id
-                    $validatedData['link'] = url('/products/' . $request->product_id); // Ví dụ link theo slug của product
-                } elseif (empty($request->event_id) && empty($request->product_id)) {
-                    // Nếu không có cả event_id và product_id, gán link là danh sách sản phẩm
-                    $validatedData['link'] = url('/api/client/products');
-                } else {
-                    // Nếu có cả event_id và product_id nhưng không nhập link, báo lỗi
-                    return response()->json([
-                        'message' => 'Link is required when both event_id and product_id are provided.',
-                        'errors' => [
-                            'link' => 'This field is required if both event_id and product_id are provided.'
-                        ]
-                    ], Response::HTTP_UNPROCESSABLE_ENTITY); // Trạng thái 422
-                }
-            }
-
-            // Xử lý upload file ảnh
-            if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $imageName = time() . '_' . $image->getClientOriginalName();
-                $image->move(public_path('uploads/banners'), $imageName);
-                $validatedData['image_name'] = $imageName; // Lưu tên file vào DB
-            }
-
-            // Tạo banner mới trong cơ sở dữ liệu
-            $banner = Banner::create($validatedData);
-
-            // Trả về phản hồi JSON
-            return response()->json([
-                'message' => 'Banner đã được tạo thành công',
-                'data' => $banner
-            ], Response::HTTP_CREATED); // Trạng thái 201
-        } catch (ValidationException $e) {
-            // Trả về phản hồi JSON với thông tin lỗi
-            return response()->json([
-                'message' => 'Validation errors',
-                'errors' => $e->errors(),
-            ], Response::HTTP_UNPROCESSABLE_ENTITY); // Trạng thái 422
+        // Validate input
+        $request->validate(
+            [
+                'image_name' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:2048',
+                'event_id' => ['nullable', 'exists:events,event_id', Rule::prohibitedIf($request->has("product_id"))], // event_id phải tồn tại trong bảng events
+                'product_id' => ['nullable', 'exists:products,product_id', Rule::prohibitedIf($request->has("event_id"))], // product_id phải tồn tại trong bảng products
+            ],
+            [
+                'image_name.required' => 'ảnh không được để trống',
+                'image_name.image' => 'ảnh không đúng định dạng',
+                'image_name.mimes' => 'ảnh không đúng định dạng',
+                'image_name.max' => 'kích thước ảnh tối đa là 2048mb',
+                'event_id.exists' => 'sự kiện không tồn tại',
+                'product_id.exists' => 'sản phẩm không tồn tại',
+            ]
+        );
+        $link = null;
+        if ($request->event_id) {
+            $event = Event::where('event_id', $request->event_id)->first();
+            $link = url('events/show-' . $event->slug);
         }
+        if ($request->product_id) {
+            $product = Products::where('product_id', $request->product_id)->first();
+            $link = url('/products/detail/' . $product->product_slug);
+        }
+        if ($request->event_id == null && $request->product_id == null) {
+            $link = url('/products');
+        }
+
+
+        // Upload the image
+        $imagePath = null;
+        if ($request->hasFile('image_name')) {
+            $imagePath = $request->file('image_name')->store('uploads');
+        }
+        // Create a new Banner
+        Banner::create([
+            'image_name' => $imagePath,
+            'event_id' => $request->event_id,
+            'product_id' => $request->product_id,
+            'link' => $link
+        ]);
+
+        return redirect()
+            ->route('Administration.banners.index')
+            ->with('message', 'Banner đã được thêm thành công!');
+    }
+    public function edit(string $id)
+    {
+        $events = Event::all();
+        $products = Products::all();
+        $banner = Banner::where('banner_id', $id)->first();
+        // dd($banner);
+        return view('admin.banners.update', compact('events', 'products', 'banner'));
     }
     public function update(Request $request, $id)
     {
+        $banner = Banner::findOrFail($id);
+
+        // Validate input
+        $request->validate(
+            [
+                'image_name' => 'nullable|image|mimes:jpeg,webp,png,jpg,gif|max:2048',
+                'event_id' => [
+                    'nullable',
+                    'exists:events,event_id',
+                    Rule::prohibitedIf($request->filled('product_id')), // event_id không được tồn tại nếu product_id có dữ liệu
+                ],
+                'product_id' => [
+                    'nullable',
+                    'exists:products,product_id',
+                    Rule::prohibitedIf($request->filled('event_id')), // product_id không được tồn tại nếu event_id có dữ liệu
+                ],
+            ],
+            [
+                'image_name.image' => 'Ảnh không đúng định dạng',
+                'image_name.mimes' => 'Ảnh không đúng định dạng',
+                'image_name.max' => 'Kích thước ảnh tối đa là 2048MB',
+                'event_id.exists' => 'Sự kiện không tồn tại',
+                'product_id.exists' => 'Sản phẩm không tồn tại',
+                'event_id.prohibited' => 'Không thể chọn cả sự kiện và sản phẩm cùng lúc.',
+                'product_id.prohibited' => 'Không thể chọn cả sự kiện và sản phẩm cùng lúc.',
+            ]
+        );
+
+        // Handle image upload
+        if ($request->hasFile('image_name')) {
+            // Delete old image if exists
+            if ($banner->image_name && Storage::exists($banner->image_name)) {
+                Storage::delete($banner->image_name);
+            }
+
+            // Save new image
+            $imagePath = $request->file('image_name')->store('uploads');
+            $banner->image_name = $imagePath;
+        }
+
+        // Update link logic
+        if ($request->event_id) {
+            $event = Event::where('event_id', $request->event_id)->first();
+            $banner->link = url('/events/detail-' . $event->slug);
+            $banner->event_id = $request->event_id;
+            $banner->product_id = null; // Clear product_id if event_id is set
+        } elseif ($request->product_id) {
+            $product = Products::where('product_id', $request->product_id)->first();
+            $banner->link = url('/products/detail-' . $product->product_slug);
+            $banner->product_id = $request->product_id;
+            $banner->event_id = null; // Clear event_id if product_id is set
+        }
+
+        // Save the updated banner
+        $banner->save();
+
+        return redirect()
+            ->route('Administration.banners.index')
+            ->with('message', 'Banner đã được cập nhật thành công!');
+    }
+    public function destroy($id)
+    {
         try {
-            // Tìm banner cần cập nhật
+            // Tìm banner theo ID
             $banner = Banner::findOrFail($id);
 
-            // Lấy dữ liệu từ request và bỏ qua những trường không có giá trị
-            $validatedData = $request->validate([
-                'image' => 'required|mimes:jpeg,png,jpg,gif|max:2048',
-                'status' => 'nullable|boolean',
-                'event_id' => 'nullable|integer',
-                'product_id' => 'nullable|integer',
-                'link' => 'nullable|string|url'
-            ]);
-
-            // Kiểm tra và thiết lập giá trị cho link nếu chưa có
-            if (empty($request->link)) {
-                if (!empty($request->event_id) && empty($request->product_id)) {
-                    // Nếu chỉ có event_id, gán link là slug của event_id
-                    $validatedData['link'] = url('/events/' . $request->event_id);
-                } elseif (empty($request->event_id) && !empty($request->product_id)) {
-                    // Nếu chỉ có product_id, gán link là slug của product_id
-                    $validatedData['link'] = url('/products/' . $request->product_id);
-                } elseif (empty($request->event_id) && empty($request->product_id)) {
-                    // Nếu không có cả event_id và product_id, gán link là danh sách sản phẩm
-                    $validatedData['link'] = url('/api/client/products');
-                }
+            // Xóa file hình ảnh nếu tồn tại
+            if ($banner->image_name && Storage::exists($banner->image_name)) {
+                Storage::delete($banner->image_name);
             }
 
-            // Xử lý upload file ảnh nếu có file mới được upload
-            if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $imageName = time() . '_' . $image->getClientOriginalName();
-                $image->move(public_path('uploads/banners'), $imageName);
-                $validatedData['image_name'] = $imageName; // Cập nhật tên file trong DB
-            }
+            // Xóa banner khỏi database
+            $banner->delete();
 
-            // Cập nhật các trường hợp có trong validatedData vào banner
-            // $banner->update(array_filter($validatedData));
-            $banner->update($validatedData);
-            
-            // Trả về phản hồi JSON
-            return response()->json([
-                'message' => 'Banner đã được cập nhật thành công',
-                'data' => $banner
-            ], Response::HTTP_OK); // Trạng thái 200
-        } catch (ValidationException $e) {
-            // Trả về phản hồi JSON với thông tin lỗi
-            return response()->json([
-                'message' => 'Validation errors',
-                'errors' => $e->errors(),
-            ], Response::HTTP_UNPROCESSABLE_ENTITY); // Trạng thái 422
-        }
-    }
-    public function destroy(string $id)
-    {
-        // Xóa banner theo banner_id
-        $deleted = Banner::where('banner_id', $id)->first();
-
-        if ($deleted) {
-            // Nếu tìm thấy bản ghi, xóa nó
-            $deleted->delete();
-            return response()->json(
-                [
-                    'message' => 'Bài viết đã được xóa thành công'
-                ],
-                Response::HTTP_OK
-            );
-        } else {
-            // Nếu không tìm thấy bản ghi
-            return response()->json(
-                [
-                    'error' => 'Bài viết không tồn tại'
-                ],
-                Response::HTTP_NOT_FOUND
-            );
+            // Trả về thông báo thành công
+            return redirect()
+                ->route('Administration.banners.index')
+                ->with('message', 'Banner đã được xóa thành công!');
+        } catch (\Exception $e) {
+            // Trả về thông báo lỗi nếu xảy ra lỗi trong quá trình xóa
+            return redirect()
+                ->route('Administration.banners.index')
+                ->with('error', 'Không thể xóa banner: ' . $e->getMessage());
         }
     }
 }
