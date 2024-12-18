@@ -383,10 +383,6 @@
                         <strong style="color: #444;">Địa chỉ giao hàng:</strong>
                         <span>{{ $order->address }}</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                        <strong style="color: #444;">Ngày đặt hàng:</strong>
-                        <span>{{ $order->created_at->format('d/m/Y') }}</span>
-                    </div>
 
                     <!-- Chi tiết thanh toán -->
                     @php
@@ -397,18 +393,7 @@
                             $giamGia = $order->total - $order->total_discount;
                         }
                     @endphp
-                    <div
-                        style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; line-height: 1.5;">
-                        <strong style="color: #333;">Tổng tiền:</strong>
-                        <span
-                            style="color: #444; font-weight: bold;">{{ number_format($order->total, 0, ',', '.') . ' VNĐ' }}</span>
-                    </div>
-                    <div
-                        style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; line-height: 1.5;">
-                        <strong style="color: #333;">Phí ship:</strong>
-                        <span
-                            style="color: #444; font-weight: bold;">{{ number_format($ship, 0, ',', '.') . ' VNĐ' }}</span>
-                    </div>
+                   
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                         <strong>Ngày đặt hàng:</strong> <span>{{ $order->created_at }}</span>
                     </div>
@@ -434,9 +419,11 @@
                     </div>
 
                     @if ($orderBill != null)
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;" class="mt-1">
-                            <strong class="fs-bold fw-5">Thông tin giao dịch</strong>
-                        </div>
+                    <div style="height: 1px; background-color: #ddd; margin-bottom: 10px;"></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;" class="mt-1">
+                        <strong class="fs-bold fw-5">Thông tin giao dịch</strong>
+                    </div>
+                    
                         <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                             <strong>Mã ngân hàng:</strong><span>{{ $orderBill->bank_code }}</span>
                         </div>
