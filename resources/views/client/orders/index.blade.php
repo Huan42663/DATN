@@ -3,88 +3,91 @@
 
 @section('content')
 
-    <div class="order-tracking py-10 bg-light">
-        <div class="container">
-            <div class="content-main" style="margin-top: 70px">
-                <h4 class="fancy-title">Đơn hàng của bạn</h4>
-
-                <div class="order-list">
-                    @forelse ($orders as $order)
-                        <div class="order-item">
-                            <!-- Thông tin đơn hàng -->
-                            <div class="order-info">
-                                <h5 class="order-code">#{{ $order->order_code }}</h5>
-                                <input type="hidden" id="{{ 'order_code' . $order->order_code }}"
-                                    value="{{ $order->order_code }}">
-                                <span class="{{ 'order_code' . $order->order_code }}" hidden></span>
-                                <p class="order-date">Ngày đặt: {{ $order->created_at->format('d/m/Y H:i') }}</p>
-                                <div class="order-status mb-3">
-                                    <span>Trạng thái:</span>
-                                    <span class="badge">
-                                        @if ($order->status == 'unconfirm')
-                                            <span class="badge bg-soft-warning text-warning">Chờ Xác Nhận</span>
-                                        @elseif($order->status == 'confirmed')
-                                            <span class="badge bg-soft-success text-success">Đã Xác Nhận</span>
-                                        @elseif($order->status == 'shipping')
-                                            <span class="badge bg-soft-info text-info">Đang Vận Chuyển</span>
-                                        @elseif($order->status == 'delivered')
-                                            <span class="badge bg-soft-primary text-primary">Đã Giao Đến Khách Hàng</span>
-                                        @elseif($order->status == 'received')
-                                            <span class="badge bg-soft-success text-success">Đã Xác Nhận Nhận Hàng</span>
-                                        @elseif($order->status == 'canceled')
-                                            <span class="badge bg-soft-danger text-danger">Hủy</span>
-                                        @elseif($order->status == 'return')
-                                            <span class="badge bg-soft-dark text-dark">Trả Hàng</span>
+    <div class="order-tracking pt-10">
+        <div class="box">
+            <div class="container">
+                <div class="content-main " style="margin-top: 70px">
+                    <h4 style="padding-top:30px" class="fancy-title">Đơn hàng của bạn</h4>
+                    <div class="order-list">
+                        @forelse ($orders as $order)
+                            <div class="order-item">
+                                <!-- Thông tin đơn hàng -->
+                                <div class="order-info">
+                                    <h5 class="order-code">#{{ $order->order_code }}</h5>
+                                    <input type="hidden" id="{{ 'order_code' . $order->order_code }}"
+                                        value="{{ $order->order_code }}">
+                                    <span class="{{ 'order_code' . $order->order_code }}" hidden></span>
+                                    <p class="order-date">Ngày đặt: {{ $order->created_at->format('d/m/Y H:i') }}</p>
+                                    <div class="order-status mb-3">
+                                        <span>Trạng thái:</span>
+                                        <span class="badge">
+                                            @if ($order->status == 'unconfirm')
+                                                <span class="badge bg-soft-warning text-warning">Chờ Xác Nhận</span>
+                                            @elseif($order->status == 'confirmed')
+                                                <span class="badge bg-soft-success text-success">Đã Xác Nhận</span>
+                                            @elseif($order->status == 'shipping')
+                                                <span class="badge bg-soft-info text-info">Đang Vận Chuyển</span>
+                                            @elseif($order->status == 'delivered')
+                                                <span class="badge bg-soft-primary text-primary">Đã Giao Đến Khách
+                                                    Hàng</span>
+                                            @elseif($order->status == 'received')
+                                                <span class="badge bg-soft-success text-success">Đã Xác Nhận Nhận
+                                                    Hàng</span>
+                                            @elseif($order->status == 'canceled')
+                                                <span class="badge bg-soft-danger text-danger">Hủy</span>
+                                            @elseif($order->status == 'return')
+                                                <span class="badge bg-soft-dark text-dark">Trả Hàng</span>
+                                            @endif
+                                        </span>
+                                    </div>
+                                    <div class="order-total">
+                                        @if ($order->total >= $order->total_discount && $order->total_discount != null)
+                                            <span>Tổng tiền: {{ number_format($order->total_discount, 0, ',', '.') }}
+                                                VNĐ</span>
+                                        @else
+                                            <span>Tổng tiền: {{ number_format($order->total, 0, ',', '.') }} VNĐ</span>
                                         @endif
-                                    </span>
+                                        <br>
+                                        @if ($order->method_payment == 'banking')
+                                            <span class="text-success">Đã Thanh Toán</span>
+                                        @else
+                                            <span class="text-light">Chưa Thanh Toán</span>
+                                        @endif
+                                    </div>
                                 </div>
-                                <div class="order-total">
-                                    @if ($order->total >= $order->total_discount && $order->total_discount != null)
-                                        <span>Tổng tiền: {{ number_format($order->total_discount, 0, ',', '.') }} VNĐ</span>
-                                    @else
-                                        <span>Tổng tiền: {{ number_format($order->total, 0, ',', '.') }} VNĐ</span>
-                                    @endif
-                                    <br>
-                                    @if ($order->method_payment == 'banking')
-                                        <span class="text-success">Đã Thanh Toán</span>
-                                    @else
-                                        <span class="text-light" >Chưa Thanh Toán</span>
-                                    @endif
-                                </div>
-                            </div>
 
-                            <!-- Phần nút hành động -->
-                            <div class="order-actions d-flex justify-content-between" >
-                                <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}"
-                                    class="btn btn-detail">Xem chi tiết</a>
-                                @if ($order->status == 'unconfirm')
+                                <!-- Phần nút hành động -->
+                                <div class="order-actions d-flex justify-content-between">
                                     <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}"
-                                        class="btn btn-cancel">Hủy đơn hàng</a>
-                                @endif
-                                @if ($order->status == 'delivered')
-                                    <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}"
-                                        class="btn btn-confirm">Xác nhận đã nhận hàng</a>
-                                    <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}"
-                                        class="btn btn-return">Trả hàng</a>
-                                @endif
+                                        class="btn btn-detail">Xem chi tiết</a>
+                                    @if ($order->status == 'unconfirm')
+                                        <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}"
+                                            class="btn btn-cancel">Hủy đơn hàng</a>
+                                    @endif
+                                    @if ($order->status == 'delivered')
+                                        <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}"
+                                            class="btn btn-confirm">Xác nhận đã nhận hàng</a>
+                                        <a href="{{ route('Client.orders.show', [$order->order_code, $order->order_id]) }}"
+                                            class="btn btn-return">Trả hàng</a>
+                                    @endif
+                                </div>
                             </div>
-                        </div>
-                    @empty
-                        <div class="alert alert-warning">Không có đơn hàng nào.</div>
-                    @endforelse
+                        @empty
+                            <div class="alert alert-warning">Không có đơn hàng nào.</div>
+                        @endforelse
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center">
+                    {{ $orders->links() }}
                 </div>
             </div>
 
         </div>
-       <div class="d-flex justify-content-center">
-        {{ $orders->links() }}
-       </div>
-
     </div>
 
     <style>
-        .order-tracking {
-            padding: 40px 0;
+        .box {
+            padding-bottom: 30px;
             background-color: #f8f9fa;
         }
 
